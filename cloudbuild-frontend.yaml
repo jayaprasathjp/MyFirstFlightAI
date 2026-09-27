@@ -1,0 +1,38 @@
+steps:
+  # 1. Build Docker image for React frontend with build-arg
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '--build-arg'
+      - 'VITE_API_BASE_URL=$_VITE_API_BASE_URL'
+      - '-t'
+      - 'gcr.io/$PROJECT_ID/myfirstflightai:$BUILD_ID'
+      - '-t'
+      - 'gcr.io/$PROJECT_ID/myfirstflightai:latest'
+      - './frontend'
+
+  # 2. Push image to Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - 'gcr.io/$PROJECT_ID/myfirstflightai:$BUILD_ID'
+
+  # 3. Deploy image to Google Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'myfirstflightai'
+      - '--image=gcr.io/$PROJECT_ID/myfirstflightai:$BUILD_ID'
+      - '--region=us-central1'
+      - '--platform=managed'
+      - '--allow-unauthenticated'
+      - '--port=8080'
+
+substitutions:
+  _VITE_API_BASE_URL: 'https://myfirstflightai-backend-964832886801.us-central1.run.app'
+
+images:
+  - 'gcr.io/$PROJECT_ID/myfirstflightai:$BUILD_ID'
+  - 'gcr.io/$PROJECT_ID/myfirstflightai:latest'
