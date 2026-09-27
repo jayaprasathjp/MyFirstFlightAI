@@ -98,7 +98,10 @@ def test_checklist_is_personalized(gautam_docs):
     assert items["checked_bag"]["title"] == "Check-in bag 20 kg or less"
     assert items["forex"]["title"].startswith("Carry some SGD")
     assert items["leave_home"]["title"] == "Leave home by 19:50"      # 23:50 - 3h - 1h
-    assert "20:50" in items["leave_home"]["detail"]
+    assert "Reach Chennai airport, Terminal 2 by 20:50" in items["leave_home"]["detail"]
+    summary["origin_terminal"] = "2"  # Gemini sometimes returns just the number
+    again = {i["id"]: i for i in build_checklist(summary, travellers, checks)}
+    assert "Reach Chennai airport, Terminal 2 by 20:50" in again["leave_home"]["detail"]
     assert "wheelchair" in items["assist"]["title"] and "Gautam Guru" in items["assist"]["title"]
     assert items["fix:t1:passport_expiry"]["group"] == "t3" and items["fix:t1:passport_expiry"]["key"]
     assert group_dates(summary) == {"t3": "2026-10-12", "t1": "2026-10-14", "t0": "2026-10-15"}

@@ -43,9 +43,9 @@ p { margin: 0 }
 .langs .on { border-color: var(--brand); background: var(--brand-soft) }
 
 /* boarding-pass style trip card */
-.pass { background: var(--brand); color: var(--brand-ink); border-radius: 18px; padding: 16px 18px; display: grid; gap: 12px }
-.pass .row { display: flex; justify-content: space-between; align-items: flex-end; gap: 10px }
-.pass .end { text-align: end }
+.boarding { background: var(--brand); color: var(--brand-ink); border-radius: 18px; padding: 16px 18px; display: grid; gap: 12px }
+.boarding .row { display: flex; justify-content: space-between; align-items: flex-end; gap: 10px }
+.boarding .end { text-align: end }
 .iata { font-family: var(--m); font-size: 32px; font-weight: 600; line-height: 1 }
 .city { font-size: 13px; opacity: .85 }
 .plane { flex: 1; display: flex; align-items: center; gap: 6px; opacity: .85; padding-bottom: 8px }

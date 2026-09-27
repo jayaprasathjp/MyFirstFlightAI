@@ -58,7 +58,7 @@ export default function Chatbot({ apiBaseUrl }) {
           { role: 'model', content: data.detail || data.reply || 'Sorry, something went wrong.' }
         ])
       }
-    } catch (error) {
+    } catch {
       setMessages((prev) => [
         ...prev,
         { role: 'model', content: '⚠️ Server connection error. Please check backend.' }

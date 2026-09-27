@@ -1,6 +1,7 @@
 """Gemini client, document extraction and translation."""
 import json
 import os
+import threading
 
 from google import genai
 from google.genai import types
@@ -18,7 +19,21 @@ def model_name():
     return os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
 
 
+# One shared client. A genai.Client closes its HTTP connection when garbage-collected, so a throwaway
+# client (e.g. `get_client().models...` racing in parallel threads) fails with "client has been closed".
+_client = None
+_client_lock = threading.Lock()
+
+
 def get_genai_client():
+    global _client
+    with _client_lock:
+        if _client is None:
+            _client = _new_client()
+        return _client
+
+
+def _new_client():
     use_vertex = os.getenv("USE_VERTEX_AI", "false").lower() in ("true", "1", "yes")
     project = os.getenv("GCP_PROJECT_ID")
     location = os.getenv("GCP_LOCATION", "us-central1")
@@ -67,14 +82,18 @@ def translate(texts: dict[str, str], lang: str) -> dict[str, str]:
         return dict(texts)
     prompt = (
         f"Translate the JSON values into {LANGUAGES.get(lang, lang)} for elderly first-time flyers from India. "
-        "Use simple, warm, everyday words. Keep the JSON keys unchanged. Keep {placeholders}, flight numbers, "
-        "airport codes, times, dates, amounts, and the words 'I'm Lost' meaning intact. Return only JSON.\n\n"
+        "Use simple, warm, everyday words. Keep the JSON keys unchanged. Copy these exactly as written, in Latin "
+        "letters, never transliterated: people's names, passport/visa/ticket numbers, booking codes, flight numbers, "
+        "airport codes, {placeholders}, times and amounts (spelling differences in names matter). Return only JSON.\n\n"
         + json.dumps(texts, ensure_ascii=False)
     )
     response = get_genai_client().models.generate_content(
         model=model_name(),
         contents=prompt,
-        config=types.GenerateContentConfig(response_mime_type="application/json", temperature=0.2),
+        config=types.GenerateContentConfig(
+            response_mime_type="application/json", temperature=0.2,
+            thinking_config=types.ThinkingConfig(thinking_budget=0),  # translation needs no reasoning; much faster
+        ),
     )
     out = json.loads(response.text)
     # Fall back to English for any key the model dropped.

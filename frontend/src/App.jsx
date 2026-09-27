@@ -43,6 +43,7 @@ function Flow({ setLang }) {
   const [step, setStepState] = useState(() => (store.get('mff-trip', null) ? store.get('mff-step', 'travellers') : 'language'))
   const [done, setDone] = useState(() => store.get(`mff-done-${store.get('mff-trip', '')}`, {}))
   const [busy, setBusy] = useState(false)
+  const [updating, setUpdating] = useState(false) // language switch: server re-translates checks + checklist
   const [error, setError] = useState('')
   const saveQueue = useRef(Promise.resolve())
 
@@ -75,9 +76,12 @@ function Flow({ setLang }) {
     applyTrip(trip ? await api.setLanguage(trip.id, code) : await api.createTrip(code))
     if (step === 'language') setStep('travellers')
   })
-  const changeLanguage = (code) => {
+  const changeLanguage = async (code) => {
     setLang(code)
-    if (trip) run(async () => applyTrip(await api.setLanguage(trip.id, code)))
+    if (!trip) return
+    setUpdating(true)
+    await run(async () => applyTrip(await api.setLanguage(trip.id, code)))
+    setUpdating(false)
   }
   const addTraveller = (files, assistance) => run(async () => applyTrip(await api.addTraveller(trip.id, files, assistance)))
   const removeTraveller = (tid) => run(async () => applyTrip(await api.removeTraveller(trip.id, tid)))
@@ -101,8 +105,9 @@ function Flow({ setLang }) {
       <TopBar onLanguage={changeLanguage} busy={busy} />
       <Stepper step={step} allowed={allowed} onGo={setStep} />
       <main className="screen">
+        {updating && <div className="reading" role="status"><span className="spin" aria-hidden="true"></span>{t('updating')}</div>}
+        {error && step !== 'travellers' && <div className="err" role="alert">{error}</div>}
         {step === 'language' && <LanguageScreen onPick={pickLanguage} busy={busy} />}
-        {step === 'language' && error && <div className="err" role="alert">{error}</div>}
         {step === 'travellers' && trip && (
           <TravellersScreen trip={trip} busy={busy} error={error} onAdd={addTraveller} onRemove={removeTraveller}
             onNext={() => setStep('check')} />

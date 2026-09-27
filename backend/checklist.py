@@ -68,9 +68,13 @@ def build_checklist(summary, travellers, checks):
     dep = parse_dt(s.get("departure_date"), s.get("departure_time"))
     if dep and s.get("departure_time"):
         reach, leave = dep - AIRPORT_EARLY, dep - AIRPORT_EARLY - TRAVEL_TO_AIRPORT
-        terminal = f" {s['origin_terminal']}" if s.get("origin_terminal") else ""
+        term = str(s.get("origin_terminal") or "").strip()
+        if term and not term.lower().startswith("terminal"):
+            term = "Terminal " + term  # Gemini may return just "2"
+        term = f", {term}" if term else ""
+        airport = f"{s['origin_city']} airport" if s.get("origin_city") else "the airport"
         items.append(_item("leave_home", "t0", f"Leave home by {leave:%H:%M}",
-                           f"Reach {s.get('origin_city') or 'the airport'}{terminal} by {reach:%H:%M}, 3 hours before the "
+                           f"Reach {airport}{term} by {reach:%H:%M}, 3 hours before the "
                            f"{dep:%H:%M} flight. Leave earlier if the airport is more than 1 hour away.", key=True))
     else:
         items.append(_item("leave_home", "t0", "Leave home early", "Reach the airport 3 hours before an international flight.", key=True))

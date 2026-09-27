@@ -32,5 +32,5 @@ export const EN = {
   checklist_title: 'Before you fly', done: 'done', t3: '3 days before', t1: 'Day before', t0: 'Travel day',
   checklist_saved: 'Your ticks are saved on this phone and online.',
   loading: 'Loading…', start_over: 'Start a new trip', start_over_confirm: 'Start a new trip? This trip will be removed from this phone.',
-  language_label: 'Language',
+  language_label: 'Language', updating: 'Updating to your language…',
 }

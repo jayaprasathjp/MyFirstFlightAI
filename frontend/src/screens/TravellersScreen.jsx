@@ -8,7 +8,7 @@ export function TripCard({ summary }) {
   const { t, fmtDate } = useI18n()
   if (!summary) return null
   return (
-    <div className="pass">
+    <div className="boarding">
       <div className="row">
         <div><div className="iata">{summary.origin_code}</div><div className="city">{summary.origin_city} · {summary.departure_time}</div></div>
         <div className="plane" aria-hidden="true"><i></i>✈<i></i></div>

@@ -4,18 +4,24 @@ import logging
 import mimetypes
 import os
 import uuid
+from pathlib import Path
 
 from dotenv import load_dotenv
-from fastapi import FastAPI, File, Form, HTTPException, UploadFile
+from fastapi import FastAPI, File, Form, HTTPException, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from google.genai import types
 
-# Load environment variables from .env file (before modules that read them)
-load_dotenv()
+# Load backend/.env (before modules that read it), whatever folder the server is started from.
+BACKEND_DIR = Path(__file__).resolve().parent
+load_dotenv(BACKEND_DIR / ".env")
+_creds = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
+if _creds and not Path(_creds).is_absolute():
+    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = str(BACKEND_DIR / _creds)
 
 import gemini  # noqa: E402
 from checklist import build_checklist, group_dates  # noqa: E402
-from db import now_iso, store  # noqa: E402
+from db import StoreError, now_iso, store  # noqa: E402
 from schemas import ChatRequest, ChecklistToggle, CreateTripRequest, TranslateRequest, UpdateTripRequest  # noqa: E402
 from validation import check_trip, overall_status, passport_name, trip_summary  # noqa: E402
 
@@ -38,6 +44,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.exception_handler(StoreError)
+async def store_error_handler(request: Request, exc: StoreError):
+    return JSONResponse(status_code=503, content={"detail": str(exc)})
+
+
 MAX_UPLOAD = 10 * 1024 * 1024
 ALLOWED_MIME = {"application/pdf", "image/jpeg", "image/png", "image/webp", "image/heic"}
 ASSISTANCE = {"none", "elderly", "wheelchair", "visually_impaired"}
@@ -49,14 +60,32 @@ def _tkey(lang, text):
     return hashlib.sha256(f"{lang}\n{text}".encode()).hexdigest()
 
 
-def localize(texts: dict[str, str], lang: str) -> dict[str, str]:
+def _mask(text, terms):
+    """Swap protected terms (names, document numbers) for {n0}, {n1}... so Gemini cannot transliterate them."""
+    mapping = {}
+    for term in terms:
+        if term in text:
+            key = f"{{n{len(mapping)}}}"
+            text = text.replace(term, key)
+            mapping[key] = term
+    return text, mapping
+
+
+def localize(texts: dict[str, str], lang: str, protect=()) -> dict[str, str]:
+    """Translate {key: english}; `protect` terms are kept exactly as written."""
     if lang == "en" or not texts:
         return dict(texts)
-    db, out, missing = store(), {}, {}
+    terms = sorted({t for t in protect if t and len(t) >= 2}, key=len, reverse=True)
+    masked, maps = {}, {}
     for k, v in texts.items():
-        hit = db.get("translations", _tkey(lang, v))
+        masked[k], maps[k] = _mask(v, terms)
+
+    db, tr, missing = store(), {}, {}
+    cached = db.get_many("translations", [_tkey(lang, v) for v in masked.values()])
+    for k, v in masked.items():
+        hit = cached.get(_tkey(lang, v))
         if hit:
-            out[k] = hit["text"]
+            tr[k] = hit["text"]
         else:
             missing[k] = v
     if missing:
@@ -64,12 +93,36 @@ def localize(texts: dict[str, str], lang: str) -> dict[str, str]:
             done = gemini.translate(missing, lang)
         except Exception:
             log.exception("translation failed; falling back to English")
-            return {**out, **missing}
-        for k, v in done.items():
-            if v != missing[k]:
-                db.set("translations", _tkey(lang, missing[k]), {"text": v, "lang": lang, "source": missing[k]})
-        out.update(done)
+            done = dict(missing)
+        db.set_many("translations", {
+            _tkey(lang, missing[k]): {"text": v, "lang": lang, "source": missing[k]}
+            for k, v in done.items() if v != missing[k] and all(p in v for p in maps[k])
+        })
+        tr.update(done)
+
+    out = {}
+    for k, v in tr.items():
+        if not all(p in v for p in maps[k]):
+            out[k] = texts[k]  # a placeholder was lost: English is safer than a missing name
+            continue
+        for p, term in maps[k].items():
+            v = v.replace(p, term)
+        out[k] = v
     return out
+
+
+def protected_terms(trip):
+    """Names and identifiers in a trip that must never be translated or transliterated."""
+    s = trip.get("summary") or {}
+    terms = {s.get("pnr"), s.get("airline")}
+    for t in trip["travellers"]:
+        docs = t.get("documents") or {}
+        passport, ticket, visa = docs.get("passport") or {}, docs.get("ticket") or {}, docs.get("visa") or {}
+        pname = passport_name(passport)
+        terms |= {t.get("name"), (t.get("name") or "").title(), pname, pname.title(),
+                  passport.get("number"), visa.get("full_name"), visa.get("passport_number"),
+                  *(ticket.get("passenger_names") or [])}
+    return {x for x in terms if isinstance(x, str)}
 
 
 # ---------- trip helpers ----------
@@ -105,7 +158,7 @@ def trip_view(trip):
         texts[f"c.{c['id']}.t"], texts[f"c.{c['id']}.m"] = c["title"], c["message"]
     for i in items:
         texts[f"i.{i['id']}.t"], texts[f"i.{i['id']}.d"] = i["title"], i["detail"]
-    tr = localize(texts, lang)
+    tr = localize(texts, lang, protect=protected_terms(trip))
 
     done = trip.get("checklist_done") or {}
     return {
