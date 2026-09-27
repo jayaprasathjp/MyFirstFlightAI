@@ -63,33 +63,7 @@ steps:
       - '--allow-unauthenticated'
       - '--port=8080'
 
-  # Make Frontend Public
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-    id: 'make-frontend-public'
-    waitFor: ['deploy-frontend']
-    entrypoint: gcloud
-    args:
-      - 'run'
-      - 'services'
-      - 'add-iam-policy-binding'
-      - 'myfirstflightai'
-      - '--region=us-central1'
-      - '--member=allUsers'
-      - '--role=roles/run.invoker'
 
-  # Make Backend Public
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-    id: 'make-backend-public'
-    waitFor: ['deploy-backend']
-    entrypoint: gcloud
-    args:
-      - 'run'
-      - 'services'
-      - 'add-iam-policy-binding'
-      - 'myfirstflightai-backend'
-      - '--region=us-central1'
-      - '--member=allUsers'
-      - '--role=roles/run.invoker'
 
 substitutions:
   _VITE_API_BASE_URL: 'https://myfirstflightai-backend-964832886801.us-central1.run.app'
