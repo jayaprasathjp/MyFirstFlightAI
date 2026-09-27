@@ -1,0 +1,36 @@
+export const LANGUAGES = [
+  { code: 'en', native: 'English', english: 'English', locale: 'en-IN' },
+  { code: 'hi', native: 'हिंदी', english: 'Hindi', locale: 'hi-IN' },
+  { code: 'ta', native: 'தமிழ்', english: 'Tamil', locale: 'ta-IN' },
+  { code: 'te', native: 'తెలుగు', english: 'Telugu', locale: 'te-IN' },
+  { code: 'kn', native: 'ಕನ್ನಡ', english: 'Kannada', locale: 'kn-IN' },
+  { code: 'ml', native: 'മലയാളം', english: 'Malayalam', locale: 'ml-IN' },
+  { code: 'bn', native: 'বাংলা', english: 'Bengali', locale: 'bn-IN' },
+  { code: 'mr', native: 'मराठी', english: 'Marathi', locale: 'mr-IN' },
+  { code: 'gu', native: 'ગુજરાતી', english: 'Gujarati', locale: 'gu-IN' },
+  { code: 'ms', native: 'Bahasa Melayu', english: 'Malay', locale: 'ms-MY' },
+  { code: 'zh', native: '中文', english: 'Mandarin', locale: 'zh-CN' },
+  { code: 'ar', native: 'العربية', english: 'Arabic', locale: 'ar', rtl: true },
+]
+
+// English source strings. Other languages are translated by Gemini once and cached (server + this device).
+export const EN = {
+  step_language: 'Language', step_travellers: 'Travellers', step_check: 'Check', step_checklist: 'Checklist',
+  choose_language: 'Choose your language', choose_language_hint: 'You can change it any time from the top.',
+  travellers_title: 'Who is travelling?', travellers_hint: 'For each person, add their ticket, passport and visa. A photo or PDF is fine.',
+  add_traveller: 'Add traveller', add_another: 'Add another traveller', ticket: 'Ticket', passport: 'Passport', visa: 'Visa',
+  tap_to_add: 'Tap to add', added: 'Added', needs_assistance: 'Needs assistance?',
+  assist_none: 'No', assist_elderly: 'Elderly', assist_wheelchair: 'Wheelchair', assist_visually_impaired: 'Visually impaired',
+  check_documents: 'Read documents', cancel: 'Cancel', remove: 'Remove',
+  reading: 'Reading the documents… this can take up to a minute.',
+  err_files: 'Add all three: ticket, passport and visa.', err_network: 'Cannot reach the server. Check your internet and try again.',
+  continue: 'Continue', back: 'Back',
+  flight: 'Flight', date: 'Date', cabin: 'Cabin', checked: 'Check-in', booking: 'Booking',
+  check_title: 'Document check', ready_title: 'Ready to fly', ready_body: 'All documents look good for this trip.',
+  fix_title: 'Fix this before you fly', fix_body: 'Some things need attention. They are also added to your checklist.',
+  trip_notes: 'For the whole trip', go_checklist: 'Go to checklist',
+  checklist_title: 'Before you fly', done: 'done', t3: '3 days before', t1: 'Day before', t0: 'Travel day',
+  checklist_saved: 'Your ticks are saved on this phone and online.',
+  loading: 'Loading…', start_over: 'Start a new trip', start_over_confirm: 'Start a new trip? This trip will be removed from this phone.',
+  language_label: 'Language',
+}
