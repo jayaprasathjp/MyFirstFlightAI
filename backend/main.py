@@ -1,5 +1,6 @@
 import os
 import json
+import mimetypes
 from datetime import date
 from dateutil.relativedelta import relativedelta
 from fastapi import FastAPI, HTTPException, UploadFile, File, Form
@@ -44,9 +45,10 @@ class TravellerDocuments(BaseModel):
     documents: dict = Field(default_factory=dict)
 
 class TripValidationRequest(BaseModel):
+    origin: Optional[str] = None
     destination: str
     departure_date: date
-    return_date: date
+    return_date: Optional[date] = None
     travellers: List[TravellerDocuments]
 
 EXTRACTION_SCHEMAS = {
@@ -124,9 +126,12 @@ async def extract_document(file: UploadFile = File(...), document_type: str = Fo
     if document_type not in EXTRACTION_SCHEMAS:
         raise HTTPException(status_code=400, detail="Choose a ticket, passport or visa document.")
     allowed = {"application/pdf", "image/jpeg", "image/png", "image/webp"}
-    if file.content_type not in allowed:
+    mime_type = file.content_type if file.content_type in allowed else mimetypes.guess_type(file.filename or "")[0]
+    if mime_type not in allowed:
         raise HTTPException(status_code=415, detail="Upload a PDF, JPG, PNG or WebP document.")
     content = await file.read(10 * 1024 * 1024 + 1)
+    if not content:
+        raise HTTPException(status_code=400, detail="The uploaded file is empty.")
     if len(content) > 10 * 1024 * 1024:
         raise HTTPException(status_code=413, detail="File must be 10 MB or smaller.")
     try:
@@ -139,7 +144,7 @@ async def extract_document(file: UploadFile = File(...), document_type: str = Fo
     try:
         response = client.models.generate_content(
             model=os.getenv("GEMINI_MODEL", "gemini-2.5-flash"),
-            contents=[types.Part.from_bytes(data=content, mime_type=file.content_type), prompt],
+            contents=[types.Part.from_bytes(data=content, mime_type=mime_type), prompt],
             config=types.GenerateContentConfig(response_mime_type="application/json", response_schema=EXTRACTION_SCHEMAS[document_type], temperature=0),
         )
         extracted = json.loads(response.text)
@@ -151,8 +156,9 @@ async def extract_document(file: UploadFile = File(...), document_type: str = Fo
 def validate_trip(request: TripValidationRequest):
     if not request.travellers:
         raise HTTPException(status_code=400, detail="Add at least one traveller.")
-    if request.return_date < request.departure_date:
+    if request.return_date and request.return_date < request.departure_date:
         raise HTTPException(status_code=400, detail="Return date must be on or after departure date.")
+    trip_end_date = request.return_date or request.departure_date
     checks = []
     issues = 0
     for index, traveller in enumerate(request.travellers, start=1):
@@ -170,12 +176,12 @@ def validate_trip(request: TripValidationRequest):
         checks.append({"status": "pass" if name_matches else "review", "title": f"Traveller {index}: name match", "message": "Names match across the submitted details." if name_matches else "Names differ or could not be confirmed across the documents. Check spelling and ticket passenger names."})
         if not name_matches: issues += 1
         expiry = parse_date(passport.get("expiry_date"))
-        six_month_limit = request.return_date + relativedelta(months=6)
+        six_month_limit = trip_end_date + relativedelta(months=6)
         passport_ok = expiry is not None and expiry >= six_month_limit
-        checks.append({"status": "pass" if passport_ok else "review", "title": f"Traveller {index}: passport expiry", "message": f"Passport expires {expiry.isoformat()}." if expiry else "Passport expiry date was not readable."} if passport_ok else {"status": "review", "title": f"Traveller {index}: passport expiry", "message": "Expiry is less than six months after your return date or could not be read. Check the destination's official entry rules."})
+        checks.append({"status": "pass" if passport_ok else "review", "title": f"Traveller {index}: passport expiry", "message": f"Passport expires {expiry.isoformat()}." if expiry else "Passport expiry date was not readable."} if passport_ok else {"status": "review", "title": f"Traveller {index}: passport expiry", "message": "Expiry may be too close to your travel date or could not be read. Check the destination's official entry rules."})
         if not passport_ok: issues += 1
         visa_start, visa_end = parse_date(visa.get("valid_from")), parse_date(visa.get("valid_until"))
-        visa_ok = bool(visa_start and visa_end and visa_start <= request.departure_date and visa_end >= request.return_date)
+        visa_ok = bool(visa_start and visa_end and visa_start <= request.departure_date and visa_end >= trip_end_date)
         visa_country = visa.get("country") or ""
         country_ok = not visa_country or request.destination.casefold() in visa_country.casefold() or visa_country.casefold() in request.destination.casefold()
         visa_ok = visa_ok and country_ok
