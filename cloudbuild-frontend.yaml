@@ -36,3 +36,6 @@ substitutions:
 images:
   - 'gcr.io/$PROJECT_ID/myfirstflightai:$BUILD_ID'
   - 'gcr.io/$PROJECT_ID/myfirstflightai:latest'
+
+options:
+  logging: CLOUD_LOGGING_ONLY
