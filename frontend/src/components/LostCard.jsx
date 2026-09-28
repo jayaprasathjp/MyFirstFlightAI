@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { api } from '../api'
+import { api, errorText } from '../api'
 import { EN } from '../strings'
 import { useI18n } from '../i18n'
 
@@ -35,7 +35,7 @@ export default function LostCard({ trip, onTrip, onClose, toast }) {
       const r = await api.assist(trip.id, { traveller_id: person.id, kind: 'lost', location: 'unknown' })
       onTrip(r.trip)
       toast(t('alert_sent', { id: r.request.id }))
-    } catch (e) { toast(e.message) } finally { setAlerting(false) }
+    } catch (e) { toast(errorText(e, t)) } finally { setAlerting(false) }
   }
 
   const readAloud = () => {

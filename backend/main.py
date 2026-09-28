@@ -411,6 +411,8 @@ def gemini_call(fn, *args, **kwargs):
         return fn(*args, **kwargs)
     except ValueError as exc:
         raise HTTPException(status_code=503, detail=str(exc))
+    except gemini.UnclearAudio as exc:
+        raise HTTPException(status_code=422, detail=str(exc))
     except Exception as exc:
         log.exception("Gemini helper failed")
         raise HTTPException(status_code=502, detail=f"Could not get an answer right now. Please try again. ({exc})")

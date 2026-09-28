@@ -167,3 +167,31 @@ def test_journey_transit_and_missing_gate(gautam_docs):
     assert "SL 900" in steps["transit_0"]["staff"]
     assert steps["gate"]["where"] == ["Gate: see boarding pass"]
     assert "Priya" in dict(steps["arrival"]["qa"])["Where will you stay?"]                # saved contact wins
+
+
+def test_translate_splits_into_parallel_chunks_and_redoes_roman(monkeypatch):
+    import gemini
+    calls = []
+
+    def fake_chunk(texts, lang, model):
+        calls.append((len(texts), model))
+        if model == gemini.translate_model():  # light model "forgets" the script for one line
+            return {k: ("Parakka thayar" if k == "k3" else "தமிழ் " + v) for k, v in texts.items()}
+        return {k: "பறக்கத் தயார்" for k in texts}
+
+    monkeypatch.setattr(gemini, "_translate_chunk", fake_chunk)
+    texts = {f"k{i}": f"Ready to fly {i}" for i in range(45)}
+    out = gemini.translate(texts, "ta")
+    light = [n for n, m in calls if m == gemini.translate_model()]
+    assert sorted(light) == [5, 20, 20]                        # 45 strings -> 3 parallel chunks
+    assert calls[-1] == (1, gemini.model_name())               # only the Roman-letter line is redone
+    assert out["k3"] == "பறக்கத் தயார்" and out["k0"].startswith("தமிழ் ")
+
+
+def test_native_script_check():
+    import gemini
+    assert gemini._needs_native_script("ta", "Ready to fly", "Parakka thayar")
+    assert not gemini._needs_native_script("ta", "Ready to fly", "பறக்கத் தயார்")
+    assert not gemini._needs_native_script("ta", "SIN", "SIN")               # codes stay as they are
+    assert not gemini._needs_native_script("ta", "{n0}: passport valid", "{n0}: பாஸ்போர்ட்")
+    assert not gemini._needs_native_script("ms", "Ready to fly", "Sedia untuk terbang")  # Malay uses Latin script

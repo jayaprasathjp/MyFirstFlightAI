@@ -1,7 +1,9 @@
 """Gemini client, document extraction and translation."""
 import json
 import os
+import re
 import threading
+from concurrent.futures import ThreadPoolExecutor
 
 from google import genai
 from google.genai import types
@@ -76,19 +78,60 @@ def extract_document(content: bytes, mime_type: str, doc_type: str) -> dict:
     return model.model_validate_json(response.text).model_dump()
 
 
+TRANSLATE_CHUNK = 20  # strings per request; chunks run in parallel, which is much faster than one big request
+
+
+def translate_model():
+    # Translation needs no reasoning: the lighter model is faster and cheaper.
+    return os.getenv("TRANSLATE_MODEL", "gemini-2.5-flash-lite")
+
+
+# Script each language must be written in (the light model sometimes answers in Roman letters, or in Urdu for Arabic).
+SCRIPT = {
+    "hi": "Devanagari", "mr": "Devanagari", "ta": "Tamil", "te": "Telugu", "kn": "Kannada", "ml": "Malayalam",
+    "bn": "Bengali", "gu": "Gujarati", "zh": "Simplified Chinese characters", "ar": "Arabic (Modern Standard Arabic, not Urdu)",
+    "ms": "Latin",
+}
+LATIN_WORD = re.compile(r"[a-z]{3,}")  # lowercase words; ALL-CAPS codes like SIN or MAA stay as they are
+
+
+def _needs_native_script(lang, source, translated):
+    """True if a non-Latin-script language came back in Roman letters only (transliterated or untranslated)."""
+    if SCRIPT.get(lang, "Latin") == "Latin":
+        return False
+    stripped = re.sub(r"\{[^}]*\}", "", source)
+    return bool(LATIN_WORD.search(stripped)) and all(ord(ch) < 0x250 for ch in translated)
+
+
 def translate(texts: dict[str, str], lang: str) -> dict[str, str]:
     """Translate a {key: english_text} map, keeping keys and {placeholders} intact."""
     if lang == "en" or not texts:
         return dict(texts)
+    items = list(texts.items())
+    chunks = [dict(items[i:i + TRANSLATE_CHUNK]) for i in range(0, len(items), TRANSLATE_CHUNK)]
+    out = {}
+    with ThreadPoolExecutor(max_workers=min(8, len(chunks))) as pool:
+        for part in pool.map(lambda c: _translate_chunk(c, lang, translate_model()), chunks):
+            out.update(part)
+    # Quality check: redo lines left in Roman letters with the stronger model.
+    redo = {k: v for k, v in texts.items() if _needs_native_script(lang, v, out[k])}
+    if redo and translate_model() != model_name():
+        out.update(_translate_chunk(redo, lang, model_name()))
+    return out
+
+
+def _translate_chunk(texts: dict[str, str], lang: str, model: str) -> dict[str, str]:
+    language, script = LANGUAGES.get(lang, lang), SCRIPT.get(lang, "Latin")
     prompt = (
-        f"Translate the JSON values into {LANGUAGES.get(lang, lang)} for elderly first-time flyers from India. "
+        f"Translate the JSON values into {language}, written in {script} script, for elderly first-time flyers. "
         "Use simple, warm, everyday words. Keep the JSON keys unchanged. Copy these exactly as written, in Latin "
         "letters, never transliterated: people's names, passport/visa/ticket numbers, booking codes, flight numbers, "
-        "airport codes, {placeholders}, times and amounts (spelling differences in names matter). Return only JSON.\n\n"
+        "airport codes, {placeholders}, times and amounts (spelling differences in names matter). Everything else "
+        f"must be in {script} script, never in Roman letters. Return only JSON.\n\n"
         + json.dumps(texts, ensure_ascii=False)
     )
     response = get_genai_client().models.generate_content(
-        model=model_name(),
+        model=model,
         contents=prompt,
         config=types.GenerateContentConfig(
             response_mime_type="application/json", temperature=0.2,
@@ -136,6 +179,10 @@ def trip_advice(context: dict, generic_titles: list[str]) -> dict:
     return TripAdvice.model_validate_json(response.text).model_dump()
 
 
+class UnclearAudio(Exception):
+    """The recording had no clear speech; the user should try again (not a server error)."""
+
+
 HELPER_RULES = ("You help an elderly first-time flyer at the airport. Use short, simple, warm sentences. "
                 "Never invent gate numbers, times or rules that are not in the trip facts; if unsure, tell them "
                 "to ask airport staff or the information desk.")
@@ -150,7 +197,10 @@ def ask(trip_facts: dict, lang: str, text: str = "", audio: bytes | None = None,
     from schemas import AskResult
     language = LANGUAGES.get(lang, "English")
     prompt = (f"{HELPER_RULES}\nTrip facts (JSON): {json.dumps(trip_facts, ensure_ascii=False)}\n\n"
-              + (f"The traveller asked (typed): {text}\n" if text else "The traveller's question is in the audio.\n")
+              + (f"The traveller asked (typed): {text}\n" if text else
+                 "The traveller's question is in the audio. Write only words you actually hear; never guess or invent "
+                 "a question. If you cannot clearly hear words, set heard_clearly=false, question to an empty string and "
+                 "answer with one short, kind request to tap the mic and ask again, slowly.\n")
               + "Detect the language the traveller used and reply in THAT language (if unclear, use "
               + f"{language}). Write the question and a 1-4 sentence answer. Keep flight numbers, gates and times as digits.")
     response = get_genai_client().models.generate_content(
@@ -159,6 +209,8 @@ def ask(trip_facts: dict, lang: str, text: str = "", audio: bytes | None = None,
                                            temperature=0.3, thinking_config=types.ThinkingConfig(thinking_budget=512)),
     )
     out = AskResult.model_validate_json(response.text).model_dump()
+    if not out.pop("heard_clearly", True) and audio:
+        out["question"] = ""  # never show or answer a question we did not actually hear
     out["language"] = (out.get("language") or "").lower()[:2]
     if out["language"] not in LANGUAGES:
         out["language"] = lang  # unsupported or unknown: speak in the app language
@@ -168,8 +220,11 @@ def ask(trip_facts: dict, lang: str, text: str = "", audio: bytes | None = None,
 def to_english(lang: str, text: str = "", audio: bytes | None = None, mime: str | None = None, context: str = "") -> dict:
     """Turn what the traveller says (any language, text or audio) into one polite English sentence for staff."""
     from schemas import StaffPhrase
-    prompt = (f"A first-time flyer who speaks {LANGUAGES.get(lang, lang)} wants to tell airport staff something. "
-              + (f"They typed: {text}\n" if text else "Their message is in the audio.\n")
+    prompt = (f"A first-time flyer (usually speaks {LANGUAGES.get(lang, lang)}, but may use any language) wants to "
+              "tell airport staff something. "
+              + (f"They typed: {text}\n" if text else
+                 "Their message is in the audio. Use only words you actually hear. If you cannot clearly hear words, "
+                 "set heard_clearly=false and leave original and english empty.\n")
               + f"Context: {context}\nWrite 'original' in their language and 'english' as one short polite English "
               "sentence, first person, that staff will understand. Do not add facts they did not say.")
     response = get_genai_client().models.generate_content(
@@ -177,7 +232,10 @@ def to_english(lang: str, text: str = "", audio: bytes | None = None, mime: str 
         config=types.GenerateContentConfig(response_mime_type="application/json", response_schema=StaffPhrase,
                                            temperature=0.2, thinking_config=types.ThinkingConfig(thinking_budget=0)),
     )
-    return StaffPhrase.model_validate_json(response.text).model_dump()
+    out = StaffPhrase.model_validate_json(response.text).model_dump()
+    if not out.pop("heard_clearly", True) and audio:
+        raise UnclearAudio("Sorry, the recording was not clear. Please tap the mic and speak again, slowly.")
+    return out
 
 
 def read_boarding_pass(content: bytes, mime: str) -> dict:

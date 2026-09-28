@@ -132,12 +132,14 @@ class ChatRequest(BaseModel):
 # ---------- Helpers (step 7) ----------
 
 class AskResult(BaseModel):
+    heard_clearly: bool = Field(True, description="false if the audio is silent, noise, too short or the words cannot be made out; never guess words")
     language: str = Field(description="ISO 639-1 code of the language the traveller spoke or typed, e.g. ta, hi, en")
     question: str = Field(description="what the traveller asked, written in the language they used")
     answer: str = Field(description="the answer, in the same language the traveller used")
 
 
 class StaffPhrase(BaseModel):
+    heard_clearly: bool = Field(True, description="false if the audio is silent, noise, too short or the words cannot be made out; never guess words")
     original: str = Field(description="what the traveller said, in their language")
     english: str = Field(description="one short, polite English sentence to show airport staff")
 

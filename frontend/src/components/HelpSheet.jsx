@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { api } from '../api'
+import { api, errorText } from '../api'
 import { useI18n } from '../i18n'
 import { speak, useRecorder } from '../voice'
 
@@ -23,7 +23,7 @@ function VoiceInput({ onSend, busy, toast }) {
       <button className={'micbtn' + (recording ? ' rec' : '')} onClick={mic} disabled={busy} aria-label={recording ? t('listening') : t('tab_ask')}>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="3" width="6" height="11" rx="3" /><path d="M5 11a7 7 0 0 0 14 0M12 18v3" /></svg>
       </button>
-      <span className="muted small">{recording ? t('listening') : busy ? t('thinking') : ''}</span>
+      <span className="muted small" role="status">{recording ? t('listening') : busy ? <><span className="spin" aria-hidden="true"></span> {t('thinking')}</> : ''}</span>
       <form className="typein" onSubmit={(e) => { e.preventDefault(); if (text.trim()) { onSend({ text: text.trim() }); setText('') } }}>
         <input type="text" value={text} placeholder={t('type_question')} onChange={(e) => setText(e.target.value)} disabled={busy} />
         <button className="btn pri" disabled={busy || !text.trim()}>{t('send')}</button>
@@ -44,7 +44,7 @@ function AskTab({ trip, toast }) {
       const r = await api.ask(trip.id, q)
       setChat((c) => [...c, r])
       play(r.answer, r.language)
-    } catch (e) { toast(e.message) } finally { setBusy(false) }
+    } catch (e) { toast(errorText(e, t)) } finally { setBusy(false) }
   }
   return (
     <>
@@ -53,7 +53,7 @@ function AskTab({ trip, toast }) {
       <div className="chat">
         {chat.map((m, i) => (
           <div key={i} className="qa-pair">
-            <div className="bub me">{m.question}</div>
+            <div className="bub me">{m.question || "🎤 …"}</div>
             <div className="bub ai" lang={m.language}>{m.answer}<button className="link" onClick={() => play(m.answer, m.language)}>🔊 {t('play')}</button></div>
           </div>
         ))}
@@ -69,7 +69,7 @@ function StaffTab({ trip, toast }) {
   const [big, setBig] = useState(false)
   const send = async (q) => {
     setBusy(true)
-    try { setPhrase(await api.toEnglish(trip.id, q)); setBig(true) } catch (e) { toast(e.message) } finally { setBusy(false) }
+    try { setPhrase(await api.toEnglish(trip.id, q)); setBig(true) } catch (e) { toast(errorText(e, t)) } finally { setBusy(false) }
   }
   return (
     <>
@@ -96,7 +96,7 @@ function PassTab({ trip, onTrip, toast }) {
   const upload = async (file) => {
     if (!file) return
     setBusy(true)
-    try { onTrip(await api.boardingPass(trip.id, file)); toast(t('pass_saved')) } catch (e) { toast(e.message) } finally { setBusy(false) }
+    try { onTrip(await api.boardingPass(trip.id, file)); toast(t('pass_saved')) } catch (e) { toast(errorText(e, t)) } finally { setBusy(false) }
   }
   const bp = trip.boarding_pass
   return (
@@ -133,7 +133,7 @@ function AssistTab({ trip, onTrip, toast }) {
       const r = await api.assist(trip.id, { traveller_id: who, kind, location: loc })
       setLast(r.request)
       onTrip(r.trip)
-    } catch (e) { toast(e.message) } finally { setBusy(false) }
+    } catch (e) { toast(errorText(e, t)) } finally { setBusy(false) }
   }
   return (
     <div className="form">

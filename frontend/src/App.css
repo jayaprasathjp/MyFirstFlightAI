@@ -216,3 +216,4 @@ ul.do li::before { content: ""; position: absolute; inset-inline-start: 4px; top
 .ticketbox b { font-size: 24px }
 .reqrow { display: flex; justify-content: space-between; gap: 10px; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; font-size: 14px }
 .alertbtn { border-color: var(--bad); color: var(--bad); font-weight: 800 }
+.small .spin { display: inline-block; width: 14px; height: 14px; border-width: 2px; vertical-align: -2px }
