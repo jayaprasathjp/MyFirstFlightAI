@@ -31,7 +31,11 @@ export default function I18nProvider({ lang, children }) {
     return () => { alive = false }
   }, [lang])
 
-  const t = (k) => texts[k] ?? k
+  const t = (k, vars) => {
+    let s = texts[k] ?? k
+    for (const [name, value] of Object.entries(vars || {})) s = s.split(`{${name}}`).join(value)
+    return s
+  }
   const fmtDate = (iso, opts = { day: 'numeric', month: 'short' }) => {
     if (!iso) return ''
     const [y, m, d] = iso.split('-').map(Number)

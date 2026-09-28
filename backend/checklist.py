@@ -1,23 +1,58 @@
-"""Personalized pre-flight checklist built from the trip summary, travellers and validation checks."""
+"""Personalized pre-flight checklist.
+
+Rule-based items come from facts (ticket, validation checks, assistance needs, universal airport rules).
+Country- and route-specific items (arrival cards, customs, currency...) come from Gemini trip advice.
+"""
+import re
 from datetime import timedelta
 
 from validation import parse_date, parse_dt
 
 AIRPORT_EARLY = timedelta(hours=3)   # reach the airport this long before an international departure
 TRAVEL_TO_AIRPORT = timedelta(hours=1)
-CURRENCY = {
-    "singapore": "SGD", "malaysia": "MYR", "united arab emirates": "AED", "thailand": "THB",
-    "united states": "USD", "united kingdom": "GBP", "saudi arabia": "SAR", "qatar": "QAR",
-    "oman": "OMR", "kuwait": "KWD", "sri lanka": "LKR", "australia": "AUD", "canada": "CAD",
-}
+GROUPS = ("t3", "t1", "t0")
 ASSIST_LABEL = {"elderly": "assistance", "wheelchair": "a wheelchair", "visually_impaired": "visual-impairment assistance"}
 
+# Told to Gemini so its route-specific advice does not repeat what the rules already cover.
+GENERIC_TITLES = [
+    "web check-in", "request wheelchair/assistance", "cabin and check-in bag weight", "liquids 100 ml rule",
+    "power banks in cabin bag", "no sharp items", "medicines with prescription", "print tickets and visas",
+    "carry some local currency", "charge phone and roaming", "leave home 3 hours before", "documents in hand",
+]
 
-def _item(id, group, title, detail, key=False):
-    return {"id": id, "group": group, "title": title, "detail": detail, "key": key}
+
+def _item(id, group, title, detail, key=False, ai=False):
+    return {"id": id, "group": group, "title": title, "detail": detail, "key": key, "ai": ai}
 
 
-def build_checklist(summary, travellers, checks):
+def airport_plan(summary):
+    """Departure time, when to reach the airport and when to leave home; None if the time is unknown."""
+    s = summary or {}
+    dep = parse_dt(s.get("departure_date"), s.get("departure_time"))
+    if not (dep and s.get("departure_time")):
+        return None
+    term = str(s.get("origin_terminal") or "").strip()
+    if term and not term.lower().startswith("terminal"):
+        term = "Terminal " + term  # Gemini may return just "2"
+    return {
+        "dep": dep, "reach": dep - AIRPORT_EARLY, "leave": dep - AIRPORT_EARLY - TRAVEL_TO_AIRPORT,
+        "airport": f"{s['origin_city']} airport" if s.get("origin_city") else "the airport", "terminal": term,
+    }
+
+
+def advice_items(advice):
+    items, seen = [], set()
+    for a in (advice or {}).get("items") or []:
+        slug = re.sub(r"[^a-z0-9]+", "_", (a.get("id") or a.get("title") or "").lower()).strip("_")[:40]
+        if not slug or slug in seen or not a.get("title"):
+            continue
+        seen.add(slug)
+        group = a.get("group") if a.get("group") in GROUPS else "t3"
+        items.append(_item("ai:" + slug, group, a["title"], a.get("detail") or "", key=bool(a.get("key")), ai=True))
+    return items
+
+
+def build_checklist(summary, travellers, checks, advice=None, contacts=None):
     s = summary or {}
     country = s.get("destination_country") or "your destination"
     airline = s.get("airline") or "the airline"
@@ -28,10 +63,8 @@ def build_checklist(summary, travellers, checks):
         if c["status"] in ("warn", "fail") and c["traveller_id"]:
             items.append(_item("fix:" + c["id"], "t3", "Fix: " + c["title"], c["message"], key=True))
 
-    if (country or "").casefold() == "singapore":
-        items.append(_item("arrival_card", "t3", "Submit SG Arrival Card online",
-                           "Free on Singapore ICA's official website, within 3 days before landing. One per traveller.", key=True))
-    else:
+    ai = advice_items(advice)
+    if not ai:  # Gemini advice unavailable: fall back to a safe generic reminder
         items.append(_item("arrival_card", "t3", f"Check if {country} needs an arrival card",
                            "If it does, fill it only on the official government website. It is usually free.", key=True))
     items.append(_item("webci", "t3", "Do web check-in",
@@ -43,11 +76,13 @@ def build_checklist(summary, travellers, checks):
         names = ", ".join((t.get("name") or "traveller").title() for t in needs)
         items.append(_item("assist", "t3", f"Request {' and '.join(kinds)} for {names}",
                            f"Tell {airline} at least 48 hours before departure. It is free.", key=True))
-    items.append(_item("lost_card", "t3", "Set up the I'm Lost card",
-                       "Add a family phone number, check name spelling and choose the card language.", key=True))
+    items.append(_item("lost_card", "t3", "Check the I'm Lost card",
+                       "Open the red I'm Lost button and check the names and family phone number." if contacts
+                       else "Add a family phone number in the Contacts step. It appears on the I'm Lost card.", key=True))
 
     # ----- T-1 day -----
     cabin, checked = s.get("cabin_bag_kg"), s.get("checked_bag_kg")
+    currency = (advice or {}).get("currency_code") or "local currency"
     items += [
         _item("cabin_bag", "t1", f"Cabin bag {cabin:g} kg or less" if cabin else "Cabin bag within the weight on your ticket",
               "One cabin bag plus one small handbag per person. Weigh it at home."),
@@ -59,30 +94,29 @@ def build_checklist(summary, travellers, checks):
         _item("sharp", "t1", "No knives, scissors or lighters in the cabin bag", "Nail cutters and coconut scrapers too."),
         _item("medicines", "t1", "Medicines with prescription in the cabin bag", "Enough for the trip plus 2 extra days."),
         _item("print_docs", "t1", "Print or download tickets and visas", "Airport entry needs your ticket and passport."),
-        _item("forex", "t1", f"Carry some {CURRENCY.get(country.casefold(), 'local currency')} or a forex card",
-              "For a taxi or food right after landing."),
+        _item("forex", "t1", f"Carry some {currency} or a forex card", "For a taxi or food right after landing."),
         _item("phone", "t1", "Charge phone and turn on roaming", "Keep the I'm Lost card saved for offline use."),
     ]
 
     # ----- Day of travel -----
-    dep = parse_dt(s.get("departure_date"), s.get("departure_time"))
-    if dep and s.get("departure_time"):
-        reach, leave = dep - AIRPORT_EARLY, dep - AIRPORT_EARLY - TRAVEL_TO_AIRPORT
-        term = str(s.get("origin_terminal") or "").strip()
-        if term and not term.lower().startswith("terminal"):
-            term = "Terminal " + term  # Gemini may return just "2"
-        term = f", {term}" if term else ""
-        airport = f"{s['origin_city']} airport" if s.get("origin_city") else "the airport"
-        items.append(_item("leave_home", "t0", f"Leave home by {leave:%H:%M}",
-                           f"Reach {airport}{term} by {reach:%H:%M}, 3 hours before the "
-                           f"{dep:%H:%M} flight. Leave earlier if the airport is more than 1 hour away.", key=True))
+    plan = airport_plan(s)
+    if plan:
+        term = f", {plan['terminal']}" if plan["terminal"] else ""
+        items.append(_item("leave_home", "t0", f"Leave home by {plan['leave']:%H:%M}",
+                           f"Reach {plan['airport']}{term} by {plan['reach']:%H:%M}, 3 hours before the "
+                           f"{plan['dep']:%H:%M} flight. Leave earlier if the airport is more than 1 hour away.", key=True))
     else:
         items.append(_item("leave_home", "t0", "Leave home early", "Reach the airport 3 hours before an international flight.", key=True))
     items += [
         _item("docs_in_hand", "t0", "Passports, visas and tickets in hand", "Keep them together in one pouch, not in the suitcase."),
         _item("test_lost", "t0", "Test the I'm Lost button once", "It works even without internet."),
     ]
-    return items
+
+    # AI items go first within their group, after fixes (they are the destination-specific tasks).
+    order = {g: i for i, g in enumerate(GROUPS)}
+    fixes = [i for i in items if i["id"].startswith("fix:")]
+    rest = [i for i in items if not i["id"].startswith("fix:")]
+    return sorted(fixes + ai + rest, key=lambda i: order[i["group"]])
 
 
 def group_dates(summary):

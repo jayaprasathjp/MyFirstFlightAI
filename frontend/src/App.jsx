@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { api, store } from './api'
 import { useI18n } from './i18n'
 import I18nProvider from './I18nProvider'
@@ -7,9 +7,12 @@ import LanguageScreen from './screens/LanguageScreen'
 import TravellersScreen from './screens/TravellersScreen'
 import CheckScreen from './screens/CheckScreen'
 import ChecklistScreen from './screens/ChecklistScreen'
+import ContactsScreen from './screens/ContactsScreen'
+import JourneyScreen from './screens/JourneyScreen'
+import LostCard from './components/LostCard'
 import './App.css'
 
-const STEPS = ['language', 'travellers', 'check', 'checklist']
+const STEPS = ['language', 'travellers', 'check', 'contacts', 'checklist', 'journey']
 
 function TopBar({ onLanguage, busy }) {
   const { lang, t } = useI18n()
@@ -45,7 +48,13 @@ function Flow({ setLang }) {
   const [busy, setBusy] = useState(false)
   const [updating, setUpdating] = useState(false) // language switch: server re-translates checks + checklist
   const [error, setError] = useState('')
+  const [lostOpen, setLostOpen] = useState(false)
+  const [toastMsg, setToastMsg] = useState('')
+  const toastTimer = useRef(null)
   const saveQueue = useRef(Promise.resolve())
+
+  const closeLost = useCallback(() => setLostOpen(false), [])
+  const toast = (msg) => { setToastMsg(msg); clearTimeout(toastTimer.current); toastTimer.current = setTimeout(() => setToastMsg(''), 3000) }
 
   const setStep = (s) => { setStepState(s); store.set('mff-step', s); window.scrollTo({ top: 0 }) }
   const applyTrip = (tr) => {
@@ -85,6 +94,8 @@ function Flow({ setLang }) {
   }
   const addTraveller = (files, assistance) => run(async () => applyTrip(await api.addTraveller(trip.id, files, assistance)))
   const removeTraveller = (tid) => run(async () => applyTrip(await api.removeTraveller(trip.id, tid)))
+  const saveContacts = (contacts) => run(async () => { applyTrip(await api.saveContacts(trip.id, contacts)); setStep('checklist') })
+  const saveBoarding = (gate, time) => run(async () => applyTrip(await api.saveBoarding(trip.id, gate, time)))
   const toggle = (itemId) => {
     const next = { ...done, [itemId]: !done[itemId] }
     setDone(next)
@@ -98,7 +109,8 @@ function Flow({ setLang }) {
     setTrip(null); setDone({}); setStep('language')
   }
 
-  const allowed = (s) => s === 'language' || (trip && (s === 'travellers' || trip.travellers.length > 0))
+  const hasTravellers = !!trip && trip.travellers.length > 0
+  const allowed = (s) => s === 'language' || (trip && (s === 'travellers' || hasTravellers))
 
   return (
     <div className="app">
@@ -112,11 +124,25 @@ function Flow({ setLang }) {
           <TravellersScreen trip={trip} busy={busy} error={error} onAdd={addTraveller} onRemove={removeTraveller}
             onNext={() => setStep('check')} />
         )}
-        {step === 'check' && trip && <CheckScreen trip={trip} onBack={() => setStep('travellers')} onNext={() => setStep('checklist')} />}
-        {step === 'checklist' && trip && <ChecklistScreen checklist={trip.checklist} done={done} onToggle={toggle} />}
+        {step === 'check' && trip && <CheckScreen trip={trip} onBack={() => setStep('travellers')} onNext={() => setStep('contacts')} />}
+        {step === 'contacts' && trip && <ContactsScreen key={trip.id} trip={trip} busy={busy} onSave={saveContacts} />}
+        {step === 'checklist' && trip && (
+          <>
+            <ChecklistScreen checklist={trip.checklist} done={done} onToggle={toggle} />
+            <button className="btn pri full" onClick={() => setStep('journey')}>{t('go_airport')} →</button>
+          </>
+        )}
+        {step === 'journey' && trip && <JourneyScreen trip={trip} busy={busy} onSaveBoarding={saveBoarding} toast={toast} />}
         {step !== 'language' && !trip && <p className="muted">{t('loading')}</p>}
       </main>
       {trip && <footer className="foot"><button className="link" onClick={startOver}>{t('start_over')}</button></footer>}
+      {hasTravellers && (
+        <button className="sos" onClick={() => setLostOpen(true)}>
+          <span aria-hidden="true">!</span>{t('lost')}
+        </button>
+      )}
+      {lostOpen && hasTravellers && <LostCard trip={trip} onClose={closeLost} toast={toast} />}
+      {toastMsg && <div className="toast" role="status">{toastMsg}</div>}
     </div>
   )
 }

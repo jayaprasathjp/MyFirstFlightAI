@@ -86,28 +86,84 @@ def test_travellers_on_different_flights(gautam_docs):
     assert by_id(checks)["trip:flights"]["status"] == "warn"
 
 
-def test_checklist_is_personalized(gautam_docs):
+def test_checklist_is_personalized(gautam_docs, sg_advice):
     gautam_docs["passport"]["expiry_date"] = "2027-02-03"
     travellers = [traveller(gautam_docs, assistance="wheelchair")]
     checks = check_trip(travellers)
     summary = trip_summary(gautam_docs["ticket"])
-    items = {i["id"]: i for i in build_checklist(summary, travellers, checks)}
+    items = {i["id"]: i for i in build_checklist(summary, travellers, checks, sg_advice)}
 
-    assert items["arrival_card"]["title"] == "Submit SG Arrival Card online"
+    # Country-specific items come from Gemini advice, sanitized
+    assert items["ai:sg_arrival_card"]["title"] == "Submit SG Arrival Card online"
+    assert items["ai:sg_arrival_card"]["ai"] and items["ai:sg_arrival_card"]["key"]
+    assert items["ai:chewing_gum"]["group"] == "t1"
+    assert items["ai:bad_group"]["group"] == "t3"                   # unknown group falls back to t3
+    assert "arrival_card" not in items                              # no generic fallback when advice exists
+    assert items["forex"]["title"].startswith("Carry some SGD")
+    # Facts from the ticket and rules
     assert items["cabin_bag"]["title"] == "Cabin bag 7 kg or less"
     assert items["checked_bag"]["title"] == "Check-in bag 20 kg or less"
-    assert items["forex"]["title"].startswith("Carry some SGD")
     assert items["leave_home"]["title"] == "Leave home by 19:50"      # 23:50 - 3h - 1h
     assert "Reach Chennai airport, Terminal 2 by 20:50" in items["leave_home"]["detail"]
     summary["origin_terminal"] = "2"  # Gemini sometimes returns just the number
-    again = {i["id"]: i for i in build_checklist(summary, travellers, checks)}
+    again = {i["id"]: i for i in build_checklist(summary, travellers, checks, sg_advice)}
     assert "Reach Chennai airport, Terminal 2 by 20:50" in again["leave_home"]["detail"]
     assert "wheelchair" in items["assist"]["title"] and "Gautam Guru" in items["assist"]["title"]
     assert items["fix:t1:passport_expiry"]["group"] == "t3" and items["fix:t1:passport_expiry"]["key"]
     assert group_dates(summary) == {"t3": "2026-10-12", "t1": "2026-10-14", "t0": "2026-10-15"}
+    # Fixes come first, then AI items
+    ids = [i["id"] for i in build_checklist(summary, travellers, checks, sg_advice)]
+    assert ids[0] == "fix:t1:passport_expiry" and ids[1] == "ai:sg_arrival_card"
+
+
+def test_checklist_without_advice_falls_back(gautam_docs):
+    travellers = [traveller(gautam_docs)]
+    items = {i["id"]: i for i in build_checklist(trip_summary(gautam_docs["ticket"]), travellers, check_trip(travellers))}
+    assert items["arrival_card"]["title"] == "Check if Singapore needs an arrival card"
+    assert items["forex"]["title"].startswith("Carry some local currency")
+    assert not any(i.startswith("ai:") for i in items)
 
 
 def test_no_assistance_item_when_nobody_needs_it(gautam_docs):
     travellers = [traveller(gautam_docs)]
     items = build_checklist(trip_summary(gautam_docs["ticket"]), travellers, check_trip(travellers))
     assert "assist" not in {i["id"] for i in items}
+
+
+def test_journey_uses_real_trip_data(gautam_docs, sg_advice):
+    from journey import build_journey
+    travellers = [traveller(gautam_docs)]
+    summary = trip_summary(gautam_docs["ticket"])
+    steps = {st["id"]: st for st in build_journey(summary, travellers, sg_advice, [], {"gate": "B7", "boarding_time": "23:10"})}
+
+    assert list(steps) == ["entry", "checkin", "emigration", "security", "gate", "arrival", "baggage"]
+    assert "Be at the airport by 20:50, 3 hours before the 23:50 flight." in steps["entry"]["do"]
+    assert "Terminal 2" in steps["entry"]["where"]
+    assert any("Check-in closes at 22:50" in d for d in steps["checkin"]["do"])
+    assert steps["checkin"]["staff"] == "Where is the check-in counter for SL 301?"
+    assert steps["gate"]["where"] == ["Gate B7", "Boarding 23:10"]
+    assert steps["emigration"]["qa"][0] == ["Where are you going?", "To Singapore, for visiting family."]
+    assert ["How long will you stay?", "9 days. Here is my return ticket."] in steps["emigration"]["qa"]
+    assert "Keep your boarding pass ready." in steps["emigration"]["do"]                  # Gemini tip
+    assert steps["arrival"]["title"] == "Singapore immigration"
+    qa = dict(steps["arrival"]["qa"])
+    assert qa["Where will you stay?"] == "With Arjun Guru (son). Phone: +65 8123 4567."    # visa local contact
+    assert qa["Do you have a return ticket?"] == "Yes, SL 302 on 25 Oct 2026."
+    assert "Exit to the arrival hall to meet Arjun Guru." in steps["baggage"]["do"]
+
+
+def test_journey_transit_and_missing_gate(gautam_docs):
+    from journey import build_journey
+    segs = gautam_docs["ticket"]["segments"]
+    segs[0].update(destination_code="KUL", destination_city="Kuala Lumpur", destination_country="Malaysia",
+                   arrival_date="2026-10-16", arrival_time="02:00")
+    segs.insert(1, {**segs[0], "flight_number": "SL 900", "origin_code": "KUL", "origin_city": "Kuala Lumpur",
+                    "destination_code": "SIN", "destination_city": "Singapore", "destination_country": "Singapore",
+                    "departure_date": "2026-10-16", "departure_time": "04:30", "arrival_date": "2026-10-16", "arrival_time": "05:40"})
+    contacts = [{"name": "Priya", "relation": "daughter", "phone": "+65 9000 0000", "at_destination": True}]
+    steps = {st["id"]: st for st in build_journey(trip_summary(gautam_docs["ticket"]), [traveller(gautam_docs)], None, contacts)}
+    assert steps["transit_0"]["title"] == "Change planes at Kuala Lumpur"
+    assert "You have 2h 30m to change planes." in steps["transit_0"]["do"]
+    assert "SL 900" in steps["transit_0"]["staff"]
+    assert steps["gate"]["where"] == ["Gate: see boarding pass"]
+    assert "Priya" in dict(steps["arrival"]["qa"])["Where will you stay?"]                # saved contact wins

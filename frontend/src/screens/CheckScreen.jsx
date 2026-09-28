@@ -33,7 +33,7 @@ export default function CheckScreen({ trip, onBack, onNext }) {
       ))}
       <div className="nav2">
         <button className="btn sec" onClick={onBack}>{t('back')}</button>
-        <button className="btn pri" onClick={onNext}>{t('go_checklist')} →</button>
+        <button className="btn pri" onClick={onNext}>{t('go_contacts')} →</button>
       </div>
     </>
   )

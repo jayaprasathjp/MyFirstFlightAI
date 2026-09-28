@@ -12,9 +12,10 @@
 .lang { border: 1px solid var(--line); background: var(--card); border-radius: 999px; padding: 8px 12px; font-size: 14px; font-weight: 600; max-width: 160px }
 
 /* stepper */
-.stepper { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; padding: 12px 14px; border-bottom: 1px solid var(--line) }
-.stepper button { border: 0; background: none; padding: 4px 2px; display: grid; justify-items: center; gap: 4px; font-size: 12px; font-weight: 700; color: var(--muted) }
+.stepper { display: grid; grid-template-columns: repeat(6, 1fr); gap: 2px; padding: 10px 8px; border-bottom: 1px solid var(--line) }
+.stepper button { border: 0; background: none; padding: 4px 1px; display: grid; justify-items: center; gap: 4px; font-size: 11px; line-height: 1.2; text-align: center; font-weight: 700; color: var(--muted) }
 .stepper i { font-style: normal; width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; background: var(--line); color: var(--ink); font-family: var(--m) }
+.stepper button { min-width: 0 } .stepper span { overflow-wrap: anywhere }
 .stepper .on { color: var(--brand) } .stepper .on i { background: var(--brand); color: var(--brand-ink) }
 .stepper .past i { background: var(--ok); color: var(--app) }
 
@@ -111,3 +112,68 @@ p { margin: 0 }
 .item small { color: var(--muted); font-size: 14px; display: block; margin-top: 2px }
 .item.done b { text-decoration: line-through; color: var(--muted) }
 .item.key { border-color: color-mix(in srgb, var(--warm) 55%, transparent); background: var(--warm-soft) }
+
+/* form fields */
+.form label { display: grid; gap: 5px; font-size: 14px; font-weight: 600; color: var(--muted) }
+.form input[type=text], .form input[type=tel], .form input[type=time] {
+  border: 1px solid var(--line); background: var(--app); border-radius: 12px; padding: 12px; font-size: 16px; color: var(--ink); width: 100%;
+}
+.form .checkline { display: flex; align-items: center; gap: 10px; color: var(--ink); font-weight: 600 }
+.form .checkline input { width: 22px; height: 22px; accent-color: var(--brand) }
+.form .tag { justify-self: start }
+.row2.even { grid-template-columns: 1fr 1fr }
+.aibadge { display: inline-block; margin-top: 6px; font-size: 11.5px; font-weight: 700; color: var(--brand); background: var(--brand-soft); border-radius: 999px; padding: 2px 9px }
+
+/* journey deck */
+.dots { display: flex; gap: 6px }
+.dots button { flex: 1; height: 10px; border: 0; border-radius: 99px; background: var(--line); padding: 0 }
+.dots .on { background: var(--brand) } .dots .past { background: var(--ok) }
+.stepcard { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 18px; display: grid; gap: 14px }
+.stepno { font-family: var(--m); font-size: 12.5px; color: var(--brand); font-weight: 600; letter-spacing: .05em }
+.where { display: flex; gap: 8px; flex-wrap: wrap }
+.where span { background: var(--brand-soft); color: var(--brand); font-weight: 700; font-size: 13px; border-radius: 8px; padding: 4px 10px }
+ul.do { margin: 0; padding: 0; list-style: none; display: grid; gap: 10px }
+ul.do li { position: relative; padding-inline-start: 22px }
+ul.do li::before { content: ""; position: absolute; inset-inline-start: 4px; top: .6em; width: 8px; height: 8px; border-radius: 50%; background: var(--brand) }
+.qa { border-top: 1px solid var(--line); padding-top: 12px; display: grid; gap: 12px }
+.qa > div { display: grid; gap: 2px }
+.qa q { font-weight: 700; quotes: none }
+.qa .ans { color: var(--muted); font-size: 15px }
+.loc { display: block; color: var(--muted); font-size: 14px }
+.say { text-align: start; background: var(--app); border: 1.5px solid var(--line); border-radius: 14px; padding: 12px 14px; display: grid; gap: 2px; font-size: 16px }
+.say small { font-size: 11.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-weight: 700 }
+.bigtext { position: fixed; inset: 0; z-index: 30; background: var(--app); display: grid; align-content: center; gap: 24px; padding: 24px; cursor: pointer }
+.bigtext p { margin: 0; font-size: clamp(30px, 8vw, 48px); font-weight: 800; line-height: 1.2; text-wrap: balance; color: var(--ink) }
+.boardingform { gap: 10px }
+
+/* I'm Lost: floating button + card */
+.sos {
+  position: fixed; z-index: 15; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); inset-inline-end: max(16px, calc(50vw - 224px));
+  background: var(--bad); color: #fff; border: 0; border-radius: 999px; padding: 14px 20px; font-weight: 800; font-size: 16px;
+  display: flex; align-items: center; gap: 8px; box-shadow: 0 8px 24px color-mix(in srgb, var(--bad) 45%, transparent);
+}
+.sos span { width: 22px; height: 22px; border-radius: 50%; border: 2.5px solid currentColor; display: grid; place-items: center; font-size: 13px }
+.screen { padding-bottom: 90px }
+.lost { position: fixed; inset: 0; z-index: 25; background: var(--app); overflow: auto; padding: calc(16px + env(safe-area-inset-top, 0px)) 16px 24px; display: grid; gap: 14px; align-content: start; grid-auto-rows: max-content; max-width: 480px; margin: 0 auto }
+.lost .head { background: var(--bad); color: #fff; border-radius: 18px; padding: 18px; display: grid; gap: 6px }
+.lost .head strong { font-size: 24px; line-height: 1.15; font-weight: 800 }
+.whotabs { display: flex; gap: 8px; flex-wrap: wrap }
+.whotabs button { border: 1.5px solid var(--line); background: var(--card); border-radius: 999px; padding: 8px 14px; font-weight: 700 }
+.whotabs .on { border-color: var(--brand); background: var(--brand-soft); color: var(--brand) }
+.lostgrid { border: 1px solid var(--line); border-radius: 16px; overflow: hidden }
+.lostgrid > div { display: grid; grid-template-columns: 110px 1fr; gap: 10px; padding: 12px 14px; border-bottom: 1px solid var(--line); align-items: baseline }
+.lostgrid > div:last-child { border-bottom: 0 }
+.lostgrid span { font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); font-weight: 700 }
+.lostgrid small { display: block; text-transform: none; letter-spacing: 0; font-weight: 600 }
+.lostgrid b { font-size: 21px; font-weight: 800; overflow-wrap: anywhere }
+.lostgrid b.help { font-size: 16px }
+.lostgrid em { font-style: normal; font-size: 15px; color: var(--muted); font-weight: 600 }
+.m { font-family: var(--m) }
+.family { display: grid; gap: 8px }
+.family h3 small { display: block; text-transform: none; letter-spacing: 0 }
+.callrow { display: flex; justify-content: space-between; align-items: center; gap: 10px; text-decoration: none; color: var(--ink); background: var(--ok-soft); border: 1.5px solid var(--ok); border-radius: 14px; padding: 12px 14px }
+.callrow > span:first-child { display: grid; min-width: 0 }
+.callrow small { color: var(--muted); font-weight: 600 }
+.callrow .m { font-size: 18px; font-weight: 600 }
+.callbtn { background: var(--ok); color: #fff; border-radius: 999px; padding: 10px 16px; font-weight: 800; white-space: nowrap }
+.toast { position: fixed; z-index: 40; left: 50%; transform: translateX(-50%); bottom: calc(90px + env(safe-area-inset-bottom, 0px)); width: min(420px, calc(100% - 32px)); background: var(--ink); color: var(--app); border-radius: 12px; padding: 12px 14px; font-size: 15px }
