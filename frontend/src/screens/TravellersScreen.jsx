@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { api } from '../api'
 import { useI18n } from '../i18n'
 
 const DOCS = ['ticket', 'passport', 'visa']
@@ -70,7 +71,18 @@ function AddTravellerForm({ onCancel, onSubmit, busy, canCancel }) {
 export default function TravellersScreen({ trip, onAdd, onRemove, onNext, busy, error }) {
   const { t } = useI18n()
   const [adding, setAdding] = useState(false)
+  const [viewingDoc, setViewingDoc] = useState(null)
+  const [docLoading, setDocLoading] = useState(false)
   const showForm = adding || trip.travellers.length === 0
+
+  useEffect(() => {
+    if (viewingDoc) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+    return () => { document.body.style.overflow = '' }
+  }, [viewingDoc])
 
   const submit = async (files, assistance) => {
     if (await onAdd(files, assistance)) setAdding(false)
@@ -88,6 +100,18 @@ export default function TravellersScreen({ trip, onAdd, onRemove, onNext, busy, 
               <div>
                 <b>{p.name}</b>
                 <small>{t('passport')} {p.documents.passport?.number || '—'}</small>
+                <div className="docs-links" style={{marginTop: '4px', display: 'flex', gap: '8px', fontSize: '12px'}}>
+                  {DOCS.map((d) => (
+                    p.documents[d] ? (
+                      <button key={d} className="link" type="button" style={{padding: 0, color: '#1a73e8', textDecoration: 'underline'}} onClick={() => {
+                        setViewingDoc({ url: api.getFileUrl(trip.id, p.id, d), name: `${p.name} - ${t(d)}` })
+                        setDocLoading(true)
+                      }}>
+                        {t('view')} {t(d)}
+                      </button>
+                    ) : null
+                  ))}
+                </div>
                 {p.assistance !== 'none' && <div className="tags"><span className="tag">{t('assist_' + p.assistance)}</span></div>}
               </div>
               <button className="link" onClick={() => onRemove(p.id)} disabled={busy}>{t('remove')}</button>
@@ -101,6 +125,29 @@ export default function TravellersScreen({ trip, onAdd, onRemove, onNext, busy, 
         : <button className="btn ghost" onClick={() => setAdding(true)} disabled={busy}>+ {t('add_another')}</button>}
       {trip.travellers.length > 0 && !showForm && (
         <button className="btn pri full" onClick={onNext}>{t('continue')} →</button>
+      )}
+      {viewingDoc && (
+        <div className="modal-overlay" onClick={() => setViewingDoc(null)}>
+          <div className="modal-content" onClick={e => e.stopPropagation()}>
+            <div className="modal-header">
+              <b>{viewingDoc.name}</b>
+              <button className="modal-close" onClick={() => setViewingDoc(null)}>&times;</button>
+            </div>
+            <div className="modal-body" style={{ position: 'relative' }}>
+              {docLoading && (
+                <div style={{ position: 'absolute', inset: 0, display: 'grid', placeItems: 'center' }}>
+                  <span className="spin" aria-hidden="true" style={{ width: 40, height: 40, borderWidth: 4 }}></span>
+                </div>
+              )}
+              <iframe 
+                src={viewingDoc.url} 
+                title={viewingDoc.name} 
+                onLoad={() => setDocLoading(false)}
+                style={{ opacity: docLoading ? 0 : 1, transition: 'opacity 0.2s' }}
+              />
+            </div>
+          </div>
+        </div>
       )}
     </>
   )

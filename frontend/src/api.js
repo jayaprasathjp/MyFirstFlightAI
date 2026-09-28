@@ -31,6 +31,7 @@ export const api = {
   removeTraveller: (id, travellerId) => request(`/api/trips/${id}/travellers/${travellerId}`, { method: 'DELETE' }),
   saveChecklist: (id, done) => request(`/api/trips/${id}/checklist`, json('PUT', { done })),
   translate: (language, texts) => request('/api/translate', json('POST', { language, texts })),
+  getFileUrl: (tripId, travellerId, doc) => `${BASE}/api/trips/${tripId}/travellers/${travellerId}/documents/${doc}`,
 }
 
 export const store = {
