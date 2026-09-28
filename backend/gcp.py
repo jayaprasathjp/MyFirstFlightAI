@@ -4,6 +4,7 @@ import json
 import logging
 import os
 import threading
+import time
 
 import google.auth
 from google.auth.transport.requests import AuthorizedSession
@@ -17,6 +18,10 @@ TTS_VOICE = {
 
 _session = None
 _lock = threading.Lock()
+
+
+_tts_off_until = 0.0  # after a "disabled" (403) error, skip TTS for a while instead of failing on every tap
+TTS_RETRY_SECONDS = 600
 
 
 class ServiceUnavailable(RuntimeError):
@@ -38,6 +43,9 @@ def _project():
 
 def synthesize(text: str, lang: str) -> str:
     """MP3 audio (base64) for text in the given app language."""
+    global _tts_off_until
+    if time.monotonic() < _tts_off_until:
+        raise ServiceUnavailable("Text-to-Speech is not available right now.")
     r = _authed().post(
         "https://texttospeech.googleapis.com/v1/text:synthesize",
         headers={"x-goog-user-project": _project()},
@@ -46,7 +54,12 @@ def synthesize(text: str, lang: str) -> str:
         timeout=30,
     )
     if r.status_code != 200:
-        log.warning("TTS failed %s: %s", r.status_code, r.text[:300])
+        if r.status_code == 403:
+            _tts_off_until = time.monotonic() + TTS_RETRY_SECONDS
+            log.warning("Cloud Text-to-Speech is disabled or not permitted; using the phone's voice for %d min. "
+                        "Enable texttospeech.googleapis.com in the project to fix.", TTS_RETRY_SECONDS // 60)
+        else:
+            log.warning("TTS failed %s: %s", r.status_code, r.text[:200])
         raise ServiceUnavailable("Text-to-Speech is not available right now.")
     return r.json()["audioContent"]
 
