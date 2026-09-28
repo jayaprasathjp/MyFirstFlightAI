@@ -1,41 +1,113 @@
-:root {
-  --bg-color: #0b0f19;
-  --panel-bg: rgba(17, 24, 39, 0.95);
-  --accent-color: #6366f1;
-  --accent-hover: #4f46e5;
-  --text-primary: #f3f4f6;
-  --text-secondary: #9ca3af;
-  --border-color: rgba(255, 255, 255, 0.08);
+.app {
+  max-width: 480px; margin: 0 auto; background: var(--app); border: 1px solid var(--line);
+  border-radius: 28px; box-shadow: var(--shadow); overflow: clip; min-height: calc(100dvh - 56px);
+  display: flex; flex-direction: column;
 }
+@media (max-width: 520px) { body { padding: 0 } .app { border-radius: 0; border: 0; min-height: 100dvh } }
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+/* top bar */
+.top { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 16px 18px 12px; border-bottom: 1px solid var(--line) }
+.brand { display: flex; align-items: center; gap: 9px; font-weight: 800; font-size: 17px }
+.mark { width: 32px; height: 32px; border-radius: 9px; background: var(--brand); color: var(--brand-ink); display: grid; place-items: center }
+.lang { border: 1px solid var(--line); background: var(--card); border-radius: 999px; padding: 8px 12px; font-size: 14px; font-weight: 600; max-width: 160px }
 
-html, body {
-  width: 100%;
-  height: 100%;
-  background-color: var(--bg-color);
-  color: var(--text-primary);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  overflow: hidden;
-}
+/* stepper */
+.stepper { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; padding: 12px 14px; border-bottom: 1px solid var(--line) }
+.stepper button { border: 0; background: none; padding: 4px 2px; display: grid; justify-items: center; gap: 4px; font-size: 12px; font-weight: 700; color: var(--muted) }
+.stepper i { font-style: normal; width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; background: var(--line); color: var(--ink); font-family: var(--m) }
+.stepper .on { color: var(--brand) } .stepper .on i { background: var(--brand); color: var(--brand-ink) }
+.stepper .past i { background: var(--ok); color: var(--app) }
 
-.app-viewport {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100vw;
-  height: 100dvh;
-  padding: 16px;
-  background: radial-gradient(circle at top center, rgba(99, 102, 241, 0.12), transparent 70%),
-              radial-gradient(circle at bottom center, rgba(168, 85, 247, 0.08), transparent 70%);
-}
+.screen { flex: 1; padding: 20px 18px 28px; display: grid; gap: 16px; align-content: start }
+h2 { margin: 0; font-size: 24px; line-height: 1.2; font-weight: 800; text-wrap: balance }
+h3 { margin: 0; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-weight: 700 }
+p { margin: 0 }
+.muted { color: var(--muted) }
+.err { color: var(--bad); background: var(--bad-soft); border-radius: 12px; padding: 10px 12px; font-weight: 600; font-size: 15px }
+.foot { padding: 0 18px 20px; text-align: center }
+.link { border: 0; background: none; color: var(--brand); font-weight: 700; padding: 6px; text-decoration: underline }
 
-@media (max-width: 640px) {
-  .app-viewport {
-    padding: 0;
-  }
-}
+/* buttons */
+.btn { border: 0; border-radius: 14px; padding: 15px 16px; font-weight: 700; font-size: 16px; display: inline-flex; align-items: center; justify-content: center; gap: 8px }
+.btn.pri { background: var(--brand); color: var(--brand-ink) }
+.btn.sec { background: var(--card); border: 1px solid var(--line) }
+.btn.ghost { background: transparent; border: 2px dashed var(--line); color: var(--brand); width: 100% }
+.btn.full { width: 100% }
+.row2, .nav2 { display: grid; grid-template-columns: 1fr 2fr; gap: 10px }
+
+/* language */
+.langs { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px }
+.langs button { border: 1.5px solid var(--line); background: var(--card); border-radius: 16px; padding: 16px 12px; display: grid; gap: 2px; text-align: start }
+.langs b { font-size: 20px }
+.langs span { font-size: 13px; color: var(--muted) }
+.langs .on { border-color: var(--brand); background: var(--brand-soft) }
+
+/* boarding-pass style trip card */
+.boarding { background: var(--brand); color: var(--brand-ink); border-radius: 18px; padding: 16px 18px; display: grid; gap: 12px }
+.boarding .row { display: flex; justify-content: space-between; align-items: flex-end; gap: 10px }
+.boarding .end { text-align: end }
+.iata { font-family: var(--m); font-size: 32px; font-weight: 600; line-height: 1 }
+.city { font-size: 13px; opacity: .85 }
+.plane { flex: 1; display: flex; align-items: center; gap: 6px; opacity: .85; padding-bottom: 8px }
+.plane i { flex: 1; border-top: 1.5px dashed currentColor }
+.meta { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; border-top: 1.5px dashed color-mix(in srgb, var(--brand-ink) 45%, transparent); padding-top: 12px }
+.meta b { display: block; font-family: var(--m); font-size: 14px }
+.meta span { font-size: 11px; opacity: .8; text-transform: uppercase; letter-spacing: .05em }
+
+/* travellers */
+.pax { display: grid; gap: 10px }
+.p { display: grid; grid-template-columns: 42px 1fr auto; gap: 12px; align-items: center; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 12px }
+.av { width: 42px; height: 42px; border-radius: 50%; background: var(--brand-soft); color: var(--brand); display: grid; place-items: center; font-weight: 800 }
+.p b { display: block; font-size: 16px }
+.p small { color: var(--muted); font-family: var(--m); font-size: 12px }
+.tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px }
+.tag { font-size: 12px; border: 1px solid var(--line); border-radius: 999px; padding: 1px 8px; color: var(--muted) }
+
+/* add traveller form */
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 14px }
+.form { display: grid; gap: 14px }
+.drop { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px }
+.drop label { border: 2px dashed var(--line); border-radius: 14px; padding: 14px 6px; text-align: center; display: grid; gap: 2px; justify-items: center; background: var(--app); position: relative; cursor: pointer; min-width: 0 }
+.drop label.has { border-style: solid; border-color: var(--ok); background: var(--ok-soft) }
+.drop .docicon { width: 32px; height: 32px; border-radius: 50%; background: var(--brand-soft); color: var(--brand); display: grid; place-items: center; font-weight: 800; font-size: 18px }
+.drop .has .docicon { background: var(--ok); color: var(--app) }
+.drop small { font-size: 11.5px; color: var(--muted); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap }
+.drop input { position: absolute; inset: 0; opacity: 0; cursor: pointer }
+.seg { border: 0; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px }
+.seg legend { font-weight: 700; font-size: 15px; margin-bottom: 8px; padding: 0 }
+.seg label { border: 1.5px solid var(--line); border-radius: 12px; padding: 11px 8px; text-align: center; font-size: 14px; font-weight: 700; background: var(--app); cursor: pointer }
+.seg input { position: absolute; opacity: 0; pointer-events: none }
+.seg label:has(input:checked) { border-color: var(--brand); background: var(--brand-soft); color: var(--brand) }
+.seg label:has(input:focus-visible) { outline: 3px solid var(--brand); outline-offset: 2px }
+.reading { display: flex; gap: 10px; align-items: center; font-weight: 600; color: var(--brand) }
+.spin { width: 20px; height: 20px; border-radius: 50%; border: 3px solid var(--brand-soft); border-top-color: var(--brand); animation: spin 1s linear infinite; flex: none }
+@keyframes spin { to { transform: rotate(360deg) } }
+
+/* document check */
+.verdict { border-radius: 16px; padding: 16px; display: grid; gap: 4px }
+.verdict strong { font-size: 20px }
+.verdict.ok { background: var(--ok-soft); border: 1.5px solid var(--ok) } .verdict.ok strong { color: var(--ok) }
+.verdict.warn { background: var(--warn-soft); border: 1.5px solid var(--warn) } .verdict.warn strong { color: var(--warn) }
+.group { display: grid; gap: 8px }
+.check { display: grid; grid-template-columns: 26px 1fr; gap: 10px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 12px }
+.check p { color: var(--muted); font-size: 14.5px; margin-top: 2px }
+.dot { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; font-size: 14px; color: var(--app) }
+.check.pass .dot { background: var(--ok) } .check.info .dot { background: var(--brand) }
+.check.warn .dot { background: var(--warn) } .check.fail .dot { background: var(--bad) }
+.check.warn { border-color: color-mix(in srgb, var(--warn) 45%, transparent) }
+.check.fail { border-color: color-mix(in srgb, var(--bad) 45%, transparent); background: var(--bad-soft) }
+
+/* checklist */
+.prog { display: grid; gap: 8px }
+.gh { display: flex; justify-content: space-between; align-items: baseline; gap: 8px }
+.gh > span { font-family: var(--m); font-size: 13px; color: var(--muted) }
+.bar { height: 10px; border-radius: 99px; background: var(--line); overflow: hidden }
+.bar i { display: block; height: 100%; background: var(--ok); border-radius: 99px; transition: width .3s }
+.item { display: grid; grid-template-columns: 28px 1fr; gap: 12px; align-items: start; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 13px; cursor: pointer }
+.item input { appearance: none; width: 26px; height: 26px; border: 2px solid var(--muted); border-radius: 7px; margin: 0; display: grid; place-items: center; cursor: pointer; background: var(--app) }
+.item input:checked { background: var(--ok); border-color: var(--ok) }
+.item input:checked::after { content: ""; width: 7px; height: 13px; border: solid var(--app); border-width: 0 3px 3px 0; transform: rotate(45deg) translate(-1px, -1px) }
+.item b { font-weight: 700; display: block }
+.item small { color: var(--muted); font-size: 14px; display: block; margin-top: 2px }
+.item.done b { text-decoration: line-through; color: var(--muted) }
+.item.key { border-color: color-mix(in srgb, var(--warm) 55%, transparent); background: var(--warm-soft) }
