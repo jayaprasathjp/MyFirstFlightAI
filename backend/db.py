@@ -18,7 +18,7 @@ class StoreError(RuntimeError):
 
 class MemoryStore:
     def __init__(self):
-        self._data = {"trips": {}, "translations": {}}
+        self._data = {"trips": {}, "translations": {}, "files": {}}
 
     def get(self, collection, doc_id):
         doc = self._data[collection].get(doc_id)
@@ -33,6 +33,16 @@ class MemoryStore:
     def set_many(self, collection, docs):
         for i, v in docs.items():
             self.set(collection, i, v)
+
+    def set_file(self, path, content, mime_type):
+        self._data["files"][path] = {"content": content, "mime_type": mime_type}
+
+    def get_file(self, path):
+        return self._data["files"].get(path)
+
+    def delete_file(self, path):
+        if path in self._data["files"]:
+            del self._data["files"][path]
 
 
 def _explain(exc):
@@ -52,11 +62,16 @@ class FirestoreStore:
         try:
             import firebase_admin
             from firebase_admin import firestore
+            from google.cloud import storage
 
             if not firebase_admin._apps:
                 project = os.getenv("GCP_PROJECT_ID")
                 firebase_admin.initialize_app(options={"projectId": project} if project else None)
             self._db = firestore.client()
+            
+            project = os.getenv("GCP_PROJECT_ID")
+            self._storage = storage.Client(project=project)
+            self._bucket_name = os.getenv("GCS_BUCKET", (project + "-mff-docs") if project else "mff-docs")
         except Exception as exc:
             log.exception("Firestore init failed")
             raise StoreError(_explain(exc)) from exc
@@ -97,6 +112,50 @@ class FirestoreStore:
         except Exception as exc:
             log.exception("Firestore batch write failed")
             raise StoreError(_explain(exc)) from exc
+
+    def set_file(self, path, content, mime_type):
+        try:
+            from google.api_core.exceptions import Forbidden, NotFound
+            bucket = self._storage.bucket(self._bucket_name)
+            try:
+                if not bucket.exists():
+                    bucket.create(location=os.getenv("GCP_LOCATION", "us-central1"))
+            except Forbidden:
+                log.warning(f"GCS: No permission to create bucket '{self._bucket_name}'. Please create it manually in GCP console.")
+            
+            blob = bucket.blob(path)
+            blob.upload_from_string(content, content_type=mime_type)
+        except Exception as exc:
+            if "Forbidden" in str(type(exc)):
+                log.error(f"GCS write failed: Permission denied for bucket '{self._bucket_name}'. Ensure your service account has Storage Object Admin.")
+            else:
+                log.error(f"GCS write failed: {exc}")
+
+    def get_file(self, path):
+        try:
+            bucket = self._storage.bucket(self._bucket_name)
+            blob = bucket.blob(path)
+            if not blob.exists():
+                return None
+            return {"content": blob.download_as_bytes(), "mime_type": blob.content_type}
+        except Exception as exc:
+            if "Forbidden" in str(type(exc)):
+                log.error(f"GCS read failed: Permission denied. Ensure your service account has Storage Object Viewer.")
+            else:
+                log.error(f"GCS read failed: {exc}")
+            return None
+
+    def delete_file(self, path):
+        try:
+            bucket = self._storage.bucket(self._bucket_name)
+            blob = bucket.blob(path)
+            if blob.exists():
+                blob.delete()
+        except Exception as exc:
+            if "Forbidden" in str(type(exc)):
+                log.warning(f"GCS delete failed: Permission denied for '{self._bucket_name}'.")
+            else:
+                log.warning(f"GCS delete failed: {exc}")
 
 
 _store = None

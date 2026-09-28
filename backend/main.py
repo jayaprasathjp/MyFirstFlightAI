@@ -9,7 +9,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 from fastapi import FastAPI, File, Form, HTTPException, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, Response
 from google.genai import types
 
 # Load backend/.env (before modules that read it), whatever folder the server is started from.
@@ -265,22 +265,28 @@ async def add_traveller(
              "passport": await read_upload(passport, "Passport"),
              "visa": await read_upload(visa, "Visa")}
 
-    async def extract(doc_type):
+    traveller_id = uuid.uuid4().hex[:8]
+
+    async def process(doc_type):
         content, mime = files[doc_type]
         try:
-            return await asyncio.to_thread(gemini.extract_document, content, mime, doc_type)
+            data = await asyncio.to_thread(gemini.extract_document, content, mime, doc_type)
         except ValueError as exc:  # missing Gemini configuration
             raise HTTPException(status_code=503, detail=str(exc))
         except Exception as exc:
             log.exception("extraction failed for %s", doc_type)
             raise HTTPException(status_code=502, detail=f"Could not read the {doc_type}. Try a clearer copy. ({exc})")
+            
+        path = f"trips/{trip_id}/travellers/{traveller_id}/{doc_type}"
+        await asyncio.to_thread(store().set_file, path, content, mime)
+        return data
 
-    ticket_data, passport_data, visa_data = await asyncio.gather(extract("ticket"), extract("passport"), extract("visa"))
+    ticket_data, passport_data, visa_data = await asyncio.gather(process("ticket"), process("passport"), process("visa"))
 
     # Files are only read in memory; we store the extracted text fields.
     trip = load_trip(trip_id)  # reload in case another traveller was added meanwhile
     trip["travellers"].append({
-        "id": uuid.uuid4().hex[:8],
+        "id": traveller_id,
         "name": passport_name(passport_data).title() or "Traveller",
         "assistance": assistance,
         "documents": {"ticket": ticket_data, "passport": passport_data, "visa": visa_data},
@@ -298,9 +304,28 @@ def remove_traveller(trip_id: str, traveller_id: str):
     trip["travellers"] = [t for t in trip["travellers"] if t["id"] != traveller_id]
     if len(trip["travellers"]) == before:
         raise HTTPException(status_code=404, detail="Traveller not found.")
+    
+    for doc in ("ticket", "passport", "visa"):
+        store().delete_file(f"trips/{trip_id}/travellers/{traveller_id}/{doc}")
+        
     recompute(trip)
     save_trip(trip)
     return trip_view(trip)
+
+
+@app.get("/api/trips/{trip_id}/travellers/{traveller_id}/documents/{doc_type}")
+def get_document(trip_id: str, traveller_id: str, doc_type: str):
+    if doc_type not in ("ticket", "passport", "visa"):
+        raise HTTPException(status_code=400, detail="Invalid document type.")
+    path = f"trips/{trip_id}/travellers/{traveller_id}/{doc_type}"
+    file_data = store().get_file(path)
+    if not file_data:
+        raise HTTPException(status_code=404, detail="Document not found.")
+    return Response(
+        content=file_data["content"], 
+        media_type=file_data["mime_type"],
+        headers={"Cache-Control": "public, max-age=86400"}
+    )
 
 
 @app.put("/api/trips/{trip_id}/checklist")
