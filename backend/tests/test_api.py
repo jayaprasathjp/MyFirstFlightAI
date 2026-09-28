@@ -162,7 +162,7 @@ def test_concierge_uses_trip_facts(client, monkeypatch):
 
     def fake_ask(facts, lang, text, audio, mime):
         seen.update(facts=facts, lang=lang, text=text, audio=audio, mime=mime)
-        return {"question": text or "(voice)", "answer": "Be at the airport by 20:50."}
+        return {"language": "ta", "question": text or "(voice)", "answer": "Be at the airport by 20:50."}
 
     monkeypatch.setattr(gemini, "ask", fake_ask)
     trip = _trip_with_traveller(client)

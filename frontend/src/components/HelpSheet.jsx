@@ -36,13 +36,14 @@ function AskTab({ trip, toast }) {
   const { lang, t } = useI18n()
   const [chat, setChat] = useState([])
   const [busy, setBusy] = useState(false)
-  const play = async (text) => { if (!(await speak(text, lang))) toast(t('no_voice')) }
+  // Speak in the language the traveller used (detected by Gemini), else the app language.
+  const play = async (text, language) => { if (!(await speak(text, language || lang))) toast(t('no_voice')) }
   const send = async (q) => {
     setBusy(true)
     try {
       const r = await api.ask(trip.id, q)
       setChat((c) => [...c, r])
-      play(r.answer)
+      play(r.answer, r.language)
     } catch (e) { toast(e.message) } finally { setBusy(false) }
   }
   return (
@@ -53,7 +54,7 @@ function AskTab({ trip, toast }) {
         {chat.map((m, i) => (
           <div key={i} className="qa-pair">
             <div className="bub me">{m.question}</div>
-            <div className="bub ai">{m.answer}<button className="link" onClick={() => play(m.answer)}>🔊 {t('play')}</button></div>
+            <div className="bub ai" lang={m.language}>{m.answer}<button className="link" onClick={() => play(m.answer, m.language)}>🔊 {t('play')}</button></div>
           </div>
         ))}
       </div>

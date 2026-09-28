@@ -151,13 +151,18 @@ def ask(trip_facts: dict, lang: str, text: str = "", audio: bytes | None = None,
     language = LANGUAGES.get(lang, "English")
     prompt = (f"{HELPER_RULES}\nTrip facts (JSON): {json.dumps(trip_facts, ensure_ascii=False)}\n\n"
               + (f"The traveller asked (typed): {text}\n" if text else "The traveller's question is in the audio.\n")
-              + f"Write the question and a 1-4 sentence answer in {language}. Keep flight numbers, gates and times as digits.")
+              + "Detect the language the traveller used and reply in THAT language (if unclear, use "
+              + f"{language}). Write the question and a 1-4 sentence answer. Keep flight numbers, gates and times as digits.")
     response = get_genai_client().models.generate_content(
         model=model_name(), contents=[*_media_part(audio, mime), prompt],
         config=types.GenerateContentConfig(response_mime_type="application/json", response_schema=AskResult,
                                            temperature=0.3, thinking_config=types.ThinkingConfig(thinking_budget=512)),
     )
-    return AskResult.model_validate_json(response.text).model_dump()
+    out = AskResult.model_validate_json(response.text).model_dump()
+    out["language"] = (out.get("language") or "").lower()[:2]
+    if out["language"] not in LANGUAGES:
+        out["language"] = lang  # unsupported or unknown: speak in the app language
+    return out
 
 
 def to_english(lang: str, text: str = "", audio: bytes | None = None, mime: str | None = None, context: str = "") -> dict:

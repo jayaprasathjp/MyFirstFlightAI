@@ -132,8 +132,9 @@ class ChatRequest(BaseModel):
 # ---------- Helpers (step 7) ----------
 
 class AskResult(BaseModel):
-    question: str = Field(description="what the traveller asked, written in their language")
-    answer: str = Field(description="the answer, in the traveller's language")
+    language: str = Field(description="ISO 639-1 code of the language the traveller spoke or typed, e.g. ta, hi, en")
+    question: str = Field(description="what the traveller asked, written in the language they used")
+    answer: str = Field(description="the answer, in the same language the traveller used")
 
 
 class StaffPhrase(BaseModel):

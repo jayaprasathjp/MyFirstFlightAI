@@ -21,7 +21,7 @@ _lock = threading.Lock()
 
 
 _tts_off_until = 0.0  # after a "disabled" (403) error, skip TTS for a while instead of failing on every tap
-TTS_RETRY_SECONDS = 600
+TTS_RETRY_SECONDS = 120
 
 
 class ServiceUnavailable(RuntimeError):
