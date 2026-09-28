@@ -10,6 +10,7 @@ import ChecklistScreen from './screens/ChecklistScreen'
 import ContactsScreen from './screens/ContactsScreen'
 import JourneyScreen from './screens/JourneyScreen'
 import LostCard from './components/LostCard'
+import HelpSheet from './components/HelpSheet'
 import './App.css'
 
 const STEPS = ['language', 'travellers', 'check', 'contacts', 'checklist', 'journey']
@@ -49,11 +50,13 @@ function Flow({ setLang }) {
   const [updating, setUpdating] = useState(false) // language switch: server re-translates checks + checklist
   const [error, setError] = useState('')
   const [lostOpen, setLostOpen] = useState(false)
+  const [helpOpen, setHelpOpen] = useState(false)
   const [toastMsg, setToastMsg] = useState('')
   const toastTimer = useRef(null)
   const saveQueue = useRef(Promise.resolve())
 
   const closeLost = useCallback(() => setLostOpen(false), [])
+  const closeHelp = useCallback(() => setHelpOpen(false), [])
   const toast = (msg) => { setToastMsg(msg); clearTimeout(toastTimer.current); toastTimer.current = setTimeout(() => setToastMsg(''), 3000) }
 
   const setStep = (s) => { setStepState(s); store.set('mff-step', s); window.scrollTo({ top: 0 }) }
@@ -137,11 +140,13 @@ function Flow({ setLang }) {
       </main>
       {trip && <footer className="foot"><button className="link" onClick={startOver}>{t('start_over')}</button></footer>}
       {hasTravellers && (
-        <button className="sos" onClick={() => setLostOpen(true)}>
-          <span aria-hidden="true">!</span>{t('lost')}
-        </button>
+        <div className="dock">
+          <button className="helpbtn" onClick={() => setHelpOpen(true)}><span aria-hidden="true">?</span>{t('help_btn')}</button>
+          <button className="sos" onClick={() => setLostOpen(true)}><span aria-hidden="true">!</span>{t('lost')}</button>
+        </div>
       )}
-      {lostOpen && hasTravellers && <LostCard trip={trip} onClose={closeLost} toast={toast} />}
+      {helpOpen && hasTravellers && <HelpSheet trip={trip} onTrip={applyTrip} onClose={closeHelp} toast={toast} />}
+      {lostOpen && hasTravellers && <LostCard trip={trip} onTrip={applyTrip} onClose={closeLost} toast={toast} />}
       {toastMsg && <div className="toast" role="status">{toastMsg}</div>}
     </div>
   )

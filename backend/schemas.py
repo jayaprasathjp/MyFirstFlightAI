@@ -127,3 +127,47 @@ class ChatMessage(BaseModel):
 class ChatRequest(BaseModel):
     message: str
     history: Optional[List[ChatMessage]] = []
+
+
+# ---------- Helpers (step 7) ----------
+
+class AskResult(BaseModel):
+    question: str = Field(description="what the traveller asked, written in their language")
+    answer: str = Field(description="the answer, in the traveller's language")
+
+
+class StaffPhrase(BaseModel):
+    original: str = Field(description="what the traveller said, in their language")
+    english: str = Field(description="one short, polite English sentence to show airport staff")
+
+
+class BoardingPassField(BaseModel):
+    field: str = Field(description="field name as printed, e.g. GATE")
+    value: str
+    meaning: str = Field(description="one plain sentence explaining what it means for the traveller")
+
+
+class BoardingPassData(BaseModel):
+    passenger_name: Optional[str] = None
+    flight_number: Optional[str] = None
+    date: Optional[str] = Field(None, description="YYYY-MM-DD")
+    origin_code: Optional[str] = None
+    destination_code: Optional[str] = None
+    departure_time: Optional[str] = Field(None, description="HH:MM")
+    gate: Optional[str] = None
+    boarding_time: Optional[str] = Field(None, description="HH:MM 24h")
+    seat: Optional[str] = None
+    boarding_group: Optional[str] = None
+    fields: List[BoardingPassField] = Field([], description="every printed field, in order")
+
+
+class AssistRequest(BaseModel):
+    traveller_id: str
+    kind: Literal["wheelchair", "escort", "visual", "lost"]
+    location: Literal["entrance", "checkin", "security", "gate", "arrival", "unknown"] = "entrance"
+    note: str = Field("", max_length=300)
+
+
+class TTSRequest(BaseModel):
+    text: str = Field(min_length=1, max_length=1500)
+    language: str

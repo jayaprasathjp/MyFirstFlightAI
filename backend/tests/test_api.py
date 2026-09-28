@@ -150,3 +150,55 @@ def test_journey_keeps_english_for_staff(client):
     emig = next(st for st in trip["journey"] if st["id"] == "emigration")
     assert emig["qa"][0]["q_en"] == "Where are you going?" and emig["qa"][0]["q"].startswith("[hi] ")
     assert emig["staff_en"] == "Which queue is for emigration?" and emig["staff"].startswith("[hi] ")
+
+
+def _trip_with_traveller(client):
+    trip = client.post("/api/trips", json={"language": "en"}).json()
+    return client.post(f"/api/trips/{trip['id']}/travellers", files=FILES).json()
+
+
+def test_concierge_uses_trip_facts(client, monkeypatch):
+    seen = {}
+
+    def fake_ask(facts, lang, text, audio, mime):
+        seen.update(facts=facts, lang=lang, text=text, audio=audio, mime=mime)
+        return {"question": text or "(voice)", "answer": "Be at the airport by 20:50."}
+
+    monkeypatch.setattr(gemini, "ask", fake_ask)
+    trip = _trip_with_traveller(client)
+    r = client.post(f"/api/trips/{trip['id']}/ask", data={"text": "When should I reach?"})
+    assert r.status_code == 200 and r.json()["answer"] == "Be at the airport by 20:50."
+    assert seen["facts"]["trip"]["flights"] == ["SL 301"] and seen["facts"]["airport_steps"][0]["step"] == "Reach the airport"
+    r = client.post(f"/api/trips/{trip['id']}/ask", files={"audio": ("q.webm", b"\x1a\x45", "audio/webm;codecs=opus")})
+    assert r.status_code == 200 and seen["mime"] == "audio/webm" and seen["audio"] == b"\x1a\x45"
+    assert client.post(f"/api/trips/{trip['id']}/ask", data={"text": " "}).status_code == 400
+    assert client.post(f"/api/trips/{trip['id']}/ask", files={"audio": ("q.txt", b"x", "text/plain")}).status_code == 415
+
+
+def test_show_to_staff(client, monkeypatch):
+    monkeypatch.setattr(gemini, "to_english", lambda lang, text, audio, mime, ctx: {"original": text, "english": "Where is the toilet?"})
+    trip = _trip_with_traveller(client)
+    r = client.post(f"/api/trips/{trip['id']}/to-english", data={"text": "கழிப்பறை எங்கே?"})
+    assert r.json() == {"original": "கழிப்பறை எங்கே?", "english": "Where is the toilet?"}
+
+
+def test_boarding_pass_fills_gate(client, monkeypatch):
+    monkeypatch.setattr(gemini, "read_boarding_pass", lambda content, mime: {
+        "flight_number": "SL 301", "gate": "b12", "boarding_time": "23:05", "seat": "23A",
+        "fields": [{"field": "GATE", "value": "B12", "meaning": "Board the plane here."}]})
+    trip = _trip_with_traveller(client)
+    trip = client.post(f"/api/trips/{trip['id']}/boarding-pass", files={"file": ("bp.jpg", b"img", "image/jpeg")}).json()
+    assert trip["boarding"] == {"gate": "B12", "boarding_time": "23:05"}
+    assert trip["boarding_pass"]["fields"][0]["meaning"] == "Board the plane here."
+    assert next(st for st in trip["journey"] if st["id"] == "gate")["where"][0] == "Gate B12"
+
+
+def test_assist_request_is_stored(client):
+    trip = _trip_with_traveller(client)
+    tid = trip["travellers"][0]["id"]
+    r = client.post(f"/api/trips/{trip['id']}/assist", json={"traveller_id": tid, "kind": "wheelchair", "location": "entrance"})
+    req = r.json()["request"]
+    assert req["id"].startswith("AS-") and req["flight"] == "SL 301" and req["sent_to_desk"] is False
+    assert db.store().get("assist_requests", req["id"])["traveller"] == "Gautam Guru"
+    assert r.json()["trip"]["assist_requests"][0]["id"] == req["id"]
+    assert client.post(f"/api/trips/{trip['id']}/assist", json={"traveller_id": "nope", "kind": "lost"}).status_code == 404

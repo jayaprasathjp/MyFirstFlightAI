@@ -134,3 +134,56 @@ def trip_advice(context: dict, generic_titles: list[str]) -> dict:
         ),
     )
     return TripAdvice.model_validate_json(response.text).model_dump()
+
+
+HELPER_RULES = ("You help an elderly first-time flyer at the airport. Use short, simple, warm sentences. "
+                "Never invent gate numbers, times or rules that are not in the trip facts; if unsure, tell them "
+                "to ask airport staff or the information desk.")
+
+
+def _media_part(content: bytes | None, mime: str | None):
+    return [types.Part.from_bytes(data=content, mime_type=mime)] if content else []
+
+
+def ask(trip_facts: dict, lang: str, text: str = "", audio: bytes | None = None, mime: str | None = None) -> dict:
+    """Voice/text concierge: answer the traveller's question from their own trip data, in their language."""
+    from schemas import AskResult
+    language = LANGUAGES.get(lang, "English")
+    prompt = (f"{HELPER_RULES}\nTrip facts (JSON): {json.dumps(trip_facts, ensure_ascii=False)}\n\n"
+              + (f"The traveller asked (typed): {text}\n" if text else "The traveller's question is in the audio.\n")
+              + f"Write the question and a 1-4 sentence answer in {language}. Keep flight numbers, gates and times as digits.")
+    response = get_genai_client().models.generate_content(
+        model=model_name(), contents=[*_media_part(audio, mime), prompt],
+        config=types.GenerateContentConfig(response_mime_type="application/json", response_schema=AskResult,
+                                           temperature=0.3, thinking_config=types.ThinkingConfig(thinking_budget=512)),
+    )
+    return AskResult.model_validate_json(response.text).model_dump()
+
+
+def to_english(lang: str, text: str = "", audio: bytes | None = None, mime: str | None = None, context: str = "") -> dict:
+    """Turn what the traveller says (any language, text or audio) into one polite English sentence for staff."""
+    from schemas import StaffPhrase
+    prompt = (f"A first-time flyer who speaks {LANGUAGES.get(lang, lang)} wants to tell airport staff something. "
+              + (f"They typed: {text}\n" if text else "Their message is in the audio.\n")
+              + f"Context: {context}\nWrite 'original' in their language and 'english' as one short polite English "
+              "sentence, first person, that staff will understand. Do not add facts they did not say.")
+    response = get_genai_client().models.generate_content(
+        model=model_name(), contents=[*_media_part(audio, mime), prompt],
+        config=types.GenerateContentConfig(response_mime_type="application/json", response_schema=StaffPhrase,
+                                           temperature=0.2, thinking_config=types.ThinkingConfig(thinking_budget=0)),
+    )
+    return StaffPhrase.model_validate_json(response.text).model_dump()
+
+
+def read_boarding_pass(content: bytes, mime: str) -> dict:
+    from schemas import BoardingPassData
+    prompt = ("This is a boarding pass. Extract the fields exactly as printed (null if missing, never guess). "
+              "Times as HH:MM 24-hour. In 'fields' list every printed field with a plain-English meaning for an "
+              "elderly first-time flyer (e.g. GATE: where you board; BOARDING: be at the gate by this time; "
+              "ZONE/GROUP: wait until this group is called).")
+    response = get_genai_client().models.generate_content(
+        model=model_name(), contents=[types.Part.from_bytes(data=content, mime_type=mime), prompt],
+        config=types.GenerateContentConfig(response_mime_type="application/json", response_schema=BoardingPassData,
+                                           temperature=0),
+    )
+    return BoardingPassData.model_validate_json(response.text).model_dump()

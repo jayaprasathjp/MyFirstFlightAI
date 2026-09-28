@@ -147,8 +147,11 @@ ul.do li::before { content: ""; position: absolute; inset-inline-start: 4px; top
 .boardingform { gap: 10px }
 
 /* I'm Lost: floating button + card */
+.dock { position: fixed; z-index: 15; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); inset-inline-end: max(16px, calc(50vw - 224px)); display: flex; gap: 10px }
+.helpbtn { background: var(--brand); color: var(--brand-ink); border: 0; border-radius: 999px; padding: 14px 18px; font-weight: 800; font-size: 16px;
+  display: flex; align-items: center; gap: 8px; box-shadow: 0 8px 24px color-mix(in srgb, var(--brand) 40%, transparent) }
+.helpbtn span { width: 22px; height: 22px; border-radius: 50%; border: 2.5px solid currentColor; display: grid; place-items: center; font-size: 13px }
 .sos {
-  position: fixed; z-index: 15; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); inset-inline-end: max(16px, calc(50vw - 224px));
   background: var(--bad); color: #fff; border: 0; border-radius: 999px; padding: 14px 20px; font-weight: 800; font-size: 16px;
   display: flex; align-items: center; gap: 8px; box-shadow: 0 8px 24px color-mix(in srgb, var(--bad) 45%, transparent);
 }
@@ -177,3 +180,39 @@ ul.do li::before { content: ""; position: absolute; inset-inline-start: 4px; top
 .callrow .m { font-size: 18px; font-weight: 600 }
 .callbtn { background: var(--ok); color: #fff; border-radius: 999px; padding: 10px 16px; font-weight: 800; white-space: nowrap }
 .toast { position: fixed; z-index: 40; left: 50%; transform: translateX(-50%); bottom: calc(90px + env(safe-area-inset-bottom, 0px)); width: min(420px, calc(100% - 32px)); background: var(--ink); color: var(--app); border-radius: 12px; padding: 12px 14px; font-size: 15px }
+
+/* help sheet */
+.sheet { position: fixed; inset: 0; z-index: 25; background: var(--app); overflow: auto; padding: calc(16px + env(safe-area-inset-top, 0px)) 16px 32px; display: grid; gap: 14px; align-content: start; grid-auto-rows: max-content; max-width: 480px; margin: 0 auto }
+.sheethead { display: flex; justify-content: space-between; align-items: center; gap: 10px }
+.sheethead .btn { padding: 10px 14px }
+.tabs4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 4px }
+.tabs4 button { border: 0; background: none; border-radius: 10px; padding: 10px 4px; font-weight: 700; font-size: 13px; color: var(--muted); min-width: 0; overflow-wrap: anywhere }
+.tabs4 .on { background: var(--app); color: var(--brand); box-shadow: 0 1px 4px rgba(0, 0, 0, .12) }
+.voicein { display: grid; justify-items: center; gap: 10px }
+.micbtn { width: 88px; height: 88px; border-radius: 50%; border: 0; background: var(--brand); color: var(--brand-ink); display: grid; place-items: center; box-shadow: 0 0 0 10px var(--brand-soft) }
+.micbtn svg { width: 36px; height: 36px }
+.micbtn.rec { background: var(--bad); box-shadow: 0 0 0 10px color-mix(in srgb, var(--bad) 20%, transparent); animation: pulse 1.2s ease-in-out infinite }
+@keyframes pulse { 50% { box-shadow: 0 0 0 18px color-mix(in srgb, var(--bad) 12%, transparent) } }
+.small { font-size: 14px; min-height: 1.4em }
+.typein { display: grid; grid-template-columns: 1fr auto; gap: 8px; width: 100% }
+.typein input, .form select { border: 1px solid var(--line); background: var(--app); border-radius: 12px; padding: 12px; font-size: 16px; color: var(--ink); width: 100% }
+.chat { display: grid; gap: 12px }
+.qa-pair { display: grid; gap: 8px }
+.bub { max-width: 88%; padding: 11px 14px; border-radius: 16px; font-size: 16px }
+.bub.me { justify-self: end; background: var(--brand); color: var(--brand-ink); border-end-end-radius: 5px }
+.bub.ai { justify-self: start; background: var(--card); border: 1px solid var(--line); border-end-start-radius: 5px; display: grid; gap: 4px }
+.bub.ai .link { justify-self: start; padding: 2px 0 }
+.filebtn { position: relative; cursor: pointer }
+.filebtn input { position: absolute; inset: 0; opacity: 0; cursor: pointer }
+.bpfields { display: grid; border: 1px solid var(--line); border-radius: 16px; overflow: hidden }
+.bpfields > div { display: grid; grid-template-columns: 90px 1fr; gap: 2px 10px; padding: 11px 14px; border-bottom: 1px solid var(--line) }
+.bpfields > div:last-child { border-bottom: 0 }
+.bpfields span { grid-row: span 2; font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; overflow-wrap: anywhere }
+.bpfields b { font-family: var(--m); font-size: 17px }
+.bpfields small { color: var(--muted); font-size: 14px }
+.bpfields .hl { background: var(--warm-soft) }
+.seg.one { grid-template-columns: 1fr }
+.ticketbox { border: 1.5px solid var(--ok); background: var(--ok-soft); border-radius: 14px; padding: 14px; display: grid; gap: 4px }
+.ticketbox b { font-size: 24px }
+.reqrow { display: flex; justify-content: space-between; gap: 10px; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; font-size: 14px }
+.alertbtn { border-color: var(--bad); color: var(--bad); font-weight: 800 }

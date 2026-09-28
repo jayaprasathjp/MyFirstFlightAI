@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { api } from '../api'
 import { EN } from '../strings'
 import { useI18n } from '../i18n'
 
@@ -10,7 +11,7 @@ function Label({ k }) {
 
 // Big card for airport staff. English first (staff read English), the user's language underneath.
 // Built only from the trip cached on the phone, so it works without internet.
-export default function LostCard({ trip, onClose, toast }) {
+export default function LostCard({ trip, onTrip, onClose, toast }) {
   const { lang, t } = useI18n()
   const [who, setWho] = useState(0)
   const closeRef = useRef(null)
@@ -26,6 +27,16 @@ export default function LostCard({ trip, onClose, toast }) {
     document.addEventListener('keydown', onKey)
     return () => document.removeEventListener('keydown', onKey)
   }, [onClose])
+
+  const [alerting, setAlerting] = useState(false)
+  const alertDesk = async () => {
+    setAlerting(true)
+    try {
+      const r = await api.assist(trip.id, { traveller_id: person.id, kind: 'lost', location: 'unknown' })
+      onTrip(r.trip)
+      toast(t('alert_sent', { id: r.request.id }))
+    } catch (e) { toast(e.message) } finally { setAlerting(false) }
+  }
 
   const readAloud = () => {
     const text = `I am a first time traveller. Please help me. My name is ${person.name}. My flight is ${flight} to ${s.destination_city || ''}`
@@ -73,6 +84,7 @@ export default function LostCard({ trip, onClose, toast }) {
         ))}
       </section>
       <button className="btn pri full" onClick={readAloud}>🔊 {t('read_aloud')}</button>
+      <button className="btn sec full alertbtn" onClick={alertDesk} disabled={alerting}>🚨 {t('alert_desk')}</button>
       <button ref={closeRef} className="btn sec full" onClick={onClose}>{t('close')}</button>
     </div>
   )
