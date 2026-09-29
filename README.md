@@ -45,6 +45,10 @@ source venv/bin/activate
 # Install dependencies
 pip install -r requirements.txt
 
+# Create backend/.env from backend/.env.example and set local GCP/Firebase values
+# Optional local service-account credentials: set GOOGLE_APPLICATION_CREDENTIALS=./sa-key.json
+# Never commit backend/.env or backend/sa-key.json. On Cloud Run, use its attached service account.
+
 # Run development server
 uvicorn main:app --reload --port 8000
 ```
@@ -63,5 +67,9 @@ npm install
 npm run dev
 ```
 - Web Application: `http://localhost:5173`
+
+## Security, Accounts, and Live Flight Status
+
+See [docs/SECURITY_AND_DATA.md](docs/SECURITY_AND_DATA.md) for Firebase setup, encrypted Firestore/GCS storage, passport retention and deletion, Cloud Scheduler cleanup, and the free flight-status limit. The account and persistence features remain unavailable until the documented cloud resources and Firebase web configuration are provisioned.
 
 ---

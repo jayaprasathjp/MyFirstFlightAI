@@ -1,0 +1,55 @@
+.auth-shell{min-height:100vh;display:grid;place-items:center;padding:24px;background:radial-gradient(ellipse at 20% 0%,#e9f0e5 0,transparent 48%),#f6f7f3}
+.auth-panel{width:min(100%,480px);padding:32px;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 16px 48px rgba(32,36,31,.08)}
+.auth-panel h1{margin:32px 0 8px;font-family:Manrope,sans-serif;font-size:30px;font-weight:700;line-height:1.2}
+.auth-panel>p{color:var(--muted);line-height:1.6}
+.auth-privacy{padding:12px;border-left:3px solid var(--green);background:var(--pale);font-size:13px}
+.auth-language{display:flex;align-items:center;gap:10px;margin-top:20px;color:var(--muted);font-size:13px;font-weight:600}
+.auth-language select{max-width:180px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink)}
+.auth-form{display:grid;gap:16px;margin-top:22px}
+.auth-form .review-button{width:100%;min-height:48px}
+.auth-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:18px}
+.auth-actions button,.auth-link{padding:0;border:0;background:transparent;color:var(--green);font-weight:700;text-align:left}
+.auth-error,.upload-error{color:#a43128}
+.auth-message{color:var(--green)}
+.account-controls{display:flex;align-items:center;justify-content:flex-end;gap:12px;flex-wrap:wrap;font-size:12px}
+.account-controls button,.passport-saved button,.history-row button{border:1px solid var(--line);border-radius:8px;padding:8px 11px;background:#fff;color:var(--ink);font-weight:700}
+.save-indicator{color:var(--green)}
+.save-indicator.error{color:#a43128}
+.passport-consent{display:grid;grid-template-columns:22px 1fr;gap:10px;align-items:start;margin-top:12px;color:var(--ink);font-size:13px;line-height:1.5}
+.passport-consent input{width:20px;height:20px;margin:0;accent-color:var(--green)}
+.field-note{margin:8px 0 0;color:var(--muted);font-size:12px}
+.passport-saved{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 12px;margin-top:10px;background:var(--pale);border-radius:8px;color:var(--green);font-size:13px}
+.flight-check{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;margin-top:20px;padding-top:18px;border-top:1px solid var(--line)}
+.flight-check h3{color:var(--ink);font-size:16px;letter-spacing:0;text-transform:none}
+.flight-check p{margin:5px 0 0;color:var(--muted);font-size:12px;line-height:1.5}
+.flight-check>.upload-error,.flight-result{grid-column:1/-1}
+.flight-result{display:flex;flex-wrap:wrap;gap:8px 16px;padding:12px;background:var(--pale);border-radius:9px;font-size:13px}
+.flight-result strong{color:var(--green);text-transform:capitalize}
+.flight-result.cancelled{background:#fae9e6;color:#9f2e25}
+.flight-result.cancelled strong{color:#9f2e25}
+.history-list{display:grid}
+.history-row{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px 0;border-top:1px solid var(--line)}
+.history-row>span{display:grid;gap:4px}
+.history-row small{color:var(--muted)}
+.account-data{display:flex;align-items:center;justify-content:space-between;gap:20px}
+.account-data h2{font-size:17px}
+.account-data p{color:var(--muted);font-size:13px}
+.account-data .remove-button{width:auto;min-height:40px}
+.emergency-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.emergency-form .field-label:first-child{grid-column:1/-1}
+.emergency-actions{grid-column:1/-1;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.emergency-actions .review-button{min-height:46px}
+.emergency-actions [role=status]{color:var(--green);font-size:13px}
+.assistant-form{display:grid;gap:12px}
+.assistant-input{min-height:100px;resize:vertical;line-height:1.5}
+.assistant-actions{display:flex;flex-wrap:wrap;gap:10px}
+.assistant-actions .btn{min-height:46px}
+.assistant-reply{display:grid;gap:12px;margin-top:20px;padding-top:16px;border-top:1px solid var(--line)}
+.assistant-reply h3{color:var(--ink);font-size:16px;letter-spacing:0;text-transform:none}
+.assistant-reply>div{padding:12px 14px;background:var(--pale);border-radius:8px}
+.assistant-reply>div p{margin:7px 0 0;line-height:1.6;white-space:pre-wrap}
+.assistant-reply>div b{font-size:12px;color:var(--muted);text-transform:uppercase}
+.assistant-reply>.btn{justify-self:start}
+.translation-status{padding:10px 12px;background:var(--pale);border-left:3px solid var(--gold);color:var(--muted);font-size:13px}
+@media(max-width:700px){.topbar{height:auto;min-height:70px;gap:12px}.account-controls{max-width:62%}.save-indicator{width:100%;text-align:right}.flight-check{grid-template-columns:1fr}.flight-check>.btn{width:100%}}
+@media(max-width:420px){.auth-panel{padding:22px}.auth-panel h1{font-size:26px}.account-controls>span:first-child{max-width:130px;overflow-wrap:anywhere;text-align:right}.passport-saved,.account-data{align-items:flex-start;flex-direction:column}.account-data button{width:100%}.emergency-form{grid-template-columns:1fr}.emergency-form .field-label:first-child{grid-column:auto}.assistant-actions .btn{flex:1}}

@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { auth } from '../firebase'
 import './Chatbot.css'
 
 export default function Chatbot({ apiBaseUrl }) {
@@ -40,9 +41,11 @@ export default function Chatbot({ apiBaseUrl }) {
     setLoading(true)
 
     try {
+      const token = await auth?.currentUser?.getIdToken()
+      if (!token) throw new Error('Sign in before using chat.')
       const response = await fetch(`${apiBaseUrl}/api/chat`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({
           message: prompt,
           history: messages.slice(-6)

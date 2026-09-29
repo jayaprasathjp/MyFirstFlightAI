@@ -27,7 +27,9 @@ steps:
       - '--platform=managed'
       - '--allow-unauthenticated'
       - '--port=8080'
-      - '--set-env-vars=USE_VERTEX_AI=true,GCP_PROJECT_ID=$PROJECT_ID,GCP_LOCATION=us-central1,GEMINI_MODEL=gemini-2.5-flash'
+      - '--service-account=myfirstflight-run@$PROJECT_ID.iam.gserviceaccount.com'
+      - '--set-env-vars=USE_VERTEX_AI=true,GCP_PROJECT_ID=$PROJECT_ID,FIREBASE_PROJECT_ID=$PROJECT_ID,GCP_LOCATION=us-central1,GEMINI_MODEL=gemini-2.5-flash,FIRESTORE_DATABASE=(default),PASSPORT_BUCKET=$PROJECT_ID-mff-passports,PII_KMS_KEY_NAME=projects/$PROJECT_ID/locations/us-central1/keyRings/myfirstflight/cryptoKeys/pii,PASSPORT_KMS_KEY_NAME=projects/$PROJECT_ID/locations/us-central1/keyRings/myfirstflight/cryptoKeys/pii,PASSPORT_RETENTION_DAYS=30,AVIATIONSTACK_MONTHLY_LIMIT=100,AVIATIONSTACK_USER_MONTHLY_LIMIT=10,TRANSLATION_MONTHLY_CHAR_LIMIT=400000,TRANSLATION_USER_MONTHLY_CHAR_LIMIT=50000,TTS_MONTHLY_CHARACTER_LIMIT=3000000,TTS_USER_MONTHLY_CHARACTER_LIMIT=200000,STT_MONTHLY_LIMIT=50,STT_USER_MONTHLY_LIMIT=15,GEMINI_CHAT_MONTHLY_LIMIT=500,GEMINI_CHAT_USER_MONTHLY_LIMIT=100,PASSPORT_CLEANUP_SERVICE_ACCOUNT=passport-cleanup@$PROJECT_ID.iam.gserviceaccount.com,PASSPORT_CLEANUP_AUDIENCE=https://myfirstflightai-backend-964832886801.us-central1.run.app'
+      - '--set-secrets=AVIATIONSTACK_ACCESS_KEY=aviationstack-access-key:latest'
 
 images:
   - 'gcr.io/$PROJECT_ID/myfirstflightai-backend:$BUILD_ID'
