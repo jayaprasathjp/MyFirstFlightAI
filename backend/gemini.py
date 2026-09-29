@@ -138,7 +138,12 @@ def _translate_chunk(texts: dict[str, str], lang: str, model: str) -> dict[str, 
             thinking_config=types.ThinkingConfig(thinking_budget=0),  # translation needs no reasoning; much faster
         ),
     )
-    out = json.loads(response.text)
+    text = response.text.strip()
+    start = text.find("{")
+    end = text.rfind("}")
+    if start != -1 and end != -1:
+        text = text[start:end+1]
+    out = json.loads(text)
     # Fall back to English for any key the model dropped.
     return {k: out.get(k) if isinstance(out.get(k), str) else v for k, v in texts.items()}
 
