@@ -68,12 +68,20 @@ function AddTravellerForm({ onCancel, onSubmit, busy, canCancel }) {
   )
 }
 
-export default function TravellersScreen({ trip, onAdd, onRemove, onNext, busy, error }) {
+export default function TravellersScreen({ trip, onAdd, onRemove, onReplaceDoc, onNext, busy, error }) {
   const { t } = useI18n()
   const [adding, setAdding] = useState(false)
   const [viewingDoc, setViewingDoc] = useState(null)
   const [docLoading, setDocLoading] = useState(false)
+  const [replacing, setReplacing] = useState(null) // `${travellerId}:${doc}` while a replace is in flight
   const showForm = adding || trip.travellers.length === 0
+
+  const replace = async (travellerId, doc, file) => {
+    if (!file) return
+    setReplacing(`${travellerId}:${doc}`)
+    await onReplaceDoc(travellerId, doc, file)
+    setReplacing(null)
+  }
 
   useEffect(() => {
     if (viewingDoc) {
@@ -100,15 +108,22 @@ export default function TravellersScreen({ trip, onAdd, onRemove, onNext, busy, 
               <div>
                 <b>{p.name}</b>
                 <small>{t('passport')} {p.documents.passport?.number || '—'}</small>
-                <div className="docs-links" style={{marginTop: '4px', display: 'flex', gap: '8px', fontSize: '12px'}}>
+                <div className="docs-links" style={{marginTop: '4px', display: 'flex', gap: '8px', fontSize: '12px', flexWrap: 'wrap', alignItems: 'center'}}>
                   {DOCS.map((d) => (
                     p.documents[d] ? (
-                      <button key={d} className="link" type="button" style={{padding: 0, color: '#1a73e8', textDecoration: 'underline'}} onClick={() => {
-                        setViewingDoc({ url: api.getFileUrl(trip.id, p.id, d), name: `${p.name} - ${t(d)}` })
-                        setDocLoading(true)
-                      }}>
-                        {t('view')} {t(d)}
-                      </button>
+                      <span key={d} style={{display: 'inline-flex', gap: '6px', alignItems: 'center'}}>
+                        <button className="link" type="button" style={{padding: 0, color: '#1a73e8', textDecoration: 'underline'}} onClick={() => {
+                          setViewingDoc({ url: api.getFileUrl(trip.id, p.id, d), name: `${p.name} - ${t(d)}` })
+                          setDocLoading(true)
+                        }}>
+                          {t('view')} {t(d)}
+                        </button>
+                        <label className="link filebtn" style={{padding: 0, textDecoration: 'underline', opacity: replacing === `${p.id}:${d}` ? 0.6 : 1}}>
+                          {replacing === `${p.id}:${d}` ? t('replacing') : t('replace')}
+                          <input type="file" accept="image/*,application/pdf" disabled={busy || !!replacing}
+                            onChange={(e) => { const f = e.target.files[0]; e.target.value = ''; replace(p.id, d, f) }} />
+                        </label>
+                      </span>
                     ) : null
                   ))}
                 </div>
