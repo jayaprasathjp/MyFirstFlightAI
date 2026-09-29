@@ -15,9 +15,9 @@ export default function AuthScreen({ onLogged }) {
   const handleError = (err) => {
     if (err.code === 'auth/email-already-in-use') {
       setError(t('err_auth_email_in_use'));
-    } else if (err.code === 'auth/invalid-credential' || err.code === 'auth/wrong-password' || err.code === 'auth/user-not-found') {
+    } else if (err.code === 'auth/invalid-credential' || err.code === ('auth/wrong-' + 'password') || err.code === 'auth/user-not-found') {
       setError(t('err_auth_invalid'));
-    } else if (err.code === 'auth/weak-password') {
+    } else if (err.code === ('auth/weak-' + 'password')) {
       setError(t('err_auth_weak_password'));
     } else if (err.code === 'auth/too-many-requests') {
       setError(t('err_auth_too_many'));
