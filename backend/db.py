@@ -1,8 +1,9 @@
 """Trip storage. Firestore in the cloud; an in-memory store for local dev and tests (DB_BACKEND=memory).
 
-Firestore layout (text only for now, no files are stored):
+Firestore layout (extracted text; the original uploaded files go to Cloud Storage, see set_file):
   trips/{trip_id}          -> {language, travellers[], summary, checks[], status, checklist_done{}, created_at, updated_at}
-  translations/{lang_hash} -> {text: {key: translated}}   cache for Gemini translations
+  translations/{lang_hash} -> {text, lang, source}   cache for Gemini translations
+  advice/{route_hash}      -> {advice, context, created_at}   cache for Gemini trip advice
 """
 import copy
 import logging
@@ -18,31 +19,30 @@ class StoreError(RuntimeError):
 
 class MemoryStore:
     def __init__(self):
-        self._data = {"trips": {}, "translations": {}, "files": {}}
+        self._data = {}
 
     def get(self, collection, doc_id):
-        doc = self._data[collection].get(doc_id)
+        doc = self._data.get(collection, {}).get(doc_id)
         return copy.deepcopy(doc) if doc is not None else None
 
     def set(self, collection, doc_id, value):
-        self._data[collection][doc_id] = copy.deepcopy(value)
+        self._data.setdefault(collection, {})[doc_id] = copy.deepcopy(value)
 
     def get_many(self, collection, doc_ids):
-        return {i: self.get(collection, i) for i in doc_ids if i in self._data[collection]}
+        return {i: self.get(collection, i) for i in doc_ids if i in self._data.get(collection, {})}
 
     def set_many(self, collection, docs):
         for i, v in docs.items():
             self.set(collection, i, v)
 
     def set_file(self, path, content, mime_type):
-        self._data["files"][path] = {"content": content, "mime_type": mime_type}
+        self._data.setdefault("files", {})[path] = {"content": content, "mime_type": mime_type}
 
     def get_file(self, path):
-        return self._data["files"].get(path)
+        return self._data.get("files", {}).get(path)
 
     def delete_file(self, path):
-        if path in self._data["files"]:
-            del self._data["files"][path]
+        self._data.get("files", {}).pop(path, None)
 
 
 def _explain(exc):
