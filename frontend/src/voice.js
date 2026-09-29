@@ -42,9 +42,14 @@ export function useRecorder() {
 
 let current = null
 
+export function stopSpeaking() {
+  try { current?.pause() } catch { /* nothing playing */ }
+  try { speechSynthesis.cancel() } catch { /* not supported */ }
+}
+
 // Speak text in the app language: Cloud Text-to-Speech first, then the phone's own voice. Returns false if neither works.
 export async function speak(text, lang) {
-  try { current?.pause() } catch { /* nothing playing */ }
+  stopSpeaking()
   try {
     const r = await api.tts(text, lang)
     current = new Audio(`data:${r.mime};base64,${r.audio}`)
@@ -60,7 +65,6 @@ export async function speak(text, lang) {
     u.voice = voice
     u.lang = voice.lang
     u.rate = 0.9
-    speechSynthesis.cancel()
     speechSynthesis.speak(u)
     return true
   }

@@ -63,6 +63,18 @@ p { margin: 0 }
 .p small { color: var(--muted); font-family: var(--m); font-size: 12px }
 .tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px }
 .tag { font-size: 12px; border: 1px solid var(--line); border-radius: 999px; padding: 1px 8px; color: var(--muted) }
+.pax-actions { display: flex; align-items: center; gap: 4px }
+.docrows { display: grid; gap: 4px; margin-top: 6px }
+.docrow { display: flex; align-items: center; gap: 8px; font-size: 13px }
+.docrow b { font-weight: 600; flex: 1 }
+.docrow-actions { display: flex; gap: 4px }
+.docicon.sm { width: 22px; height: 22px; font-size: 12px; flex: none; color: var(--brand); display: grid; place-items: center }
+.docicon.sm svg { width: 18px; height: 18px }
+.iconbtn { width: 34px; height: 34px; border-radius: 999px; border: 1px solid var(--line); background: var(--app); color: var(--brand); display: grid; place-items: center; flex: none; position: relative; cursor: pointer }
+.iconbtn svg { width: 18px; height: 18px }
+.iconbtn.bad { color: var(--bad) }
+.iconbtn .spin { width: 16px; height: 16px; border-width: 2px }
+.listenbtn { border: 1px solid var(--line); background: var(--app); border-radius: 999px; width: 36px; height: 36px; font-size: 16px; display: grid; place-items: center; flex: none }
 
 /* add traveller form */
 .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 14px }
@@ -71,6 +83,7 @@ p { margin: 0 }
 .drop label { border: 2px dashed var(--line); border-radius: 14px; padding: 14px 6px; text-align: center; display: grid; gap: 2px; justify-items: center; background: var(--app); position: relative; cursor: pointer; min-width: 0 }
 .drop label.has { border-style: solid; border-color: var(--ok); background: var(--ok-soft) }
 .drop .docicon { width: 32px; height: 32px; border-radius: 50%; background: var(--brand-soft); color: var(--brand); display: grid; place-items: center; font-weight: 800; font-size: 18px }
+.drop .docicon svg { width: 18px; height: 18px }
 .drop .has .docicon { background: var(--ok); color: var(--app) }
 .drop small { font-size: 11.5px; color: var(--muted); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap }
 .drop input { position: absolute; inset: 0; opacity: 0; cursor: pointer }
@@ -104,7 +117,7 @@ p { margin: 0 }
 .gh > span { font-family: var(--m); font-size: 13px; color: var(--muted) }
 .bar { height: 10px; border-radius: 99px; background: var(--line); overflow: hidden }
 .bar i { display: block; height: 100%; background: var(--ok); border-radius: 99px; transition: width .3s }
-.item { display: grid; grid-template-columns: 28px 1fr; gap: 12px; align-items: start; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 13px; cursor: pointer }
+.item { display: grid; grid-template-columns: 28px 1fr auto; gap: 12px; align-items: start; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 13px; cursor: pointer }
 .item input { appearance: none; width: 26px; height: 26px; border: 2px solid var(--muted); border-radius: 7px; margin: 0; display: grid; place-items: center; cursor: pointer; background: var(--app) }
 .item input:checked { background: var(--ok); border-color: var(--ok) }
 .item input:checked::after { content: ""; width: 7px; height: 13px; border: solid var(--app); border-width: 0 3px 3px 0; transform: rotate(45deg) translate(-1px, -1px) }

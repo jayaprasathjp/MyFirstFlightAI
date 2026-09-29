@@ -126,13 +126,13 @@ function Flow({ setLang }) {
         {step === 'language' && <LanguageScreen onPick={pickLanguage} busy={busy} />}
         {step === 'travellers' && trip && (
           <TravellersScreen trip={trip} busy={busy} error={error} onAdd={addTraveller} onRemove={removeTraveller}
-            onReplaceDoc={replaceDocument} onNext={() => setStep('check')} />
+            onReplaceDoc={replaceDocument} onNext={() => setStep('check')} toast={toast} />
         )}
-        {step === 'check' && trip && <CheckScreen trip={trip} onBack={() => setStep('travellers')} onNext={() => setStep('contacts')} />}
-        {step === 'contacts' && trip && <ContactsScreen key={trip.id} trip={trip} busy={busy} onSave={saveContacts} />}
+        {step === 'check' && trip && <CheckScreen trip={trip} onBack={() => setStep('travellers')} onNext={() => setStep('contacts')} toast={toast} />}
+        {step === 'contacts' && trip && <ContactsScreen key={trip.id} trip={trip} busy={busy} onSave={saveContacts} toast={toast} />}
         {step === 'checklist' && trip && (
           <>
-            <ChecklistScreen checklist={trip.checklist} done={done} onToggle={toggle} />
+            <ChecklistScreen checklist={trip.checklist} done={done} onToggle={toggle} toast={toast} />
             <button className="btn pri full" onClick={() => setStep('journey')}>{t('go_airport')} →</button>
           </>
         )}

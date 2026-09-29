@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useI18n } from '../i18n'
+import Listen from '../components/Listen'
 
 const PHONE = /^\+?[0-9][0-9 ()-]{5,19}$/
 const EMPTY = { name: '', relation: '', phone: '', at_destination: false }
@@ -11,7 +12,7 @@ function initialRows(trip) {
   return host ? [{ ...EMPTY }, { ...host, at_destination: true, fromVisa: true }] : [{ ...EMPTY }]
 }
 
-export default function ContactsScreen({ trip, onSave, busy, error }) {
+export default function ContactsScreen({ trip, onSave, busy, error, toast }) {
   const { t } = useI18n()
   const [rows, setRows] = useState(() => initialRows(trip))
   const [err, setErr] = useState('')
@@ -26,7 +27,7 @@ export default function ContactsScreen({ trip, onSave, busy, error }) {
 
   return (
     <>
-      <h2>{t('contacts_title')}</h2>
+      <div className="gh"><h2>{t('contacts_title')}</h2><Listen text={`${t('contacts_title')}. ${t('contacts_hint')}`} toast={toast} /></div>
       <p className="muted">{t('contacts_hint')}</p>
       {rows.map((r, i) => (
         <div className="card form" key={i}>
