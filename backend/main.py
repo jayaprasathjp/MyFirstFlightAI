@@ -19,10 +19,14 @@ _creds = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
 if _creds and not Path(_creds).is_absolute():
     os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = str(BACKEND_DIR / _creds)
 
+import gcp  # noqa: E402
 import gemini  # noqa: E402
+from advice import get_advice  # noqa: E402
 from checklist import build_checklist, group_dates  # noqa: E402
 from db import StoreError, now_iso, store  # noqa: E402
-from schemas import ChatRequest, ChecklistToggle, CreateTripRequest, TranslateRequest, UpdateTripRequest  # noqa: E402
+from journey import build_journey, destination_contact  # noqa: E402
+from schemas import (AssistRequest, BoardingRequest, ChatRequest, ChecklistToggle, ContactsRequest,  # noqa: E402
+                     CreateTripRequest, TranslateRequest, TTSRequest, UpdateTripRequest)
 from validation import check_trip, overall_status, passport_name, trip_summary  # noqa: E402
 
 log = logging.getLogger("myfirstflight")
@@ -114,7 +118,12 @@ def localize(texts: dict[str, str], lang: str, protect=()) -> dict[str, str]:
 def protected_terms(trip):
     """Names and identifiers in a trip that must never be translated or transliterated."""
     s = trip.get("summary") or {}
-    terms = {s.get("pnr"), s.get("airline")}
+    terms = {s.get("pnr"), s.get("airline"), *(s.get("flights") or []), *(s.get("return_flights") or [])}
+    for c in trip.get("contacts") or []:
+        terms |= {c.get("name"), c.get("phone")}
+    host = destination_contact(trip["travellers"], trip.get("contacts"))
+    if host:
+        terms |= {host["name"], host["phone"]}
     for t in trip["travellers"]:
         docs = t.get("documents") or {}
         passport, ticket, visa = docs.get("passport") or {}, docs.get("ticket") or {}, docs.get("visa") or {}
@@ -145,20 +154,44 @@ def recompute(trip):
     trip["summary"] = trip_summary(first_ticket) if first_ticket else None
     trip["checks"] = check_trip(travellers)
     trip["status"] = overall_status(trip["checks"]) if travellers else "empty"
+    trip["advice"] = get_advice(trip["summary"], travellers) if travellers else None  # Gemini, cached per route
 
 
 def trip_view(trip):
     """Trip as returned to the frontend, with checks and checklist in the trip language."""
     lang = trip.get("language", "en")
     checks = trip.get("checks") or []
-    items = build_checklist(trip.get("summary"), trip["travellers"], checks) if trip["travellers"] else []
+    travellers, contacts, advice = trip["travellers"], trip.get("contacts") or [], trip.get("advice")
+    items = build_checklist(trip.get("summary"), travellers, checks, advice, contacts) if travellers else []
+    journey = build_journey(trip.get("summary"), travellers, advice, contacts, trip.get("boarding")) if travellers else []
 
     texts = {}
     for c in checks:
         texts[f"c.{c['id']}.t"], texts[f"c.{c['id']}.m"] = c["title"], c["message"]
     for i in items:
         texts[f"i.{i['id']}.t"], texts[f"i.{i['id']}.d"] = i["title"], i["detail"]
+    bp = trip.get("boarding_pass") or {}
+    for n, f in enumerate(bp.get("fields") or []):
+        texts[f"bp.{n}"] = f["meaning"]
+    for st in journey:
+        j = f"j.{st['id']}"
+        texts[f"{j}.t"], texts[f"{j}.s"] = st["title"], st["staff"]
+        texts.update({f"{j}.w{n}": w for n, w in enumerate(st["where"])})
+        texts.update({f"{j}.d{n}": d for n, d in enumerate(st["do"])})
+        for n, (q, a) in enumerate(st["qa"]):
+            texts[f"{j}.q{n}"], texts[f"{j}.a{n}"] = q, a
     tr = localize(texts, lang, protect=protected_terms(trip))
+
+    def journey_step(st):
+        j = f"j.{st['id']}"
+        return {
+            "id": st["id"], "title": tr[f"{j}.t"],
+            "where": [tr[f"{j}.w{n}"] for n in range(len(st["where"]))],
+            "do": [tr[f"{j}.d{n}"] for n in range(len(st["do"]))],
+            # Officers and staff speak English: keep the English line, show the translation under it.
+            "qa": [{"q_en": q, "a_en": a, "q": tr[f"{j}.q{n}"], "a": tr[f"{j}.a{n}"]} for n, (q, a) in enumerate(st["qa"])],
+            "staff_en": st["staff"], "staff": tr[f"{j}.s"],
+        }
 
     done = trip.get("checklist_done") or {}
     return {
@@ -173,6 +206,13 @@ def trip_view(trip):
             "items": [{**i, "title": tr[f"i.{i['id']}.t"], "detail": tr[f"i.{i['id']}.d"], "done": bool(done.get(i["id"]))}
                       for i in items],
         },
+        "contacts": contacts,
+        "destination_contact": destination_contact(travellers, []),  # from the visa, to prefill the contacts form
+        "boarding": trip.get("boarding") or {},
+        "journey": [journey_step(st) for st in journey],
+        "boarding_pass": {**bp, "fields": [{**f, "meaning": tr[f"bp.{n}"]} for n, f in enumerate(bp.get("fields") or [])]}
+                         if bp else None,
+        "assist_requests": trip.get("assist_requests") or [],
     }
 
 
@@ -230,7 +270,8 @@ def create_trip(req: CreateTripRequest):
     if req.language not in gemini.LANGUAGES:
         raise HTTPException(status_code=400, detail="Unsupported language.")
     trip = {"id": uuid.uuid4().hex, "language": req.language, "travellers": [], "summary": None,
-            "checks": [], "status": "empty", "checklist_done": {}, "created_at": now_iso()}
+            "checks": [], "status": "empty", "checklist_done": {}, "contacts": [], "boarding": {},
+            "advice": None, "created_at": now_iso()}
     save_trip(trip)
     return trip_view(trip)
 
@@ -283,7 +324,7 @@ async def add_traveller(
 
     ticket_data, passport_data, visa_data = await asyncio.gather(process("ticket"), process("passport"), process("visa"))
 
-    # Files are only read in memory; we store the extracted text fields.
+    # Original files are in Cloud Storage (set_file above); Firestore keeps only the extracted text fields.
     trip = load_trip(trip_id)  # reload in case another traveller was added meanwhile
     trip["travellers"].append({
         "id": traveller_id,
@@ -292,9 +333,9 @@ async def add_traveller(
         "documents": {"ticket": ticket_data, "passport": passport_data, "visa": visa_data},
         "added_at": now_iso(),
     })
-    recompute(trip)
+    await asyncio.to_thread(recompute, trip)  # may call Gemini for trip advice
     save_trip(trip)
-    return trip_view(trip)
+    return await asyncio.to_thread(trip_view, trip)
 
 
 @app.delete("/api/trips/{trip_id}/travellers/{traveller_id}")
@@ -334,6 +375,148 @@ def set_checklist(trip_id: str, req: ChecklistToggle):
     trip["checklist_done"] = {k: True for k, v in req.done.items() if v}
     save_trip(trip)
     return {"checklist_done": trip["checklist_done"]}
+
+
+@app.put("/api/trips/{trip_id}/contacts")
+def set_contacts(trip_id: str, req: ContactsRequest):
+    trip = load_trip(trip_id)
+    trip["contacts"] = [c.model_dump() for c in req.contacts]
+    save_trip(trip)
+    return trip_view(trip)
+
+
+@app.put("/api/trips/{trip_id}/boarding")
+def set_boarding(trip_id: str, req: BoardingRequest):
+    """Gate and boarding time from the boarding pass (known only at the airport)."""
+    trip = load_trip(trip_id)
+    trip["boarding"] = {"gate": req.gate.strip().upper(), "boarding_time": req.boarding_time}
+    save_trip(trip)
+    return trip_view(trip)
+
+
+# ---------- step 7: always-on helpers ----------
+
+AUDIO_MIME = {"audio/webm", "audio/ogg", "audio/mp4", "audio/mpeg", "audio/mp3", "audio/wav", "audio/x-wav", "audio/aac"}
+
+
+async def read_audio(audio: UploadFile | None):
+    if audio is None:
+        return None, None
+    mime = (audio.content_type or "").split(";")[0].strip()
+    if mime not in AUDIO_MIME:
+        raise HTTPException(status_code=415, detail="Unsupported audio format.")
+    content = await audio.read(MAX_UPLOAD + 1)
+    if not content or len(content) > MAX_UPLOAD:
+        raise HTTPException(status_code=413, detail="Recording is empty or too long.")
+    return content, mime
+
+
+def trip_facts(trip):
+    """Compact English facts about the trip for the concierge to answer from."""
+    travellers, contacts, advice = trip["travellers"], trip.get("contacts") or [], trip.get("advice")
+    done = trip.get("checklist_done") or {}
+    return {
+        "today": now_iso()[:10],
+        "trip": trip.get("summary"),
+        "travellers": [{"name": t["name"], "assistance": t.get("assistance")} for t in travellers],
+        "document_checks": [{"status": c["status"], "result": c["title"], "detail": c["message"]}
+                            for c in trip.get("checks") or []],
+        "checklist": [{"task": i["title"], "detail": i["detail"], "done": bool(done.get(i["id"]))}
+                      for i in build_checklist(trip.get("summary"), travellers, trip.get("checks") or [], advice, contacts)],
+        "airport_steps": [{"step": st["title"], "do": st["do"]}
+                          for st in build_journey(trip.get("summary"), travellers, advice, contacts, trip.get("boarding"))],
+        "boarding_pass": trip.get("boarding") or {},
+        "family_contacts": [{"name": c["name"], "relation": c.get("relation")} for c in contacts],
+        "destination_tips": {k: (advice or {}).get(k) for k in ("arrival_tips", "customs_tips", "transit_tips")},
+    }
+
+
+def gemini_call(fn, *args, **kwargs):
+    try:
+        return fn(*args, **kwargs)
+    except ValueError as exc:
+        raise HTTPException(status_code=503, detail=str(exc))
+    except gemini.UnclearAudio as exc:
+        raise HTTPException(status_code=422, detail=str(exc))
+    except Exception as exc:
+        log.exception("Gemini helper failed")
+        raise HTTPException(status_code=502, detail=f"Could not get an answer right now. Please try again. ({exc})")
+
+
+@app.post("/api/trips/{trip_id}/ask")
+async def ask(trip_id: str, text: str = Form(""), audio: UploadFile | None = File(None)):
+    """Voice concierge: question by voice or text, answered in the trip language from the trip's own data."""
+    trip = load_trip(trip_id)
+    content, mime = await read_audio(audio)
+    if not content and not text.strip():
+        raise HTTPException(status_code=400, detail="Ask a question by voice or text.")
+    return await asyncio.to_thread(gemini_call, gemini.ask, trip_facts(trip), trip.get("language", "en"),
+                                   text.strip()[:500], content, mime)
+
+
+@app.post("/api/trips/{trip_id}/to-english")
+async def to_english(trip_id: str, text: str = Form(""), audio: UploadFile | None = File(None)):
+    """Show to staff: anything the traveller says, as one polite English sentence."""
+    trip = load_trip(trip_id)
+    content, mime = await read_audio(audio)
+    if not content and not text.strip():
+        raise HTTPException(status_code=400, detail="Say or type what you want to tell staff.")
+    s = trip.get("summary") or {}
+    context = f"At the airport, flying {' + '.join(s.get('flights') or [])} to {s.get('destination_city') or ''}."
+    return await asyncio.to_thread(gemini_call, gemini.to_english, trip.get("language", "en"),
+                                   text.strip()[:500], content, mime, context)
+
+
+@app.post("/api/trips/{trip_id}/boarding-pass")
+async def boarding_pass(trip_id: str, file: UploadFile = File(...)):
+    """Boarding pass explainer: read the photo, explain each field, fill gate + boarding time."""
+    content, mime = await read_upload(file, "Boarding pass")
+    data = await asyncio.to_thread(gemini_call, gemini.read_boarding_pass, content, mime)
+    trip = load_trip(trip_id)
+    trip["boarding_pass"] = data
+    boarding = dict(trip.get("boarding") or {})
+    if data.get("gate"):
+        boarding["gate"] = data["gate"].strip().upper()[:8]
+    if data.get("boarding_time"):
+        boarding["boarding_time"] = data["boarding_time"][:5]
+    trip["boarding"] = boarding
+    save_trip(trip)
+    return await asyncio.to_thread(trip_view, trip)
+
+
+@app.post("/api/trips/{trip_id}/assist")
+def request_assist(trip_id: str, req: AssistRequest):
+    """Assistance request / I'm Lost alert: stored for the assist desk and published to Pub/Sub if configured."""
+    trip = load_trip(trip_id)
+    person = next((t for t in trip["travellers"] if t["id"] == req.traveller_id), None)
+    if not person:
+        raise HTTPException(status_code=404, detail="Traveller not found.")
+    s, boarding = trip.get("summary") or {}, trip.get("boarding") or {}
+    request = {
+        "id": "AS-" + uuid.uuid4().hex[:6].upper(), "trip_id": trip_id, "kind": req.kind, "location": req.location,
+        "note": req.note.strip(), "traveller": person["name"], "assistance_need": person.get("assistance"),
+        "flight": " + ".join(s.get("flights") or []), "airport": s.get("origin_code"), "gate": boarding.get("gate"),
+        "boarding_time": boarding.get("boarding_time"),
+        "family_phone": ((trip.get("contacts") or [{}])[0]).get("phone"), "status": "open", "created_at": now_iso(),
+    }
+    store().set("assist_requests", request["id"], request)
+    request["sent_to_desk"] = gcp.publish_assist(request)
+    trip.setdefault("assist_requests", []).append(
+        {k: request[k] for k in ("id", "kind", "location", "traveller", "status", "created_at", "sent_to_desk")})
+    save_trip(trip)
+    return {"request": request, "trip": trip_view(trip)}
+
+
+@app.post("/api/tts")
+def tts(req: TTSRequest):
+    """Spoken answer (MP3, base64) via Cloud Text-to-Speech; 503 lets the app fall back to the phone's voice."""
+    try:
+        return {"audio": gcp.synthesize(req.text, req.language), "mime": "audio/mpeg"}
+    except gcp.ServiceUnavailable as exc:
+        raise HTTPException(status_code=503, detail=str(exc))
+    except Exception:
+        log.exception("TTS error")
+        raise HTTPException(status_code=503, detail="Text-to-Speech is not available right now.")
 
 
 @app.post("/api/chat")
