@@ -26,6 +26,7 @@ p { margin: 0 }
 .muted { color: var(--muted) }
 .err { color: var(--bad); background: var(--bad-soft); border-radius: 12px; padding: 10px 12px; font-weight: 600; font-size: 15px }
 .foot { padding: 0 18px 20px; text-align: center }
+.foot.dock-pad { padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px)) } /* clears the fixed Help/I'm lost dock */
 .link { border: 0; background: none; color: var(--brand); font-weight: 700; padding: 6px; text-decoration: underline }
 
 /* buttons */

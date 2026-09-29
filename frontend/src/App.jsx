@@ -138,7 +138,7 @@ function Flow({ setLang }) {
         {step === 'journey' && trip && <JourneyScreen trip={trip} busy={busy} onSaveBoarding={saveBoarding} toast={toast} />}
         {step !== 'language' && !trip && <p className="muted">{t('loading')}</p>}
       </main>
-      {trip && <footer className="foot"><button className="link" onClick={startOver}>{t('start_over')}</button></footer>}
+      {trip && <footer className={'foot' + (hasTravellers ? ' dock-pad' : '')}><button className="link" onClick={startOver}>{t('start_over')}</button></footer>}
       {hasTravellers && (
         <div className="dock">
           <button className="helpbtn" onClick={() => setHelpOpen(true)}><span aria-hidden="true">?</span>{t('help_btn')}</button>
