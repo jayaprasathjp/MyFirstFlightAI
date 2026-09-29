@@ -1,0 +1,82 @@
+import { useState } from 'react'
+import { store } from '../api'
+import { useI18n } from '../i18n'
+
+function BoardingForm({ boarding, onSave, busy }) {
+  const { t } = useI18n()
+  const [gate, setGate] = useState(boarding.gate || '')
+  const [time, setTime] = useState(boarding.boarding_time || '')
+  const saved = gate === (boarding.gate || '') && time === (boarding.boarding_time || '') && (gate || time)
+  return (
+    <div className="card form boardingform">
+      <h3>{t('boarding_title')}</h3>
+      <div className="row2 even">
+        <label>{t('gate')}<input type="text" value={gate} maxLength={8} placeholder="B7" onChange={(e) => setGate(e.target.value)} /></label>
+        <label>{t('boarding_time')}<input type="time" value={time} onChange={(e) => setTime(e.target.value)} /></label>
+      </div>
+      <button className="btn sec" disabled={busy || saved} onClick={() => onSave(gate.trim(), time)}>
+        {saved ? '✓ ' + t('saved') : t('save')}
+      </button>
+    </div>
+  )
+}
+
+export default function JourneyScreen({ trip, onSaveBoarding, busy, toast }) {
+  const { t } = useI18n()
+  const steps = trip.journey
+  const key = `mff-jstep-${trip.id}`
+  const [n, setN] = useState(() => Math.min(store.get(key, 0), steps.length - 1))
+  const [big, setBig] = useState(false)
+  const go = (i) => { setN(i); store.set(key, i); window.scrollTo({ top: 0 }) }
+  const s = steps[n]
+  if (!s) return null
+  const last = n === steps.length - 1
+
+  return (
+    <>
+      <h2>{t('journey_title')}</h2>
+      <div className="dots" role="tablist">
+        {steps.map((x, i) => (
+          <button key={x.id} role="tab" aria-selected={i === n} aria-label={t('step_of', { n: i + 1, t: steps.length }) + ': ' + x.title}
+            className={i === n ? 'on' : i < n ? 'past' : ''} onClick={() => go(i)} />
+        ))}
+      </div>
+      <article className="stepcard">
+        <div className="stepno">{t('step_of', { n: n + 1, t: steps.length })}</div>
+        <h2>{s.title}</h2>
+        {s.where.length > 0 && <div className="where">{s.where.map((w) => <span key={w}>{w}</span>)}</div>}
+        <ul className="do">{s.do.map((d) => <li key={d}>{d}</li>)}</ul>
+        {s.qa.length > 0 && (
+          <div className="qa">
+            <h3>{t('they_ask')}</h3>
+            {s.qa.map((x) => (
+              <div key={x.q_en}>
+                <q lang="en">{x.q_en}</q>{x.q !== x.q_en && <span className="loc">{x.q}</span>}
+                <span className="ans">{t('you_say')}: <b lang="en">{x.a_en}</b></span>
+                {x.a !== x.a_en && <span className="loc">{x.a}</span>}
+              </div>
+            ))}
+          </div>
+        )}
+        <button className="say" onClick={() => setBig(true)} aria-label={t('tap_big')}>
+          <small>{t('show_staff')}</small>
+          <b lang="en">{s.staff_en}</b>
+          {s.staff !== s.staff_en && <span className="loc">{s.staff}</span>}
+        </button>
+      </article>
+      {(s.id === 'checkin' || s.id === 'gate') && <BoardingForm key={s.id} boarding={trip.boarding} onSave={onSaveBoarding} busy={busy} />}
+      <div className="nav2">
+        <button className="btn sec" disabled={n === 0} onClick={() => go(n - 1)}>{t('back')}</button>
+        <button className="btn pri" onClick={() => (last ? toast(t('arrived')) : go(n + 1))}>
+          {last ? t('done_btn') + ' ✓' : t('next_step') + ' →'}
+        </button>
+      </div>
+      {big && (
+        <div className="bigtext" role="dialog" aria-label={t('show_staff')} onClick={() => setBig(false)}>
+          <p lang="en">{s.staff_en}</p>
+          <button className="btn sec">{t('close')}</button>
+        </div>
+      )}
+    </>
+  )
+}

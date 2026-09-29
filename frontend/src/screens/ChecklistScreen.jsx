@@ -28,7 +28,7 @@ export default function ChecklistScreen({ checklist, done, onToggle }) {
             {list.map((i) => (
               <label key={i.id} className={['item', done[i.id] && 'done', i.key && !done[i.id] && 'key'].filter(Boolean).join(' ')}>
                 <input type="checkbox" checked={!!done[i.id]} onChange={() => onToggle(i.id)} />
-                <div><b>{i.title}</b><small>{i.detail}</small></div>
+                <div><b>{i.title}</b><small>{i.detail}</small>{i.ai && <span className="aibadge">✦ {t('ai_badge')}</span>}</div>
               </label>
             ))}
           </section>

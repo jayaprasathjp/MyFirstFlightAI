@@ -29,8 +29,29 @@ GAUTAM = {
                  "date_of_birth": "1996-03-12", "expiry_date": "2032-01-09"},
     "visa": {"full_name": "GAUTAM GURU", "passport_number": "T0000001", "visa_type": "TOURIST / VISIT",
              "country": "SINGAPORE", "entries": "SINGLE", "valid_from": "2026-10-01", "valid_until": "2026-12-31",
-             "max_stay_days": 30},
+             "max_stay_days": 30, "purpose": "VISITING FAMILY", "local_contact_name": "ARJUN GURU",
+             "local_contact_relation": "SON", "local_contact_phone": "+65 8123 4567"},
 }
+
+# What Gemini trip advice returns for MAA -> SIN (shape of schemas.TripAdvice)
+SG_ADVICE = {
+    "currency_code": "SGD",
+    "items": [
+        {"id": "sg_arrival_card", "group": "t3", "title": "Submit SG Arrival Card online",
+         "detail": "Free on the ICA official website, within 3 days before arrival.", "key": True},
+        {"id": "chewing gum!", "group": "t1", "title": "Do not pack chewing gum", "detail": "It is not allowed.", "key": False},
+        {"id": "bad group", "group": "someday", "title": "Plug type G adapter", "detail": "Singapore uses type G.", "key": False},
+    ],
+    "emigration_tips": ["Keep your boarding pass ready."],
+    "transit_tips": [],
+    "arrival_tips": ["Your SG Arrival Card is linked to your passport."],
+    "customs_tips": ["Declare cigarettes; there is no duty-free allowance."],
+}
+
+
+@pytest.fixture
+def sg_advice():
+    return copy.deepcopy(SG_ADVICE)
 
 
 @pytest.fixture

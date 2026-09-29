@@ -83,7 +83,7 @@ def build_itinerary(ticket):
 
     return {
         "origin_code": first.get("origin_code"), "origin_city": first.get("origin_city"),
-        "origin_terminal": first.get("origin_terminal"),
+        "origin_terminal": first.get("origin_terminal"), "origin_country": first.get("origin_country"),
         "destination_code": last.get("destination_code"), "destination_city": last.get("destination_city"),
         "destination_country": last.get("destination_country"),
         "flights": [s.get("flight_number") for s in outbound],
@@ -103,7 +103,7 @@ def trip_summary(ticket):
         **it,
         "pnr": ticket.get("pnr"), "airline": ticket.get("airline"),
         "cabin_bag_kg": ticket.get("cabin_bag_kg"), "checked_bag_kg": ticket.get("checked_bag_kg"),
-        "checkin_closes": ticket.get("checkin_closes"),
+        "checkin_closes": ticket.get("checkin_closes"), "gate_closes": ticket.get("gate_closes"),
     }
 
 
