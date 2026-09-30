@@ -103,9 +103,17 @@ export default function TravellersScreen({ trip, onAdd, onRemove, onNext, busy, 
                 <div className="docs-links" style={{marginTop: '4px', display: 'flex', gap: '8px', fontSize: '12px'}}>
                   {DOCS.map((d) => (
                     p.documents[d] ? (
-                      <button key={d} className="link" type="button" style={{padding: 0, color: '#1a73e8', textDecoration: 'underline'}} onClick={() => {
-                        setViewingDoc({ url: api.getFileUrl(trip.id, p.id, d), name: `${p.name} - ${t(d)}` })
+                      <button key={d} className="link" type="button" style={{padding: 0, color: '#1a73e8', textDecoration: 'underline'}} onClick={async () => {
+                        setViewingDoc({ url: null, name: `${p.name} - ${t(d)}` })
                         setDocLoading(true)
+                        try {
+                          const url = await api.getFileUrl(trip.id, p.id, d)
+                          setViewingDoc({ url, name: `${p.name} - ${t(d)}` })
+                        } catch (err) {
+                          alert('Failed to load document: ' + err.message)
+                          setViewingDoc(null)
+                          setDocLoading(false)
+                        }
                       }}>
                         {t('view')} {t(d)}
                       </button>
@@ -127,11 +135,17 @@ export default function TravellersScreen({ trip, onAdd, onRemove, onNext, busy, 
         <button className="btn pri full" onClick={onNext}>{t('continue')} →</button>
       )}
       {viewingDoc && (
-        <div className="modal-overlay" onClick={() => setViewingDoc(null)}>
+        <div className="modal-overlay" onClick={() => {
+          if (viewingDoc?.url) URL.revokeObjectURL(viewingDoc.url)
+          setViewingDoc(null)
+        }}>
           <div className="modal-content" onClick={e => e.stopPropagation()}>
             <div className="modal-header">
               <b>{viewingDoc.name}</b>
-              <button className="modal-close" onClick={() => setViewingDoc(null)}>&times;</button>
+              <button className="modal-close" onClick={() => {
+                if (viewingDoc?.url) URL.revokeObjectURL(viewingDoc.url)
+                setViewingDoc(null)
+              }}>&times;</button>
             </div>
             <div className="modal-body" style={{ position: 'relative' }}>
               {docLoading && (
@@ -139,12 +153,14 @@ export default function TravellersScreen({ trip, onAdd, onRemove, onNext, busy, 
                   <span className="spin" aria-hidden="true" style={{ width: 40, height: 40, borderWidth: 4 }}></span>
                 </div>
               )}
-              <iframe 
-                src={viewingDoc.url} 
-                title={viewingDoc.name} 
-                onLoad={() => setDocLoading(false)}
-                style={{ opacity: docLoading ? 0 : 1, transition: 'opacity 0.2s' }}
-              />
+              {viewingDoc.url && (
+                <iframe 
+                  src={viewingDoc.url} 
+                  title={viewingDoc.name} 
+                  onLoad={() => setDocLoading(false)}
+                  style={{ opacity: docLoading ? 0 : 1, transition: 'opacity 0.2s' }}
+                />
+              )}
             </div>
           </div>
         </div>
