@@ -1,4 +1,5 @@
 import { useI18n } from '../i18n'
+import Listen from '../components/Listen'
 
 const MARK = { pass: '✓', info: 'i', warn: '!', fail: '✕' }
 
@@ -11,16 +12,19 @@ function Check({ c }) {
   )
 }
 
-export default function CheckScreen({ trip, onBack, onNext }) {
+export default function CheckScreen({ trip, onBack, onNext, toast }) {
   const { t } = useI18n()
   const ready = trip.status === 'ready'
   const groups = trip.travellers.map((p) => ({ key: p.id, title: p.name, checks: trip.checks.filter((c) => c.traveller_id === p.id) }))
   const tripChecks = trip.checks.filter((c) => !c.traveller_id)
   if (tripChecks.length) groups.push({ key: 'trip', title: t('trip_notes'), checks: tripChecks })
 
+  const readAll = () => [ready ? t('ready_title') : t('fix_title'), ready ? t('ready_body') : t('fix_body'),
+    ...groups.flatMap((g) => [g.title, ...g.checks.map((c) => `${c.title}. ${c.message}`)])].join('. ')
+
   return (
     <>
-      <h2>{t('check_title')}</h2>
+      <div className="gh"><h2>{t('check_title')}</h2><Listen text={readAll} toast={toast} /></div>
       <div className={'verdict ' + (ready ? 'ok' : 'warn')} role="status">
         <strong>{ready ? t('ready_title') + ' ✓' : t('fix_title')}</strong>
         <span>{ready ? t('ready_body') : t('fix_body')}</span>
