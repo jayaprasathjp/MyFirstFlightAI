@@ -395,6 +395,39 @@ def remove_traveller(trip_id: str, traveller_id: str, user_id: str = Depends(get
     return trip_view(trip)
 
 
+@app.put("/api/trips/{trip_id}/travellers/{traveller_id}/documents/{doc_type}")
+async def replace_document(trip_id: str, traveller_id: str, doc_type: str, file: UploadFile = File(...),
+                            user_id: str = Depends(get_current_user)):
+    if doc_type not in ("ticket", "passport", "visa"):
+        raise HTTPException(status_code=400, detail="Invalid document type.")
+    trip = load_trip(trip_id, user_id)
+    if not any(t["id"] == traveller_id for t in trip["travellers"]):
+        raise HTTPException(status_code=404, detail="Traveller not found.")
+
+    content, mime = await read_upload(file, doc_type.title())
+    try:
+        data = await asyncio.to_thread(gemini.extract_document, content, mime, doc_type)
+    except ValueError as exc:  # missing Gemini configuration
+        raise HTTPException(status_code=503, detail=str(exc))
+    except Exception as exc:
+        log.exception("extraction failed for %s", doc_type)
+        raise HTTPException(status_code=502, detail=f"Could not read the {doc_type}. Try a clearer copy. ({exc})")
+
+    path = f"trips/{trip_id}/travellers/{traveller_id}/{doc_type}"
+    await asyncio.to_thread(store().set_file, path, content, mime)
+
+    trip = load_trip(trip_id)  # reload in case of a concurrent edit
+    traveller = next((t for t in trip["travellers"] if t["id"] == traveller_id), None)
+    if not traveller:
+        raise HTTPException(status_code=404, detail="Traveller not found.")
+    traveller["documents"][doc_type] = data
+    if doc_type == "passport":
+        traveller["name"] = passport_name(data).title() or traveller["name"]
+    await asyncio.to_thread(recompute, trip)  # may call Gemini for trip advice
+    save_trip(trip)
+    return await asyncio.to_thread(trip_view, trip)
+
+
 @app.get("/api/trips/{trip_id}/travellers/{traveller_id}/documents/{doc_type}")
 def get_document(trip_id: str, traveller_id: str, doc_type: str, user_id: str = Depends(get_current_user)):
     trip = load_trip(trip_id, user_id)
