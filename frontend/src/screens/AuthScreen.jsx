@@ -14,6 +14,14 @@ export default function AuthScreen({ onLogged }) {
   const { requestPhoneOtp, loginWithGoogle } = useAuth();
   const { t } = useI18n();
 
+  useEffect(() => {
+    return () => {
+      if (window.recaptchaVerifier) {
+        window.recaptchaVerifier.clear();
+        window.recaptchaVerifier = null;
+      }
+    };
+  }, []);
 
   const handleError = (err) => {
     setError(err.message || t('err_auth_default'));
