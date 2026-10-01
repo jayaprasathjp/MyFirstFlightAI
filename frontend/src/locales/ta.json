@@ -58,7 +58,7 @@
   "contact_name": "பெயர்",
   "contact_relation": "உறவு (உதாரணமாக: மகன்)",
   "contact_phone": "நாடு குறியீட்டுடன் தொலைபேசி",
-  "at_destination": "சேருமிடத்தில் வசிக்கிறார்",
+  "at_destination": "சேர வேண்டிய இடத்தில்",
   "from_visa": "உங்கள் விசா-வில் இருந்து",
   "add_contact": "மற்றொரு தொடர்பு எண்ணைச் சேர்க்கவும்",
   "save_continue": "சேமித்து தொடரவும்",
@@ -134,6 +134,8 @@
   "optional": "விருப்பத்தேர்வு",
   "official_site": "அதிகாரப்பூர்வ வலைத்தளத்தைத் திறக்கவும்",
   "or_say": "நீங்கள் கொடுக்கக்கூடிய பிற பதில்கள்",
+  "contact_where": "இந்த நபர் எங்கே வசிக்கிறார்?",
+  "at_home": "வீட்டில் (நீங்கள் புறப்படும் இடம்)",
   "__source": {
     "step_language": "Language",
     "step_travellers": "Travellers",
@@ -194,7 +196,7 @@
     "contact_name": "Name",
     "contact_relation": "Relation (for example: son)",
     "contact_phone": "Phone with country code",
-    "at_destination": "Lives at the destination",
+    "at_destination": "At the destination",
     "from_visa": "From your visa",
     "add_contact": "Add another contact",
     "save_continue": "Save and continue",
@@ -269,6 +271,8 @@
     "no_voice": "This phone cannot read aloud. Show the card instead.",
     "optional": "Optional",
     "official_site": "Open the official website",
-    "or_say": "Other answers you can give"
+    "or_say": "Other answers you can give",
+    "contact_where": "Where does this person live?",
+    "at_home": "At home (where you start)"
   }
 }

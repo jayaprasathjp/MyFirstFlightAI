@@ -58,7 +58,7 @@
   "contact_name": "નામ",
   "contact_relation": "સંબંધ (ઉદાહરણ તરીકે: દીકરો)",
   "contact_phone": "દેશ કોડ સાથેનો ફોન નંબર",
-  "at_destination": "ગંતવ્ય સ્થાન પર રહે છે",
+  "at_destination": "જ્યાં તમે પહોંચવા માંગો છો",
   "from_visa": "તમારા વિઝામાંથી",
   "add_contact": "બીજો સંપર્ક ઉમેરો",
   "save_continue": "સાચવો અને આગળ વધો",
@@ -134,6 +134,8 @@
   "optional": "વૈકલ્પિક",
   "official_site": "અધિકૃત વેબસાઇટ ખોલો",
   "or_say": "તમે આપી શકો તેવા અન્ય જવાબો",
+  "contact_where": "આ વ્યક્તિ ક્યાં રહે છે?",
+  "at_home": "ઘરે (જ્યાંથી તમે નીકળ્યા છો)",
   "__source": {
     "step_language": "Language",
     "step_travellers": "Travellers",
@@ -194,7 +196,7 @@
     "contact_name": "Name",
     "contact_relation": "Relation (for example: son)",
     "contact_phone": "Phone with country code",
-    "at_destination": "Lives at the destination",
+    "at_destination": "At the destination",
     "from_visa": "From your visa",
     "add_contact": "Add another contact",
     "save_continue": "Save and continue",
@@ -269,6 +271,8 @@
     "no_voice": "This phone cannot read aloud. Show the card instead.",
     "optional": "Optional",
     "official_site": "Open the official website",
-    "or_say": "Other answers you can give"
+    "or_say": "Other answers you can give",
+    "contact_where": "Where does this person live?",
+    "at_home": "At home (where you start)"
   }
 }

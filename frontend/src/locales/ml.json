@@ -58,7 +58,7 @@
   "contact_name": "പേര്",
   "contact_relation": "ബന്ധം (ഉദാഹരണത്തിന്: മകൻ)",
   "contact_phone": "രാജ്യ കോഡ് സഹിതമുള്ള ഫോൺ നമ്പർ",
-  "at_destination": "ലക്ഷ്യസ്ഥാനത്ത് താമസിക്കുന്നു",
+  "at_destination": "എത്തിച്ചേരേണ്ട സ്ഥലത്ത്",
   "from_visa": "നിങ്ങളുടെ വിസയിൽ നിന്ന്",
   "add_contact": "മറ്റൊരു കോൺടാക്റ്റ് ചേർക്കുക",
   "save_continue": "സേവ് ചെയ്ത് തുടരുക",
@@ -134,6 +134,8 @@
   "optional": "നിർബന്ധമില്ലാത്തത്",
   "official_site": "ഔദ്യോഗിക വെബ്സൈറ്റ് തുറക്കുക",
   "or_say": "നിങ്ങൾക്ക് നൽകാൻ കഴിയുന്ന മറ്റ് ഉത്തരങ്ങൾ",
+  "contact_where": "ഈ വ്യക്തി എവിടെയാണ് താമസിക്കുന്നത്?",
+  "at_home": "വീട്ടിൽ (യാത്ര തുടങ്ങുന്നിടത്ത്)",
   "__source": {
     "step_language": "Language",
     "step_travellers": "Travellers",
@@ -194,7 +196,7 @@
     "contact_name": "Name",
     "contact_relation": "Relation (for example: son)",
     "contact_phone": "Phone with country code",
-    "at_destination": "Lives at the destination",
+    "at_destination": "At the destination",
     "from_visa": "From your visa",
     "add_contact": "Add another contact",
     "save_continue": "Save and continue",
@@ -269,6 +271,8 @@
     "no_voice": "This phone cannot read aloud. Show the card instead.",
     "optional": "Optional",
     "official_site": "Open the official website",
-    "or_say": "Other answers you can give"
+    "or_say": "Other answers you can give",
+    "contact_where": "Where does this person live?",
+    "at_home": "At home (where you start)"
   }
 }

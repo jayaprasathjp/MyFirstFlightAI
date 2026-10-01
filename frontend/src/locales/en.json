@@ -58,7 +58,7 @@
   "contact_name": "Name",
   "contact_relation": "Relation (for example: son)",
   "contact_phone": "Phone with country code",
-  "at_destination": "Lives at the destination",
+  "at_destination": "At the destination",
   "from_visa": "From your visa",
   "add_contact": "Add another contact",
   "save_continue": "Save and continue",
@@ -133,5 +133,7 @@
   "no_voice": "This phone cannot read aloud. Show the card instead.",
   "optional": "Optional",
   "official_site": "Open the official website",
-  "or_say": "Other answers you can give"
+  "or_say": "Other answers you can give",
+  "contact_where": "Where does this person live?",
+  "at_home": "At home (where you start)"
 }
