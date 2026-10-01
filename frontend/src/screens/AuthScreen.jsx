@@ -13,6 +13,8 @@ export default function AuthScreen({ onLogged }) {
   const [busy, setBusy] = useState(false);
   const { requestPhoneOtp, loginWithGoogle } = useAuth();
   const { t } = useI18n();
+  // Generate a unique ID for this mount so Firebase doesn't trip over old detached DOM nodes
+  const [recaptchaId] = useState(() => 'recaptcha-' + Math.random().toString(36).substring(2, 9));
 
   useEffect(() => {
     return () => {
@@ -34,7 +36,7 @@ export default function AuthScreen({ onLogged }) {
     setMessage('');
     try {
       if (!window.recaptchaVerifier) {
-        window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+        window.recaptchaVerifier = new RecaptchaVerifier(auth, recaptchaId, {
           size: 'invisible'
         });
         await window.recaptchaVerifier.render();
@@ -91,11 +93,11 @@ export default function AuthScreen({ onLogged }) {
 
   return (
     <div className="screen" style={{ alignContent: 'center' }}>
-      <div id="recaptcha-container"></div>
+      <div id={recaptchaId}></div>
       <div className="card" style={{ padding: '24px', display: 'grid', gap: '20px' }}>
-        <h2 style={{ textAlign: 'center', marginBottom: '8px' }}>Sign In / Sign Up</h2>
+        <h2 style={{ textAlign: 'center', marginBottom: '8px' }}>{t('auth_sign_in_up')}</h2>
         <p style={{ textAlign: 'center', fontSize: '14px', color: 'var(--muted)', marginTop: '-12px' }}>
-          Enter your phone number. If you don't have an account, one will be created for you automatically.
+          {t('auth_phone_desc')}
         </p>
         
         {error && <div className="err" role="alert">{error}</div>}
