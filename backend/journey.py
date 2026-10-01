@@ -59,7 +59,7 @@ def build_journey(summary, travellers, advice=None, contacts=None, boarding=None
          "Take your boarding pass. Add the gate and boarding time below, so they show on your I'm Lost card."],
         f"Where is the check-in counter for {flight}?"))
 
-    emig_qa = [["Where are you going?", f"To {dest_city}" + (f", for {purpose}." if purpose else ".")]]
+    emig_qa = [["Where are you going?", f"To {dest_city}" + (f", for {purpose}." if purpose else " (e.g., Tourist / Personal visit / Meeting a friend / Business).")]]
     if days:
         emig_qa.append(["How long will you stay?", f"{days} days. Here is my return ticket."])
     steps.append(_step("emigration", "Emigration (passport control)", [origin_country, "Emigration"],
@@ -97,7 +97,7 @@ def build_journey(summary, travellers, advice=None, contacts=None, boarding=None
              *adv.get("transit_tips", [])],
             f"I have a connecting flight, {nxt}. Where is the transfer area?"))
 
-    arr_qa = [["What is the purpose of your visit?", purpose.capitalize() + "." if purpose else "A short visit."]]
+    arr_qa = [["What is the purpose of your visit?", purpose.capitalize() + "." if purpose else "Tourist / Personal visit / Meeting a friend / Business."]]
     if days:
         arr_qa.append(["How long will you stay?", f"{days} days."])
     if host:
