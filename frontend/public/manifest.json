@@ -1,0 +1,16 @@
+{
+  "name": "MyFirstFlight",
+  "short_name": "MyFirstFlight",
+  "description": "A first-time traveller's companion: document checks, checklists, and airport help.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#E9EEF3",
+  "theme_color": "#0B5CAD",
+  "orientation": "portrait",
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
