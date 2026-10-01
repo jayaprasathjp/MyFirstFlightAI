@@ -209,7 +209,7 @@ function Flow({ setLang }) {
             {step === 'journey' && trip && <JourneyScreen trip={trip} busy={busy} onSaveBoarding={saveBoarding} toast={toast} />}
             {step !== 'language' && !trip && <p className="muted">{t('loading')}</p>}
           </main>
-          {trip && <footer className="foot">
+          {trip && <footer className={'foot' + (hasTravellers ? ' dock-pad' : '')}>
             <button className="link" onClick={() => setViewMode('trips')}>{t('back_to_trips')}</button>
             <button className="link" onClick={startOver} style={{marginLeft: '20px'}}>{t('start_over')}</button>
           </footer>}

@@ -438,9 +438,9 @@ def get_document(trip_id: str, traveller_id: str, doc_type: str, user_id: str = 
     if not file_data:
         raise HTTPException(status_code=404, detail="Document not found.")
     return Response(
-        content=file_data["content"], 
+        content=file_data["content"],
         media_type=file_data["mime_type"],
-        headers={"Cache-Control": "public, max-age=86400"}
+        headers={"Cache-Control": "private, max-age=86400"}
     )
 
 
