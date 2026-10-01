@@ -95,9 +95,9 @@ export default function AuthScreen({ onLogged }) {
     <div className="screen" style={{ alignContent: 'center' }}>
       <div id={recaptchaId}></div>
       <div className="card" style={{ padding: '24px', display: 'grid', gap: '20px' }}>
-        <h2 style={{ textAlign: 'center', marginBottom: '8px' }}>Sign In / Sign Up</h2>
+        <h2 style={{ textAlign: 'center', marginBottom: '8px' }}>{t('auth_sign_in_up')}</h2>
         <p style={{ textAlign: 'center', fontSize: '14px', color: 'var(--muted)', marginTop: '-12px' }}>
-          Enter your phone number. If you don't have an account, one will be created for you automatically.
+          {t('auth_phone_desc')}
         </p>
         
         {error && <div className="err" role="alert">{error}</div>}

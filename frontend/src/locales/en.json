@@ -173,5 +173,7 @@
   "auth_verify_otp": "Verify and Login",
   "auth_otp_sent": "Code sent to your phone.",
   "err_auth_invalid_phone": "Invalid phone number.",
-  "err_auth_invalid_otp": "Invalid verification code."
+  "err_auth_invalid_otp": "Invalid verification code.",
+  "auth_sign_in_up": "Sign In / Sign Up",
+  "auth_phone_desc": "Enter your phone number. If you don't have an account, one will be created for you automatically."
 }
