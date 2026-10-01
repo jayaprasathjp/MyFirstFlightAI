@@ -175,5 +175,10 @@
   "err_auth_invalid_phone": "Invalid phone number.",
   "err_auth_invalid_otp": "Invalid verification code.",
   "auth_sign_in_up": "Sign In / Sign Up",
-  "auth_phone_desc": "Enter your phone number. If you don't have an account, one will be created for you automatically."
+  "auth_phone_desc": "Enter your phone number. If you don't have an account, one will be created for you automatically.",
+  "optional": "Optional",
+  "official_site": "Open the official website",
+  "or_say": "Other answers you can give",
+  "contact_where": "Where does this person live?",
+  "at_home": "At home (where you start)"
 }

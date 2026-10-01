@@ -40,10 +40,17 @@ export default function ContactsScreen({ trip, onSave, busy, error }) {
           <label>{t('contact_phone')}
             <input type="tel" inputMode="tel" value={r.phone} placeholder="+91 98400 12345" onChange={(e) => edit(i, 'phone', e.target.value)} />
           </label>
-          <label className="checkline">
-            <input type="checkbox" checked={r.at_destination} onChange={(e) => edit(i, 'at_destination', e.target.checked)} />
-            {t('at_destination')}
-          </label>
+          <fieldset className="seg">
+            <legend>{t('contact_where')}</legend>
+            <label>
+              <input type="radio" name={`where${i}`} checked={!r.at_destination} onChange={() => edit(i, 'at_destination', false)} />
+              {t('at_home')}{trip.summary?.origin_city && <small> · {trip.summary.origin_city}</small>}
+            </label>
+            <label>
+              <input type="radio" name={`where${i}`} checked={r.at_destination} onChange={() => edit(i, 'at_destination', true)} />
+              {t('at_destination')}{trip.summary?.destination_city && <small> · {trip.summary.destination_city}</small>}
+            </label>
+          </fieldset>
         </div>
       ))}
       {rows.length < 5 && <button className="btn ghost" onClick={() => setRows((r) => [...r, { ...EMPTY }])}>+ {t('add_contact')}</button>}

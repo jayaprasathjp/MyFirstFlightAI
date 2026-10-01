@@ -12,6 +12,7 @@ from conftest import GAUTAM, SG_ADVICE
 @pytest.fixture
 def client(monkeypatch):
     monkeypatch.setattr(db, "_store", None)  # fresh in-memory store (and translation cache) per test
+    main.app.dependency_overrides[main.get_current_user] = lambda: "test-user"  # signed-in user
     monkeypatch.setattr(gemini, "extract_document", lambda content, mime, doc_type: copy.deepcopy(GAUTAM[doc_type]))
     monkeypatch.setattr(gemini, "translate", lambda texts, lang: {k: f"[{lang}] {v}" for k, v in texts.items()})
     monkeypatch.setattr(gemini, "trip_advice", lambda ctx, generic: copy.deepcopy(SG_ADVICE))
@@ -202,3 +203,11 @@ def test_assist_request_is_stored(client):
     assert db.store().get("assist_requests", req["id"])["traveller"] == "Gautam Guru"
     assert r.json()["trip"]["assist_requests"][0]["id"] == req["id"]
     assert client.post(f"/api/trips/{trip['id']}/assist", json={"traveller_id": "nope", "kind": "lost"}).status_code == 404
+
+
+def test_other_user_cannot_open_trip(client):
+    trip = client.post("/api/trips", json={"language": "en"}).json()
+    main.app.dependency_overrides[main.get_current_user] = lambda: "someone-else"
+    assert client.get(f"/api/trips/{trip['id']}").status_code == 403
+    main.app.dependency_overrides.pop(main.get_current_user)
+    assert client.get(f"/api/trips/{trip['id']}").status_code in (401, 403)   # no token at all
