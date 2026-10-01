@@ -47,7 +47,10 @@ function TopBar({ onLanguage, busy, currentUser, logout, onShowTrips }) {
         {currentUser && (
           <div style={{ position: 'relative' }} ref={menuRef}>
             <button className="av" onClick={() => setMenuOpen(!menuOpen)} aria-label="Profile" style={{ width: '36px', height: '36px', border: 'none' }}>
-              {(currentUser.email || currentUser.phoneNumber || 'U')[0].toUpperCase()}
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
             </button>
             {menuOpen && (
               <div style={{ position: 'absolute', right: 0, top: '48px', background: 'var(--card)', border: '1px solid var(--line)', borderRadius: '12px', padding: '8px', display: 'grid', gap: '4px', zIndex: 10, minWidth: '160px', boxShadow: 'var(--shadow)' }}>
