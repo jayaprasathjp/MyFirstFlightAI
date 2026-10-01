@@ -113,7 +113,11 @@ function Flow({ setLang }) {
   const closeHelp = useCallback(() => setHelpOpen(false), [])
   const toast = (msg) => { setToastMsg(msg); clearTimeout(toastTimer.current); toastTimer.current = setTimeout(() => setToastMsg(''), 3000) }
 
-  const setStep = (s) => { setStepState(s); store.set('mff-step', s); window.scrollTo({ top: 0 }) }
+  const setStep = (s) => {
+    setStepState(s); store.set('mff-step', s); window.scrollTo({ top: 0 })
+    // Country advice is generated in the background after upload; fetch it when these screens open.
+    if (trip && (s === 'checklist' || s === 'journey')) api.getTrip(trip.id).then(applyTrip).catch(() => {})
+  }
   const applyTrip = (tr) => {
     setTrip(tr)
     store.set('mff-trip', tr.id)
