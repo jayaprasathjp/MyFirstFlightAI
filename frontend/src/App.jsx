@@ -47,11 +47,11 @@ function TopBar({ onLanguage, busy, currentUser, logout, onShowTrips }) {
         {currentUser && (
           <div style={{ position: 'relative' }} ref={menuRef}>
             <button className="av" onClick={() => setMenuOpen(!menuOpen)} aria-label="Profile" style={{ width: '36px', height: '36px', border: 'none' }}>
-              {currentUser.email ? currentUser.email[0].toUpperCase() : 'U'}
+              {(currentUser.email || currentUser.phoneNumber || 'U')[0].toUpperCase()}
             </button>
             {menuOpen && (
               <div style={{ position: 'absolute', right: 0, top: '48px', background: 'var(--card)', border: '1px solid var(--line)', borderRadius: '12px', padding: '8px', display: 'grid', gap: '4px', zIndex: 10, minWidth: '160px', boxShadow: 'var(--shadow)' }}>
-                <div style={{ padding: '8px', fontSize: '14px', fontWeight: 'bold', borderBottom: '1px solid var(--line)', marginBottom: '4px' }}>{currentUser.email}</div>
+                <div style={{ padding: '8px', fontSize: '14px', fontWeight: 'bold', borderBottom: '1px solid var(--line)', marginBottom: '4px' }}>{currentUser.email || currentUser.phoneNumber}</div>
                 <button className="btn sec" onClick={() => { setMenuOpen(false); onShowTrips(); }} style={{ padding: '8px', fontSize: '14px', textAlign: 'left', border: 'none', background: 'transparent' }}>{t('my_trips_title')}</button>
                 <button className="btn sec" onClick={() => { setMenuOpen(false); logout(); }} style={{ padding: '8px', fontSize: '14px', textAlign: 'left', border: 'none', color: 'var(--bad)', background: 'transparent' }}>{t('logout')}</button>
               </div>

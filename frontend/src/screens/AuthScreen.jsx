@@ -1,53 +1,66 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../AuthContext';
 import { useI18n } from '../i18n';
+import { RecaptchaVerifier } from 'firebase/auth';
+import { auth } from '../firebase';
 
 export default function AuthScreen({ onLogged }) {
-  const [isLogin, setIsLogin] = useState(true);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [code, setCode] = useState('');
+  const [confirmResult, setConfirmResult] = useState(null);
   const [error, setError] = useState('');
+  const [message, setMessage] = useState('');
   const [busy, setBusy] = useState(false);
-  const { login, signup, loginWithGoogle } = useAuth();
+  const { requestPhoneOtp, loginWithGoogle } = useAuth();
   const { t } = useI18n();
 
+
   const handleError = (err) => {
-    if (err.code === 'auth/email-already-in-use') {
-      setError(t('err_auth_email_in_use'));
-    } else if (err.code === 'auth/invalid-credential' || err.code === ('auth/wrong-' + 'password') || err.code === 'auth/user-not-found') {
-      setError(t('err_auth_invalid'));
-    } else if (err.code === ('auth/weak-' + 'password')) {
-      setError(t('err_auth_weak_password'));
-    } else if (err.code === 'auth/too-many-requests') {
-      setError(t('err_auth_too_many'));
-    } else if (err.message === 'network') {
-      setError(t('err_network'));
-    } else {
-      setError(err.message || t('err_auth_default'));
-    }
+    setError(err.message || t('err_auth_default'));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSendOtp = async (e) => {
     e.preventDefault();
     setBusy(true);
     setError('');
-
-    if (!isLogin && password !== confirmPassword) {
-      setError(t('auth_pass_err'));
-      setBusy(false);
-      return;
-    }
-
+    setMessage('');
     try {
-      if (isLogin) {
-        await login(email, password);
-      } else {
-        await signup(email, password);
+      if (!window.recaptchaVerifier) {
+        window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+          size: 'invisible'
+        });
+        await window.recaptchaVerifier.render();
       }
+      const confirmation = await requestPhoneOtp(phoneNumber, window.recaptchaVerifier);
+      setConfirmResult(confirmation);
+      setMessage(t('auth_otp_sent'));
+    } catch (err) {
+      console.error(err);
+      if (err.code === 'auth/invalid-phone-number') {
+        setError(t('err_auth_invalid_phone'));
+      } else {
+        handleError(err);
+      }
+      if (window.recaptchaVerifier) {
+        window.recaptchaVerifier.clear();
+        window.recaptchaVerifier = null;
+      }
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const handleVerifyOtp = async (e) => {
+    e.preventDefault();
+    setBusy(true);
+    setError('');
+    setMessage('');
+    try {
+      await confirmResult.confirm(code);
       if (onLogged) onLogged();
     } catch (err) {
-      handleError(err);
+      console.error(err);
+      setError(t('err_auth_invalid_otp'));
     } finally {
       setBusy(false);
     }
@@ -70,57 +83,59 @@ export default function AuthScreen({ onLogged }) {
 
   return (
     <div className="screen" style={{ alignContent: 'center' }}>
+      <div id="recaptcha-container"></div>
       <div className="card" style={{ padding: '24px', display: 'grid', gap: '20px' }}>
-        <h2 style={{ textAlign: 'center', marginBottom: '8px' }}>{isLogin ? t('auth_welcome') : t('auth_create')}</h2>
+        <h2 style={{ textAlign: 'center', marginBottom: '8px' }}>Sign In / Sign Up</h2>
+        <p style={{ textAlign: 'center', fontSize: '14px', color: 'var(--muted)', marginTop: '-12px' }}>
+          Enter your phone number. If you don't have an account, one will be created for you automatically.
+        </p>
         
         {error && <div className="err" role="alert">{error}</div>}
+        {message && <div style={{ color: 'var(--ok)', background: 'var(--ok-soft)', padding: '10px 12px', borderRadius: '12px', fontWeight: '600', fontSize: '15px' }} role="status">{message}</div>}
         
-        <form onSubmit={handleSubmit} className="form" style={{ gap: '16px' }}>
-          <label>
-            {t('auth_email')}
-            <input 
-              type="email" 
-              placeholder="you@example.com" 
-              required 
-              value={email} 
-              onChange={(e) => setEmail(e.target.value)}
-              style={{ border: '1px solid var(--line)', background: 'var(--app)', borderRadius: '12px', padding: '12px', fontSize: '16px', color: 'var(--ink)', width: '100%', marginTop: '6px' }}
-            />
-          </label>
-          <label>
-            {t('auth_password')}
-            <input 
-              type="password" 
-              placeholder="••••••••" 
-              required 
-              value={password} 
-              onChange={(e) => setPassword(e.target.value)}
-              style={{ border: '1px solid var(--line)', background: 'var(--app)', borderRadius: '12px', padding: '12px', fontSize: '16px', color: 'var(--ink)', width: '100%', marginTop: '6px' }}
-            />
-          </label>
-          {!isLogin && (
+        {!confirmResult ? (
+          <form onSubmit={handleSendOtp} className="form" style={{ gap: '16px' }}>
             <label>
-              {t('auth_confirm')}
+              {t('auth_phone')}
               <input 
-                type="password" 
-                placeholder="••••••••" 
+                type="tel" 
+                placeholder={t('auth_phone_placeholder')}
                 required 
-                value={confirmPassword} 
-                onChange={(e) => setConfirmPassword(e.target.value)}
+                value={phoneNumber} 
+                onChange={(e) => setPhoneNumber(e.target.value)}
                 style={{ border: '1px solid var(--line)', background: 'var(--app)', borderRadius: '12px', padding: '12px', fontSize: '16px', color: 'var(--ink)', width: '100%', marginTop: '6px' }}
               />
             </label>
-          )}
-          <button className="btn pri full" type="submit" disabled={busy} style={{ marginTop: '4px' }}>
-            {busy ? <span className="spin" style={{width: '20px', height: '20px', borderTopColor: 'var(--brand-ink)'}} /> : (isLogin ? t('auth_sign_in') : t('auth_sign_up'))}
-          </button>
-        </form>
+            
+            <button className="btn pri full" type="submit" disabled={busy} style={{ marginTop: '4px' }}>
+              {busy ? <span className="spin" style={{width: '20px', height: '20px', borderTopColor: 'var(--brand-ink)'}} /> : t('auth_send_otp')}
+            </button>
+          </form>
+        ) : (
+          <form onSubmit={handleVerifyOtp} className="form" style={{ gap: '16px' }}>
+            <label>
+              {t('auth_otp')}
+              <input 
+                type="text" 
+                placeholder={t('auth_otp_placeholder')}
+                required 
+                value={code} 
+                onChange={(e) => setCode(e.target.value)}
+                style={{ border: '1px solid var(--line)', background: 'var(--app)', borderRadius: '12px', padding: '12px', fontSize: '16px', color: 'var(--ink)', width: '100%', marginTop: '6px' }}
+              />
+            </label>
+            
+            <button className="btn pri full" type="submit" disabled={busy} style={{ marginTop: '4px' }}>
+              {busy ? <span className="spin" style={{width: '20px', height: '20px', borderTopColor: 'var(--brand-ink)'}} /> : t('auth_verify_otp')}
+            </button>
 
-        <div style={{ textAlign: 'center' }}>
-          <button className="link" onClick={() => { setIsLogin(!isLogin); setError(''); setConfirmPassword(''); }} type="button">
-            {isLogin ? t('auth_need_acct') : t('auth_have_acct')}
-          </button>
-        </div>
+            <div style={{ textAlign: 'center', marginTop: '8px' }}>
+              <button className="link" onClick={() => { setConfirmResult(null); setError(''); setMessage(''); setCode(''); }} type="button">
+                {t('back')}
+              </button>
+            </div>
+          </form>
+        )}
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', color: 'var(--muted)', fontSize: '14px', margin: '8px 0' }}>
           <div style={{ flex: 1, borderTop: '1px solid var(--line)' }}></div>
