@@ -195,3 +195,44 @@ def test_native_script_check():
     assert not gemini._needs_native_script("ta", "SIN", "SIN")               # codes stay as they are
     assert not gemini._needs_native_script("ta", "{n0}: passport valid", "{n0}: பாஸ்போர்ட்")
     assert not gemini._needs_native_script("ms", "Ready to fly", "Sedia untuk terbang")  # Malay uses Latin script
+
+
+def test_checklist_feedback_round(gautam_docs, sg_advice):
+    sg_advice["origin_currency_code"] = "INR"
+    travellers = [traveller(gautam_docs, assistance="wheelchair")]
+    summary = trip_summary(gautam_docs["ticket"])
+    items = build_checklist(summary, travellers, check_trip(travellers), sg_advice, contacts=[{"name": "A"}])
+    by = {i["id"]: i for i in items}
+    # I'm Lost card: one item, travel day only
+    assert [i["id"] for i in items if "lost" in i["id"]] == ["lost_card"] and by["lost_card"]["group"] == "t0"
+    assert not any("I'm Lost" in i["detail"] for i in items if i["id"] != "lost_card")
+    # Optional items
+    assert by["webci"]["optional"] and by["assist"]["optional"] and not by["assist"]["key"]
+    assert not by["leave_home"]["optional"]
+    # Official arrival-card link (verified list, never from Gemini)
+    assert by["ai:sg_arrival_card"]["link"] == "https://eservices.ica.gov.sg/arrivalcard"
+    assert by["ai:chewing_gum"]["link"] is None
+    # Paid food/shopping on board, with home and destination currency
+    assert "INR or SGD" in by["onboard_money"]["detail"]
+
+
+def test_arrival_card_link_on_fallback_and_unknown_country(gautam_docs):
+    travellers = [traveller(gautam_docs)]
+    summary = trip_summary(gautam_docs["ticket"])
+    by = {i["id"]: i for i in build_checklist(summary, travellers, check_trip(travellers))}
+    assert by["arrival_card"]["link"] == "https://eservices.ica.gov.sg/arrivalcard"
+    summary["destination_country"] = "Atlantis"
+    by = {i["id"]: i for i in build_checklist(summary, travellers, check_trip(travellers))}
+    assert by["arrival_card"]["link"] is None
+
+
+def test_purpose_answer_options(gautam_docs):
+    from journey import build_journey
+    steps = {st["id"]: st for st in build_journey(trip_summary(gautam_docs["ticket"]), [traveller(gautam_docs)])}
+    emig, arr = steps["emigration"], steps["arrival"]
+    assert emig["qa"][0][1] == "To Singapore, for visiting family."          # from the visa, shown first
+    assert "To Singapore, for a holiday." in emig["qa_alts"][0]
+    assert "To Singapore, for business meetings." in emig["qa_alts"][0]
+    assert not any("family" in a for a in emig["qa_alts"][0])               # visa purpose not repeated
+    assert {"Tourism, a holiday.", "A personal visit.", "Meeting a friend."} <= set(arr["qa_alts"][0])
+    assert emig["qa_alts"][1] == []                                          # other questions: no options

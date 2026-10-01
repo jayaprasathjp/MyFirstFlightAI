@@ -14,7 +14,7 @@ from db import now_iso, store
 
 log = logging.getLogger("myfirstflight")
 
-ADVICE_VERSION = 2  # bump when the prompt or schema changes to invalidate the cache
+ADVICE_VERSION = 3  # bump when the prompt or schema changes to invalidate the cache
 ADVICE_TTL = timedelta(days=30)
 
 

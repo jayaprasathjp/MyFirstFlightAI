@@ -7,8 +7,11 @@ import uuid
 from pathlib import Path
 
 from dotenv import load_dotenv
-from fastapi import FastAPI, File, Form, HTTPException, Request, UploadFile
+from fastapi import FastAPI, File, Form, HTTPException, Request, UploadFile, Depends, Query
+from typing import Optional
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from firebase_admin import auth as fb_auth
 from fastapi.responses import JSONResponse, Response
 from google.genai import types
 
@@ -51,6 +54,22 @@ app.add_middleware(
 @app.exception_handler(StoreError)
 async def store_error_handler(request: Request, exc: StoreError):
     return JSONResponse(status_code=503, content={"detail": str(exc)})
+
+security = HTTPBearer()
+
+def get_current_user(token: HTTPAuthorizationCredentials = Depends(security)):
+    try:
+        from db import store
+        store() # init firebase if needed
+        decoded = fb_auth.verify_id_token(token.credentials, clock_skew_seconds=10)
+        return decoded["uid"]
+    except Exception as e:
+        import sys
+        err_msg = f"Token verification failed: {type(e).__name__} - {str(e)}"
+        print(err_msg, file=sys.stderr)
+        with open("auth_error.txt", "w") as f:
+            f.write(err_msg)
+        raise HTTPException(status_code=401, detail="Invalid authentication credentials")
 
 
 MAX_UPLOAD = 10 * 1024 * 1024
@@ -136,10 +155,12 @@ def protected_terms(trip):
 
 # ---------- trip helpers ----------
 
-def load_trip(trip_id):
+def load_trip(trip_id, user_id=None):
     trip = store().get("trips", trip_id)
     if not trip:
         raise HTTPException(status_code=404, detail="Trip not found.")
+    if user_id and trip.get("owner_id") and trip["owner_id"] != user_id:
+        raise HTTPException(status_code=403, detail="Not authorized to access this trip.")
     return trip
 
 
@@ -180,6 +201,7 @@ def trip_view(trip):
         texts.update({f"{j}.d{n}": d for n, d in enumerate(st["do"])})
         for n, (q, a) in enumerate(st["qa"]):
             texts[f"{j}.q{n}"], texts[f"{j}.a{n}"] = q, a
+            texts.update({f"{j}.a{n}.{m}": alt for m, alt in enumerate(st["qa_alts"][n])})
     tr = localize(texts, lang, protect=protected_terms(trip))
 
     def journey_step(st):
@@ -189,7 +211,9 @@ def trip_view(trip):
             "where": [tr[f"{j}.w{n}"] for n in range(len(st["where"]))],
             "do": [tr[f"{j}.d{n}"] for n in range(len(st["do"]))],
             # Officers and staff speak English: keep the English line, show the translation under it.
-            "qa": [{"q_en": q, "a_en": a, "q": tr[f"{j}.q{n}"], "a": tr[f"{j}.a{n}"]} for n, (q, a) in enumerate(st["qa"])],
+            "qa": [{"q_en": q, "a_en": a, "q": tr[f"{j}.q{n}"], "a": tr[f"{j}.a{n}"],
+                    "alts": [{"en": alt, "tr": tr[f"{j}.a{n}.{m}"]} for m, alt in enumerate(st["qa_alts"][n])]}
+                   for n, (q, a) in enumerate(st["qa"])],
             "staff_en": st["staff"], "staff": tr[f"{j}.s"],
         }
 
@@ -265,11 +289,27 @@ def translate_ui(req: TranslateRequest):
     return {"language": req.language, "texts": localize(req.texts, req.language)}
 
 
+@app.get("/api/trips")
+def list_trips(user_id: str = Depends(get_current_user)):
+    try:
+        trips = store().query("trips", "owner_id", user_id)
+        trip_list = []
+        for tid, trip in trips.items():
+            # Minimal summary format, using trip_view logic or just returning raw trips? 
+            # Better to return raw trip since trip_view is heavy. The frontend can just use summary.
+            trip["id"] = tid
+            trip_list.append(trip)
+        trip_list.sort(key=lambda t: t.get("created_at", ""), reverse=True)
+        return {"trips": [trip_view(t) for t in trip_list]}
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=str(exc))
+
+
 @app.post("/api/trips")
-def create_trip(req: CreateTripRequest):
+def create_trip(req: CreateTripRequest, user_id: str = Depends(get_current_user)):
     if req.language not in gemini.LANGUAGES:
         raise HTTPException(status_code=400, detail="Unsupported language.")
-    trip = {"id": uuid.uuid4().hex, "language": req.language, "travellers": [], "summary": None,
+    trip = {"id": uuid.uuid4().hex, "owner_id": user_id, "language": req.language, "travellers": [], "summary": None,
             "checks": [], "status": "empty", "checklist_done": {}, "contacts": [], "boarding": {},
             "advice": None, "created_at": now_iso()}
     save_trip(trip)
@@ -277,15 +317,15 @@ def create_trip(req: CreateTripRequest):
 
 
 @app.get("/api/trips/{trip_id}")
-def get_trip(trip_id: str):
-    return trip_view(load_trip(trip_id))
+def get_trip(trip_id: str, user_id: str = Depends(get_current_user)):
+    return trip_view(load_trip(trip_id, user_id))
 
 
 @app.patch("/api/trips/{trip_id}")
-def update_trip(trip_id: str, req: UpdateTripRequest):
+def update_trip(trip_id: str, req: UpdateTripRequest, user_id: str = Depends(get_current_user)):
     if req.language not in gemini.LANGUAGES:
         raise HTTPException(status_code=400, detail="Unsupported language.")
-    trip = load_trip(trip_id)
+    trip = load_trip(trip_id, user_id)
     trip["language"] = req.language
     save_trip(trip)
     return trip_view(trip)
@@ -298,8 +338,9 @@ async def add_traveller(
     passport: UploadFile = File(...),
     visa: UploadFile = File(...),
     assistance: str = Form("none"),
+    user_id: str = Depends(get_current_user)
 ):
-    trip = load_trip(trip_id)
+    trip = load_trip(trip_id, user_id)
     if assistance not in ASSISTANCE:
         raise HTTPException(status_code=400, detail="Unknown assistance type.")
     files = {"ticket": await read_upload(ticket, "Ticket"),
@@ -339,8 +380,8 @@ async def add_traveller(
 
 
 @app.delete("/api/trips/{trip_id}/travellers/{traveller_id}")
-def remove_traveller(trip_id: str, traveller_id: str):
-    trip = load_trip(trip_id)
+def remove_traveller(trip_id: str, traveller_id: str, user_id: str = Depends(get_current_user)):
+    trip = load_trip(trip_id, user_id)
     before = len(trip["travellers"])
     trip["travellers"] = [t for t in trip["travellers"] if t["id"] != traveller_id]
     if len(trip["travellers"]) == before:
@@ -355,7 +396,8 @@ def remove_traveller(trip_id: str, traveller_id: str):
 
 
 @app.get("/api/trips/{trip_id}/travellers/{traveller_id}/documents/{doc_type}")
-def get_document(trip_id: str, traveller_id: str, doc_type: str):
+def get_document(trip_id: str, traveller_id: str, doc_type: str, user_id: str = Depends(get_current_user)):
+    trip = load_trip(trip_id, user_id)
     if doc_type not in ("ticket", "passport", "visa"):
         raise HTTPException(status_code=400, detail="Invalid document type.")
     path = f"trips/{trip_id}/travellers/{traveller_id}/{doc_type}"
@@ -370,25 +412,25 @@ def get_document(trip_id: str, traveller_id: str, doc_type: str):
 
 
 @app.put("/api/trips/{trip_id}/checklist")
-def set_checklist(trip_id: str, req: ChecklistToggle):
-    trip = load_trip(trip_id)
+def set_checklist(trip_id: str, req: ChecklistToggle, user_id: str = Depends(get_current_user)):
+    trip = load_trip(trip_id, user_id)
     trip["checklist_done"] = {k: True for k, v in req.done.items() if v}
     save_trip(trip)
     return {"checklist_done": trip["checklist_done"]}
 
 
 @app.put("/api/trips/{trip_id}/contacts")
-def set_contacts(trip_id: str, req: ContactsRequest):
-    trip = load_trip(trip_id)
+def set_contacts(trip_id: str, req: ContactsRequest, user_id: str = Depends(get_current_user)):
+    trip = load_trip(trip_id, user_id)
     trip["contacts"] = [c.model_dump() for c in req.contacts]
     save_trip(trip)
     return trip_view(trip)
 
 
 @app.put("/api/trips/{trip_id}/boarding")
-def set_boarding(trip_id: str, req: BoardingRequest):
+def set_boarding(trip_id: str, req: BoardingRequest, user_id: str = Depends(get_current_user)):
     """Gate and boarding time from the boarding pass (known only at the airport)."""
-    trip = load_trip(trip_id)
+    trip = load_trip(trip_id, user_id)
     trip["boarding"] = {"gate": req.gate.strip().upper(), "boarding_time": req.boarding_time}
     save_trip(trip)
     return trip_view(trip)
@@ -444,9 +486,9 @@ def gemini_call(fn, *args, **kwargs):
 
 
 @app.post("/api/trips/{trip_id}/ask")
-async def ask(trip_id: str, text: str = Form(""), audio: UploadFile | None = File(None)):
+async def ask(trip_id: str, text: str = Form(""), audio: UploadFile | None = File(None), user_id: str = Depends(get_current_user)):
     """Voice concierge: question by voice or text, answered in the trip language from the trip's own data."""
-    trip = load_trip(trip_id)
+    trip = load_trip(trip_id, user_id)
     content, mime = await read_audio(audio)
     if not content and not text.strip():
         raise HTTPException(status_code=400, detail="Ask a question by voice or text.")
@@ -455,9 +497,9 @@ async def ask(trip_id: str, text: str = Form(""), audio: UploadFile | None = Fil
 
 
 @app.post("/api/trips/{trip_id}/to-english")
-async def to_english(trip_id: str, text: str = Form(""), audio: UploadFile | None = File(None)):
+async def to_english(trip_id: str, text: str = Form(""), audio: UploadFile | None = File(None), user_id: str = Depends(get_current_user)):
     """Show to staff: anything the traveller says, as one polite English sentence."""
-    trip = load_trip(trip_id)
+    trip = load_trip(trip_id, user_id)
     content, mime = await read_audio(audio)
     if not content and not text.strip():
         raise HTTPException(status_code=400, detail="Say or type what you want to tell staff.")
@@ -468,11 +510,11 @@ async def to_english(trip_id: str, text: str = Form(""), audio: UploadFile | Non
 
 
 @app.post("/api/trips/{trip_id}/boarding-pass")
-async def boarding_pass(trip_id: str, file: UploadFile = File(...)):
+async def boarding_pass(trip_id: str, file: UploadFile = File(...), user_id: str = Depends(get_current_user)):
     """Boarding pass explainer: read the photo, explain each field, fill gate + boarding time."""
     content, mime = await read_upload(file, "Boarding pass")
     data = await asyncio.to_thread(gemini_call, gemini.read_boarding_pass, content, mime)
-    trip = load_trip(trip_id)
+    trip = load_trip(trip_id, user_id)
     trip["boarding_pass"] = data
     boarding = dict(trip.get("boarding") or {})
     if data.get("gate"):
@@ -485,9 +527,9 @@ async def boarding_pass(trip_id: str, file: UploadFile = File(...)):
 
 
 @app.post("/api/trips/{trip_id}/assist")
-def request_assist(trip_id: str, req: AssistRequest):
+def request_assist(trip_id: str, req: AssistRequest, user_id: str = Depends(get_current_user)):
     """Assistance request / I'm Lost alert: stored for the assist desk and published to Pub/Sub if configured."""
-    trip = load_trip(trip_id)
+    trip = load_trip(trip_id, user_id)
     person = next((t for t in trip["travellers"] if t["id"] == req.traveller_id), None)
     if not person:
         raise HTTPException(status_code=404, detail="Traveller not found.")

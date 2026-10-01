@@ -41,7 +41,7 @@ export default function LostCard({ trip, onTrip, onClose, toast }) {
   const readAloud = () => {
     const text = `I am a first time traveller. Please help me. My name is ${person.name}. My flight is ${flight} to ${s.destination_city || ''}`
       + (gate ? `, gate ${gate}` : '') + (boardingTime ? `, boarding at ${boardingTime}` : '') + '.'
-      + (trip.contacts[0] ? ` Please call my family, ${trip.contacts[0].name}, on ${trip.contacts[0].phone}.` : '')
+      + (trip.contacts[0] ? ` Please call my family, ${trip.contacts[0].name}, on ${trip.contacts[0].phone.replace(/(\d)/g, '$1 ')}.` : '')
     try {
       const voices = speechSynthesis.getVoices()
       const u = new SpeechSynthesisUtterance(text)

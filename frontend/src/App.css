@@ -227,3 +227,10 @@ ul.do li::before { content: ""; position: absolute; inset-inline-start: 4px; top
 .reqrow { display: flex; justify-content: space-between; gap: 10px; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; font-size: 14px }
 .alertbtn { border-color: var(--bad); color: var(--bad); font-weight: 800 }
 .small .spin { display: inline-block; width: 14px; height: 14px; border-width: 2px; vertical-align: -2px }
+
+/* checklist: optional items, official links; journey: other answers */
+.item.optional { border-style: dashed }
+.opttag { display: inline-block; font-size: 11.5px; font-weight: 700; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 0 8px; margin-bottom: 4px }
+.official { display: inline-block; margin-top: 8px; font-weight: 700; color: var(--brand); background: var(--brand-soft); border-radius: 10px; padding: 8px 12px; text-decoration: none }
+.alts summary { cursor: pointer; color: var(--brand); font-weight: 700; font-size: 14px; margin-top: 4px }
+.alts ul { margin: 6px 0 0; padding-inline-start: 18px; display: grid; gap: 6px }
