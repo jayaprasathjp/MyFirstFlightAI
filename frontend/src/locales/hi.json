@@ -131,6 +131,9 @@
   "close": "बंद करें",
   "no_contacts": "अभी तक कोई पारिवारिक नंबर नहीं है। संपर्क में एक जोड़ें।",
   "no_voice": "यह फ़ोन ज़ोर से पढ़ नहीं सकता। इसके बजाय कार्ड दिखाएँ।",
+  "optional": "वैकल्पिक",
+  "official_site": "आधिकारिक वेबसाइट खोलें",
+  "or_say": "आप अन्य उत्तर दे सकते हैं",
   "__source": {
     "step_language": "Language",
     "step_travellers": "Travellers",
@@ -263,6 +266,9 @@
     "alert_sent": "Help desk alerted. Request {id}.",
     "close": "Close",
     "no_contacts": "No family number yet. Add one in Contacts.",
-    "no_voice": "This phone cannot read aloud. Show the card instead."
+    "no_voice": "This phone cannot read aloud. Show the card instead.",
+    "optional": "Optional",
+    "official_site": "Open the official website",
+    "or_say": "Other answers you can give"
   }
 }

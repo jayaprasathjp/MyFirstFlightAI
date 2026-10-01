@@ -131,6 +131,9 @@
   "close": "إغلاق",
   "no_contacts": "لا يوجد رقم عائلة حتى الآن. أضف واحدًا في جهات الاتصال.",
   "no_voice": "هذا الهاتف لا يستطيع القراءة بصوت عالٍ. أظهر البطاقة بدلاً من ذلك.",
+  "optional": "اختياري",
+  "official_site": "افتح الموقع الرسمي",
+  "or_say": "إجابات أخرى يمكنك قولها",
   "__source": {
     "step_language": "Language",
     "step_travellers": "Travellers",
@@ -263,6 +266,9 @@
     "alert_sent": "Help desk alerted. Request {id}.",
     "close": "Close",
     "no_contacts": "No family number yet. Add one in Contacts.",
-    "no_voice": "This phone cannot read aloud. Show the card instead."
+    "no_voice": "This phone cannot read aloud. Show the card instead.",
+    "optional": "Optional",
+    "official_site": "Open the official website",
+    "or_say": "Other answers you can give"
   }
 }

@@ -131,6 +131,9 @@
   "close": "Tutup",
   "no_contacts": "Belum ada nombor keluarga. Tambah satu di Kenalan.",
   "no_voice": "Telefon ini tidak boleh membaca dengan kuat. Tunjukkan kad ini sahaja.",
+  "optional": "Pilihan",
+  "official_site": "Buka laman web rasmi",
+  "or_say": "Jawapan lain yang boleh anda berikan",
   "__source": {
     "step_language": "Language",
     "step_travellers": "Travellers",
@@ -263,6 +266,9 @@
     "alert_sent": "Help desk alerted. Request {id}.",
     "close": "Close",
     "no_contacts": "No family number yet. Add one in Contacts.",
-    "no_voice": "This phone cannot read aloud. Show the card instead."
+    "no_voice": "This phone cannot read aloud. Show the card instead.",
+    "optional": "Optional",
+    "official_site": "Open the official website",
+    "or_say": "Other answers you can give"
   }
 }

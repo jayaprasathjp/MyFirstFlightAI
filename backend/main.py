@@ -180,6 +180,7 @@ def trip_view(trip):
         texts.update({f"{j}.d{n}": d for n, d in enumerate(st["do"])})
         for n, (q, a) in enumerate(st["qa"]):
             texts[f"{j}.q{n}"], texts[f"{j}.a{n}"] = q, a
+            texts.update({f"{j}.a{n}.{m}": alt for m, alt in enumerate(st["qa_alts"][n])})
     tr = localize(texts, lang, protect=protected_terms(trip))
 
     def journey_step(st):
@@ -189,7 +190,9 @@ def trip_view(trip):
             "where": [tr[f"{j}.w{n}"] for n in range(len(st["where"]))],
             "do": [tr[f"{j}.d{n}"] for n in range(len(st["do"]))],
             # Officers and staff speak English: keep the English line, show the translation under it.
-            "qa": [{"q_en": q, "a_en": a, "q": tr[f"{j}.q{n}"], "a": tr[f"{j}.a{n}"]} for n, (q, a) in enumerate(st["qa"])],
+            "qa": [{"q_en": q, "a_en": a, "q": tr[f"{j}.q{n}"], "a": tr[f"{j}.a{n}"],
+                    "alts": [{"en": alt, "tr": tr[f"{j}.a{n}.{m}"]} for m, alt in enumerate(st["qa_alts"][n])]}
+                   for n, (q, a) in enumerate(st["qa"])],
             "staff_en": st["staff"], "staff": tr[f"{j}.s"],
         }
 

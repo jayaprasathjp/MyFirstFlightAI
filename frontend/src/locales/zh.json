@@ -131,6 +131,9 @@
   "close": "关闭",
   "no_contacts": "还没有家人电话。请在“联系人”中添加。",
   "no_voice": "此手机无法朗读。请出示卡片。",
+  "optional": "非必要",
+  "official_site": "打开官方网站",
+  "or_say": "您还可以这样说",
   "__source": {
     "step_language": "Language",
     "step_travellers": "Travellers",
@@ -263,6 +266,9 @@
     "alert_sent": "Help desk alerted. Request {id}.",
     "close": "Close",
     "no_contacts": "No family number yet. Add one in Contacts.",
-    "no_voice": "This phone cannot read aloud. Show the card instead."
+    "no_voice": "This phone cannot read aloud. Show the card instead.",
+    "optional": "Optional",
+    "official_site": "Open the official website",
+    "or_say": "Other answers you can give"
   }
 }

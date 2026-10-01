@@ -131,6 +131,9 @@
   "close": "അടയ്ക്കുക",
   "no_contacts": "കുടുംബാംഗങ്ങളുടെ നമ്പർ ഇതുവരെ ചേർത്തിട്ടില്ല. കോൺടാക്റ്റുകളിൽ ഒന്ന് ചേർക്കുക.",
   "no_voice": "ഈ ഫോണിന് വായിക്കാൻ കഴിയില്ല. പകരം കാർഡ് കാണിക്കുക.",
+  "optional": "നിർബന്ധമില്ലാത്തത്",
+  "official_site": "ഔദ്യോഗിക വെബ്സൈറ്റ് തുറക്കുക",
+  "or_say": "നിങ്ങൾക്ക് നൽകാൻ കഴിയുന്ന മറ്റ് ഉത്തരങ്ങൾ",
   "__source": {
     "step_language": "Language",
     "step_travellers": "Travellers",
@@ -263,6 +266,9 @@
     "alert_sent": "Help desk alerted. Request {id}.",
     "close": "Close",
     "no_contacts": "No family number yet. Add one in Contacts.",
-    "no_voice": "This phone cannot read aloud. Show the card instead."
+    "no_voice": "This phone cannot read aloud. Show the card instead.",
+    "optional": "Optional",
+    "official_site": "Open the official website",
+    "or_say": "Other answers you can give"
   }
 }

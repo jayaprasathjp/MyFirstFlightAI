@@ -131,6 +131,9 @@
   "close": "మూసివేయండి",
   "no_contacts": "ఇంకా కుటుంబ నంబర్ లేదు. కాంటాక్ట్స్‌లో ఒకదాన్ని జోడించండి.",
   "no_voice": "ఈ ఫోన్ బిగ్గరగా చదవదు. బదులుగా కార్డును చూపండి.",
+  "optional": "అవసరం లేదు",
+  "official_site": "అధికారిక వెబ్‌సైట్ తెరవండి",
+  "or_say": "మీరు చెప్పగల ఇతర సమాధానాలు",
   "__source": {
     "step_language": "Language",
     "step_travellers": "Travellers",
@@ -263,6 +266,9 @@
     "alert_sent": "Help desk alerted. Request {id}.",
     "close": "Close",
     "no_contacts": "No family number yet. Add one in Contacts.",
-    "no_voice": "This phone cannot read aloud. Show the card instead."
+    "no_voice": "This phone cannot read aloud. Show the card instead.",
+    "optional": "Optional",
+    "official_site": "Open the official website",
+    "or_say": "Other answers you can give"
   }
 }
