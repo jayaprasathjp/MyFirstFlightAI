@@ -113,7 +113,11 @@ function Flow({ setLang }) {
   const closeHelp = useCallback(() => setHelpOpen(false), [])
   const toast = (msg) => { setToastMsg(msg); clearTimeout(toastTimer.current); toastTimer.current = setTimeout(() => setToastMsg(''), 3000) }
 
-  const setStep = (s) => { setStepState(s); store.set('mff-step', s); window.scrollTo({ top: 0 }) }
+  const setStep = (s) => {
+    setStepState(s); store.set('mff-step', s); window.scrollTo({ top: 0 })
+    // Country advice is generated in the background after upload; fetch it when these screens open.
+    if (trip && (s === 'checklist' || s === 'journey')) api.getTrip(trip.id).then(applyTrip).catch(() => {})
+  }
   const applyTrip = (tr) => {
     setTrip(tr)
     store.set('mff-trip', tr.id)
@@ -161,6 +165,7 @@ function Flow({ setLang }) {
   }
   const addTraveller = (files, assistance) => run(async () => applyTrip(await api.addTraveller(trip.id, files, assistance)))
   const removeTraveller = (tid) => run(async () => applyTrip(await api.removeTraveller(trip.id, tid)))
+  const replaceDocument = (tid, doc, file) => run(async () => applyTrip(await api.replaceDocument(trip.id, tid, doc, file)))
   const saveContacts = (contacts) => run(async () => { applyTrip(await api.saveContacts(trip.id, contacts)); setStep('checklist') })
   const saveBoarding = (gate, time) => run(async () => applyTrip(await api.saveBoarding(trip.id, gate, time)))
   const toggle = (itemId) => {
@@ -195,20 +200,20 @@ function Flow({ setLang }) {
             {step === 'language' && <LanguageScreen onPick={pickLanguage} busy={busy} />}
             {step === 'travellers' && trip && (
               <TravellersScreen trip={trip} busy={busy} error={error} onAdd={addTraveller} onRemove={removeTraveller}
-                onNext={() => setStep('check')} />
+                onReplaceDoc={replaceDocument} onNext={() => setStep('check')} toast={toast} />
             )}
-            {step === 'check' && trip && <CheckScreen trip={trip} onBack={() => setStep('travellers')} onNext={() => setStep('contacts')} />}
-            {step === 'contacts' && trip && <ContactsScreen key={trip.id} trip={trip} busy={busy} onSave={saveContacts} />}
+            {step === 'check' && trip && <CheckScreen trip={trip} onBack={() => setStep('travellers')} onNext={() => setStep('contacts')} toast={toast} />}
+            {step === 'contacts' && trip && <ContactsScreen key={trip.id} trip={trip} busy={busy} onSave={saveContacts} toast={toast} />}
             {step === 'checklist' && trip && (
               <>
-                <ChecklistScreen checklist={trip.checklist} done={done} onToggle={toggle} />
+                <ChecklistScreen checklist={trip.checklist} done={done} onToggle={toggle} toast={toast} />
                 <button className="btn pri full" onClick={() => setStep('journey')}>{t('go_airport')} →</button>
               </>
             )}
             {step === 'journey' && trip && <JourneyScreen trip={trip} busy={busy} onSaveBoarding={saveBoarding} toast={toast} />}
             {step !== 'language' && !trip && <p className="muted">{t('loading')}</p>}
           </main>
-          {trip && <footer className="foot">
+          {trip && <footer className={'foot' + (hasTravellers ? ' dock-pad' : '')}>
             <button className="link" onClick={() => setViewMode('trips')}>{t('back_to_trips')}</button>
             <button className="link" onClick={startOver} style={{marginLeft: '20px'}}>{t('start_over')}</button>
           </footer>}

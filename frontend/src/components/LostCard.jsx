@@ -25,7 +25,7 @@ export default function LostCard({ trip, onTrip, onClose, toast }) {
     closeRef.current?.focus()
     const onKey = (e) => e.key === 'Escape' && onClose()
     document.addEventListener('keydown', onKey)
-    return () => document.removeEventListener('keydown', onKey)
+    return () => { document.removeEventListener('keydown', onKey); speechSynthesis.cancel() }
   }, [onClose])
 
   const [alerting, setAlerting] = useState(false)

@@ -26,6 +26,7 @@ p { margin: 0 }
 .muted { color: var(--muted) }
 .err { color: var(--bad); background: var(--bad-soft); border-radius: 12px; padding: 10px 12px; font-weight: 600; font-size: 15px }
 .foot { padding: 0 18px 20px; text-align: center }
+.foot.dock-pad { padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px)) } /* clears the fixed Help/I'm lost dock */
 .link { border: 0; background: none; color: var(--brand); font-weight: 700; padding: 6px; text-decoration: underline }
 
 /* buttons */
@@ -63,6 +64,18 @@ p { margin: 0 }
 .p small { color: var(--muted); font-family: var(--m); font-size: 12px }
 .tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px }
 .tag { font-size: 12px; border: 1px solid var(--line); border-radius: 999px; padding: 1px 8px; color: var(--muted) }
+.pax-actions { display: flex; align-items: center; gap: 4px }
+.docrows { display: grid; gap: 4px; margin-top: 6px }
+.docrow { display: flex; align-items: center; gap: 8px; font-size: 13px }
+.docrow b { font-weight: 600; flex: 1 }
+.docrow-actions { display: flex; gap: 4px }
+.docicon.sm { width: 22px; height: 22px; font-size: 12px; flex: none; color: var(--brand); display: grid; place-items: center }
+.docicon.sm svg { width: 18px; height: 18px }
+.iconbtn { width: 34px; height: 34px; border-radius: 999px; border: 1px solid var(--line); background: var(--app); color: var(--brand); display: grid; place-items: center; flex: none; position: relative; cursor: pointer }
+.iconbtn svg { width: 18px; height: 18px }
+.iconbtn.bad { color: var(--bad) }
+.iconbtn .spin { width: 16px; height: 16px; border-width: 2px }
+.listenbtn { border: 1px solid var(--line); background: var(--app); border-radius: 999px; width: 36px; height: 36px; font-size: 16px; display: grid; place-items: center; flex: none }
 
 /* add traveller form */
 .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 14px }
@@ -71,6 +84,7 @@ p { margin: 0 }
 .drop label { border: 2px dashed var(--line); border-radius: 14px; padding: 14px 6px; text-align: center; display: grid; gap: 2px; justify-items: center; background: var(--app); position: relative; cursor: pointer; min-width: 0 }
 .drop label.has { border-style: solid; border-color: var(--ok); background: var(--ok-soft) }
 .drop .docicon { width: 32px; height: 32px; border-radius: 50%; background: var(--brand-soft); color: var(--brand); display: grid; place-items: center; font-weight: 800; font-size: 18px }
+.drop .docicon svg { width: 18px; height: 18px }
 .drop .has .docicon { background: var(--ok); color: var(--app) }
 .drop small { font-size: 11.5px; color: var(--muted); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap }
 .drop input { position: absolute; inset: 0; opacity: 0; cursor: pointer }
@@ -104,7 +118,7 @@ p { margin: 0 }
 .gh > span { font-family: var(--m); font-size: 13px; color: var(--muted) }
 .bar { height: 10px; border-radius: 99px; background: var(--line); overflow: hidden }
 .bar i { display: block; height: 100%; background: var(--ok); border-radius: 99px; transition: width .3s }
-.item { display: grid; grid-template-columns: 28px 1fr; gap: 12px; align-items: start; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 13px; cursor: pointer }
+.item { display: grid; grid-template-columns: 28px 1fr auto; gap: 12px; align-items: start; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 13px; cursor: pointer }
 .item input { appearance: none; width: 26px; height: 26px; border: 2px solid var(--muted); border-radius: 7px; margin: 0; display: grid; place-items: center; cursor: pointer; background: var(--app) }
 .item input:checked { background: var(--ok); border-color: var(--ok) }
 .item input:checked::after { content: ""; width: 7px; height: 13px; border: solid var(--app); border-width: 0 3px 3px 0; transform: rotate(45deg) translate(-1px, -1px) }
@@ -226,3 +240,10 @@ ul.do li::before { content: ""; position: absolute; inset-inline-start: 4px; top
 .reqrow { display: flex; justify-content: space-between; gap: 10px; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; font-size: 14px }
 .alertbtn { border-color: var(--bad); color: var(--bad); font-weight: 800 }
 .small .spin { display: inline-block; width: 14px; height: 14px; border-width: 2px; vertical-align: -2px }
+
+/* checklist: optional items, official links; journey: other answers */
+.item.optional { border-style: dashed }
+.opttag { display: inline-block; font-size: 11.5px; font-weight: 700; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 0 8px; margin-bottom: 4px }
+.official { display: inline-block; margin-top: 8px; font-weight: 700; color: var(--brand); background: var(--brand-soft); border-radius: 10px; padding: 8px 12px; text-decoration: none }
+.alts summary { cursor: pointer; color: var(--brand); font-weight: 700; font-size: 14px; margin-top: 4px }
+.alts ul { margin: 6px 0 0; padding-inline-start: 18px; display: grid; gap: 6px }
