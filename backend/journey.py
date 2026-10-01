@@ -1,15 +1,32 @@
 """Journey deck: tap-through airport steps built from the real trip, contacts, boarding pass and Gemini tips.
 
-Each step: {id, title, where[], do[], qa[[question, answer]], staff}. `qa` and `staff` stay in English for
-officers and staff; the API adds translations alongside them.
+Each step: {id, title, where[], do[], qa[[question, answer]], qa_alts[[other answers]], staff}. `qa` and `staff`
+stay in English for officers and staff; the API adds translations alongside them.
 """
 from checklist import airport_plan
 from validation import fmt_date, parse_date
 
+# Other honest answers to "why are you travelling?" (keyword, departure answer, arrival answer).
+PURPOSES = [
+    ("holiday", "To {city}, for a holiday.", "Tourism, a holiday."),
+    ("personal", "To {city}, on a personal visit.", "A personal visit."),
+    ("family", "To {city}, to meet my family.", "Visiting my family."),
+    ("friend", "To {city}, to meet a friend.", "Meeting a friend."),
+    ("business", "To {city}, for business meetings.", "Business meetings."),
+]
 
-def _step(id, title, where, do, staff, qa=None):
+
+def _step(id, title, where, do, staff, qa=None, qa_alts=None):
+    qa = qa or []
+    alts = (qa_alts or []) + [[] for _ in range(len(qa) - len(qa_alts or []))]
     return {"id": id, "title": title, "where": [w for w in where if w], "do": [d for d in do if d],
-            "qa": qa or [], "staff": staff}
+            "qa": qa, "qa_alts": alts, "staff": staff}
+
+
+def purpose_alternatives(purpose, city):
+    """(departure answers, arrival answers) for purposes other than the one on the visa."""
+    other = [p for p in PURPOSES if p[0] not in purpose]
+    return [d.format(city=city) for _, d, _ in other], [a for _, _, a in other]
 
 
 def destination_contact(travellers, contacts):
@@ -59,6 +76,7 @@ def build_journey(summary, travellers, advice=None, contacts=None, boarding=None
          "Take your boarding pass. Add the gate and boarding time below, so they show on your I'm Lost card."],
         f"Where is the check-in counter for {flight}?"))
 
+    dep_alts, arr_alts = purpose_alternatives(purpose, dest_city)
     emig_qa = [["Where are you going?", f"To {dest_city}" + (f", for {purpose}." if purpose else ".")]]
     if days:
         emig_qa.append(["How long will you stay?", f"{days} days. Here is my return ticket."])
@@ -67,7 +85,7 @@ def build_journey(summary, travellers, advice=None, contacts=None, boarding=None
          "Show passport, visa and boarding pass together.",
          "The officer checks your documents and may stamp your passport.",
          *adv.get("emigration_tips", [])],
-        "Which queue is for emigration?", emig_qa))
+        "Which queue is for emigration?", emig_qa, [dep_alts]))
 
     steps.append(_step("security", "Security check", ["Security"],
         ["Put phone, wallet, belt, coins and laptop in the tray.",
@@ -111,7 +129,7 @@ def build_journey(summary, travellers, advice=None, contacts=None, boarding=None
         ["Follow 'Arrival' and 'Immigration' signs.",
          "Show your passport and visa. Look at the camera if asked.",
          *adv.get("arrival_tips", [])],
-        "Where is immigration?", arr_qa))
+        "Where is immigration?", arr_qa, [arr_alts]))
 
     steps.append(_step("baggage", "Bags and customs", ["Baggage belt", "Customs"],
         [f"Find {last_flight} on the baggage screen. It shows your belt number.",

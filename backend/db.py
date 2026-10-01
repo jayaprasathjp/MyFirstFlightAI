@@ -31,6 +31,10 @@ class MemoryStore:
     def get_many(self, collection, doc_ids):
         return {i: self.get(collection, i) for i in doc_ids if i in self._data.get(collection, {})}
 
+    def query(self, collection, field, value):
+        docs = self._data.get(collection, {})
+        return {k: copy.deepcopy(v) for k, v in docs.items() if v.get(field) == value}
+
     def set_many(self, collection, docs):
         for i, v in docs.items():
             self.set(collection, i, v)
@@ -89,6 +93,15 @@ class FirestoreStore:
             self._db.collection(collection).document(doc_id).set(value)
         except Exception as exc:
             log.exception("Firestore write failed")
+            raise StoreError(_explain(exc)) from exc
+
+    def query(self, collection, field, value):
+        try:
+            from google.cloud.firestore_v1.base_query import FieldFilter
+            docs = self._db.collection(collection).where(filter=FieldFilter(field, "==", value)).stream()
+            return {d.id: d.to_dict() for d in docs}
+        except Exception as exc:
+            log.exception("Firestore query failed")
             raise StoreError(_explain(exc)) from exc
 
     def get_many(self, collection, doc_ids):

@@ -1,9 +1,16 @@
 const BASE = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000'
 
+let authToken = null;
+
 // retry: repeat once after a connection failure (only for requests that are safe to repeat).
 async function request(path, options = {}, retry = false) {
   let res
   try {
+    const headers = options.headers || {};
+    if (authToken) {
+      headers['Authorization'] = `Bearer ${authToken}`;
+    }
+    options.headers = headers;
     res = await fetch(`${BASE}${path}`, options)
   } catch {
     if (retry) {
@@ -31,7 +38,9 @@ function voiceForm(text, audio) {
 }
 
 export const api = {
+  setToken: (token) => { authToken = token; },
   createTrip: (language) => request('/api/trips', json('POST', { language })),
+  getTrips: () => request('/api/trips'),
   getTrip: (id) => request(`/api/trips/${id}`),
   setLanguage: (id, language) => request(`/api/trips/${id}`, json('PATCH', { language })),
   addTraveller: (id, files, assistance) => {
@@ -59,7 +68,20 @@ export const api = {
   assist: (id, body) => request(`/api/trips/${id}/assist`, json('POST', body)),
   tts: (text, language) => request('/api/tts', json('POST', { text, language }), true),
   translate: (language, texts) => request('/api/translate', json('POST', { language, texts })),
-  getFileUrl: (tripId, travellerId, doc) => `${BASE}/api/trips/${tripId}/travellers/${travellerId}/documents/${doc}`,
+  getFileUrl: async (tripId, travellerId, doc) => {
+    let res;
+    try {
+      const headers = authToken ? { 'Authorization': `Bearer ${authToken}` } : {};
+      res = await fetch(`${BASE}/api/trips/${tripId}/travellers/${travellerId}/documents/${doc}`, { headers });
+    } catch {
+      throw new Error('network');
+    }
+    if (!res.ok) {
+      throw new Error(`HTTP ${res.status}`);
+    }
+    const blob = await res.blob();
+    return URL.createObjectURL(blob);
+  },
 }
 
 // User-facing text for an API error ('network' = the server could not be reached).

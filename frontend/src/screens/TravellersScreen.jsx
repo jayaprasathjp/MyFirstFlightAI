@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { api } from '../api'
+import { api, errorText } from '../api'
 import { useI18n } from '../i18n'
 import Listen from '../components/Listen'
 
@@ -124,7 +124,7 @@ function DocRow({ trip, p, d, replacing, onView, onReplace, busy }) {
       <b>{t(d)}</b>
       <span className="docrow-actions">
         <button type="button" className="iconbtn" aria-label={`${t('view')} ${t(d)}`}
-          onClick={() => onView({ url: api.getFileUrl(trip.id, p.id, d), name: `${p.name} - ${t(d)}` })}>
+          onClick={() => onView(trip.id, p.id, d, `${p.name} - ${t(d)}`)}>
           <EyeIcon />
         </button>
         <label className={'iconbtn filebtn' + (isReplacing ? ' busy' : '')} aria-label={`${t('replace')} ${t(d)}`}>
@@ -151,7 +151,19 @@ export default function TravellersScreen({ trip, onAdd, onRemove, onReplaceDoc, 
     await onReplaceDoc(travellerId, doc, file)
     setReplacing(null)
   }
-  const view = (doc) => { setViewingDoc(doc); setDocLoading(true) }
+  // getFileUrl fetches the document with the auth header and returns a blob URL (the endpoint requires a session).
+  const view = async (tripId, travellerId, doc, name) => {
+    setViewingDoc({ url: null, name })
+    setDocLoading(true)
+    try {
+      const url = await api.getFileUrl(tripId, travellerId, doc)
+      setViewingDoc({ url, name })
+    } catch (err) {
+      toast(errorText(err, t))
+      setViewingDoc(null)
+      setDocLoading(false)
+    }
+  }
 
   useEffect(() => {
     document.body.style.overflow = viewingDoc ? 'hidden' : ''
@@ -205,11 +217,17 @@ export default function TravellersScreen({ trip, onAdd, onRemove, onReplaceDoc, 
         <button className="btn pri full" onClick={onNext}>{t('continue')} →</button>
       )}
       {viewingDoc && (
-        <div className="modal-overlay" onClick={() => setViewingDoc(null)}>
+        <div className="modal-overlay" onClick={() => {
+          if (viewingDoc?.url) URL.revokeObjectURL(viewingDoc.url)
+          setViewingDoc(null)
+        }}>
           <div className="modal-content" onClick={e => e.stopPropagation()}>
             <div className="modal-header">
               <b>{viewingDoc.name}</b>
-              <button className="modal-close" onClick={() => setViewingDoc(null)}>&times;</button>
+              <button className="modal-close" onClick={() => {
+                if (viewingDoc?.url) URL.revokeObjectURL(viewingDoc.url)
+                setViewingDoc(null)
+              }}>&times;</button>
             </div>
             <div className="modal-body" style={{ position: 'relative' }}>
               {docLoading && (
@@ -217,12 +235,14 @@ export default function TravellersScreen({ trip, onAdd, onRemove, onReplaceDoc, 
                   <span className="spin" aria-hidden="true" style={{ width: 40, height: 40, borderWidth: 4 }}></span>
                 </div>
               )}
-              <iframe
-                src={viewingDoc.url}
-                title={viewingDoc.name}
-                onLoad={() => setDocLoading(false)}
-                style={{ opacity: docLoading ? 0 : 1, transition: 'opacity 0.2s' }}
-              />
+              {viewingDoc.url && (
+                <iframe
+                  src={viewingDoc.url}
+                  title={viewingDoc.name}
+                  onLoad={() => setDocLoading(false)}
+                  style={{ opacity: docLoading ? 0 : 1, transition: 'opacity 0.2s' }}
+                />
+              )}
             </div>
           </div>
         </div>

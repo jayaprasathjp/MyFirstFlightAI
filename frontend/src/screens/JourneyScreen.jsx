@@ -35,7 +35,8 @@ export default function JourneyScreen({ trip, onSaveBoarding, busy, toast }) {
   if (!s) return null
   const last = n === steps.length - 1
   const stepText = () => [s.title, ...s.where, ...s.do,
-    ...s.qa.map((x) => `${t('they_ask')}: ${x.q}. ${t('you_say')}: ${x.a}`)].join('. ')
+    ...s.qa.map((x) => [`${t('they_ask')}: ${x.q}. ${t('you_say')}: ${x.a}`,
+      ...(x.alts || []).map((alt) => `${t('or_say')}: ${alt.tr}`)].join('. '))].join('. ')
 
   return (
     <>
@@ -62,6 +63,16 @@ export default function JourneyScreen({ trip, onSaveBoarding, busy, toast }) {
                 <q lang="en">{x.q_en}</q>{x.q !== x.q_en && <span className="loc">{x.q}</span>}
                 <span className="ans">{t('you_say')}: <b lang="en">{x.a_en}</b></span>
                 {x.a !== x.a_en && <span className="loc">{x.a}</span>}
+                {x.alts?.length > 0 && (
+                  <details className="alts">
+                    <summary>{t('or_say')}</summary>
+                    <ul>
+                      {x.alts.map((alt) => (
+                        <li key={alt.en}><b lang="en">{alt.en}</b>{alt.tr !== alt.en && <span className="loc">{alt.tr}</span>}</li>
+                      ))}
+                    </ul>
+                  </details>
+                )}
               </div>
             ))}
           </div>
