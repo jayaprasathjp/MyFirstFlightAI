@@ -73,6 +73,9 @@ def extract_document(content: bytes, mime_type: str, doc_type: str) -> dict:
         ],
         config=types.GenerateContentConfig(
             response_mime_type="application/json", response_schema=model, temperature=0,
+            # Copying printed fields needs little reasoning: a small budget is ~2x faster than the default
+            # with the same accuracy in tests. Raise EXTRACT_THINKING_BUDGET if blurry photos misread.
+            thinking_config=types.ThinkingConfig(thinking_budget=int(os.getenv("EXTRACT_THINKING_BUDGET", "512"))),
         ),
     )
     return model.model_validate_json(response.text).model_dump()
