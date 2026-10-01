@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { auth } from './firebase';
-import { onIdTokenChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut as fbSignOut, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { onIdTokenChanged, signOut as fbSignOut, GoogleAuthProvider, signInWithPopup, signInWithPhoneNumber, RecaptchaVerifier } from 'firebase/auth';
 import { api } from './api';
 
 const AuthContext = createContext();
@@ -28,27 +28,22 @@ export function AuthProvider({ children }) {
     return unsubscribe;
   }, []);
 
-  const signup = (email, password) => {
-    return createUserWithEmailAndPassword(auth, email, password);
-  };
-
-  const login = (email, password) => {
-    return signInWithEmailAndPassword(auth, email, password);
+  const requestPhoneOtp = (phoneNumber, appVerifier) => {
+    return signInWithPhoneNumber(auth, phoneNumber, appVerifier);
   };
 
   const logout = () => {
     return fbSignOut(auth);
   };
 
-  const loginWithGoogle = () => {
+  const loginWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
-    return signInWithPopup(auth, provider);
+    return await signInWithPopup(auth, provider);
   };
 
   const value = {
     currentUser,
-    signup,
-    login,
+    requestPhoneOtp,
     loginWithGoogle,
     logout
   };

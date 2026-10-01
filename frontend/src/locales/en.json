@@ -157,5 +157,21 @@
   "err_auth_invalid": "Incorrect email or password. Please try again.",
   "err_auth_weak_password": "Password is too weak. Please use at least 6 characters.",
   "err_auth_too_many": "Too many failed attempts. Please try again later.",
-  "err_auth_default": "Authentication failed. Please try again."
+  "err_auth_default": "Authentication failed. Please try again.",
+  "auth_pass_len": "Password must be at least 12 characters.",
+  "auth_pass_upper": "Password must contain at least one uppercase letter.",
+  "auth_pass_lower": "Password must contain at least one lowercase letter.",
+  "auth_pass_num": "Password must contain at least one number.",
+  "auth_pass_sym": "Password must contain at least one symbol.",
+  "auth_verify_email_sent": "A verification link has been sent to your email. Please verify your email to sign in.",
+  "auth_email_not_verified": "Your email is not verified. Please check your inbox for the verification link.",
+  "auth_phone": "Phone number (with country code)",
+  "auth_phone_placeholder": "+91 98765 43210",
+  "auth_otp": "Verification code",
+  "auth_otp_placeholder": "123456",
+  "auth_send_otp": "Send Code",
+  "auth_verify_otp": "Verify and Login",
+  "auth_otp_sent": "Code sent to your phone.",
+  "err_auth_invalid_phone": "Invalid phone number.",
+  "err_auth_invalid_otp": "Invalid verification code."
 }

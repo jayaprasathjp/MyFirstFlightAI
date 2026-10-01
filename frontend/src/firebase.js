@@ -12,3 +12,9 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
+
+// Disable reCAPTCHA app verification based on .env config (for test numbers)
+if (import.meta.env.VITE_FIREBASE_TEST_MODE === 'true') {
+  auth.settings.appVerificationDisabledForTesting = true;
+}
+
