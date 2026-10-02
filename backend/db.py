@@ -44,6 +44,14 @@ class MemoryStore:
         if doc is not None:
             doc.update(copy.deepcopy(fields))
 
+    def delete(self, collection, doc_id):
+        self._data.get(collection, {}).pop(doc_id, None)
+
+    def delete_files(self, prefix):
+        files = self._data.get("files", {})
+        for path in [p for p in files if p.startswith(prefix)]:
+            files.pop(path)
+
     def set_file(self, path, content, mime_type):
         self._data.setdefault("files", {})[path] = {"content": content, "mime_type": mime_type}
 
@@ -130,6 +138,21 @@ class FirestoreStore:
         except Exception as exc:
             log.exception("Firestore batch write failed")
             raise StoreError(_explain(exc)) from exc
+
+    def delete(self, collection, doc_id):
+        try:
+            self._db.collection(collection).document(doc_id).delete()
+        except Exception as exc:
+            log.exception("Firestore delete failed")
+            raise StoreError(_explain(exc)) from exc
+
+    def delete_files(self, prefix):
+        """Delete every stored file under a path prefix, e.g. all documents of one trip."""
+        try:
+            for blob in self._storage.bucket(self._bucket_name).list_blobs(prefix=prefix):
+                blob.delete()
+        except Exception as exc:
+            log.warning(f"GCS delete failed for '{prefix}': {exc}")
 
     def update(self, collection, doc_id, fields):
         """Change only these fields (does not overwrite edits made meanwhile by another request)."""

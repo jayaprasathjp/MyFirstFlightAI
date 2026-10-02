@@ -95,6 +95,10 @@ class UpdateTripRequest(BaseModel):
     language: str
 
 
+class QuickAnswers(BaseModel):
+    answers: dict[str, bool]  # question id -> True ("yes, already done") / False ("not yet")
+
+
 class ChecklistToggle(BaseModel):
     done: dict[str, bool]  # full map of item_id -> done; last write wins
 

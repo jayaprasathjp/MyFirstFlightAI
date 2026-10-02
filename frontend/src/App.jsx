@@ -11,6 +11,7 @@ import CheckScreen from './screens/CheckScreen'
 import ContactsScreen from './screens/ContactsScreen'
 import ChecklistScreen from './screens/ChecklistScreen'
 import TripsScreen from './screens/TripsScreen'
+import DocsFoundScreen from './screens/DocsFoundScreen'
 import JourneyScreen from './screens/JourneyScreen'
 import LostCard from './components/LostCard'
 import HelpSheet from './components/HelpSheet'
@@ -95,10 +96,24 @@ function Flow({ setLang }) {
   const [toastMsg, setToastMsg] = useState('')
   const toastTimer = useRef(null)
   const saveQueue = useRef(Promise.resolve())
+  // "Documents already saved: continue or replace?" Asked once per login session per trip.
+  const [docsPrompt, setDocsPrompt] = useState(false)
+  const docsKey = (id) => `mff-docs-ok-${id}`
+  const needsDocsPrompt = (tr) => {
+    if (!tr?.travellers?.length) return false
+    try { return !sessionStorage.getItem(docsKey(tr.id)) } catch { return true }
+  }
+  const answerDocsPrompt = (replace) => {
+    try { sessionStorage.setItem(docsKey(trip.id), '1') } catch { /* storage unavailable */ }
+    setDocsPrompt(false)
+    if (replace) setStep('travellers')
+    else if (step === 'language' || step === 'travellers') setStep('check')
+  }
   const selectTrip = (t) => {
     applyTrip(t);
     setDone(t.checklist_done || {});
     setStep('travellers');
+    setDocsPrompt(needsDocsPrompt(t));
     setViewMode('trip');
   }
 
@@ -131,11 +146,15 @@ function Flow({ setLang }) {
     if (!currentUser) {
       setTrip(null);
       setDone({});
+      setDocsPrompt(false);
+      try {  // ask "continue or replace?" again after the next login
+        Object.keys(sessionStorage).filter((k) => k.startsWith('mff-docs-ok-')).forEach((k) => sessionStorage.removeItem(k))
+      } catch { /* storage unavailable */ }
       return;
     }
     const id = store.get('mff-trip', null)
     if (!id) return
-    api.getTrip(id).then(applyTrip).catch((e) => {
+    api.getTrip(id).then((tr) => { applyTrip(tr); setDocsPrompt(needsDocsPrompt(tr)) }).catch((e) => {
       if (e.status === 404 || e.status === 403 || e.status === 401) { 
         ['mff-trip', 'mff-trip-cache', 'mff-step'].forEach(store.del); 
         setTrip(null); 
@@ -163,9 +182,23 @@ function Flow({ setLang }) {
     await run(async () => applyTrip(await api.setLanguage(trip.id, code)))
     setUpdating(false)
   }
-  const addTraveller = (files, assistance) => run(async () => applyTrip(await api.addTraveller(trip.id, files, assistance)))
+  const [dup, setDup] = useState(null) // same traveller already in another trip of this user
+  const addTraveller = (files, assistance) => run(async () => {
+    const r = await api.addTraveller(trip.id, files, assistance)
+    applyTrip(r)
+    if (r.duplicate_of) setDup({ ...r.duplicate_of, newTravellerId: r.travellers[r.travellers.length - 1].id })
+  })
+  // "Open my existing trip": drop the new copy (whole trip if that was its only traveller), then open the old one.
+  const openExistingTrip = () => run(async () => {
+    if (trip.travellers.length <= 1) await api.deleteTrip(trip.id)
+    else await api.removeTraveller(trip.id, dup.newTravellerId)
+    const existing = await api.getTrip(dup.trip_id)
+    setDup(null)
+    selectTrip(existing)
+  })
   const removeTraveller = (tid) => run(async () => applyTrip(await api.removeTraveller(trip.id, tid)))
   const replaceDocument = (tid, doc, file) => run(async () => applyTrip(await api.replaceDocument(trip.id, tid, doc, file)))
+  const answerQuick = (id, done) => run(async () => applyTrip(await api.saveQuickAnswers(trip.id, { [id]: done })))
   const saveContacts = (contacts) => run(async () => { applyTrip(await api.saveContacts(trip.id, contacts)); setStep('checklist') })
   const saveBoarding = (gate, time) => run(async () => applyTrip(await api.saveBoarding(trip.id, gate, time)))
   const toggle = (itemId) => {
@@ -174,6 +207,16 @@ function Flow({ setLang }) {
     store.set(`mff-done-${trip.id}`, next)
     // Serialize saves so an older request never overwrites a newer one.
     saveQueue.current = saveQueue.current.then(() => api.saveChecklist(trip.id, next)).catch(() => {})
+  }
+  // Log out: confirm, then remove this trip's data from the phone (it stays safe in the database).
+  const doLogout = async () => {
+    if (!window.confirm(t('logout_confirm'))) return
+    try {
+      Object.keys(localStorage).filter((k) => k.startsWith('mff-') && k !== 'mff-lang' && !k.startsWith('mff-ui-'))
+        .forEach((k) => localStorage.removeItem(k))
+    } catch { /* storage unavailable */ }
+    setTrip(null); setDone({}); setStepState('language'); setViewMode('trips')
+    await logout()
   }
   const startOver = () => {
     if (!window.confirm(t('start_over_confirm'))) return
@@ -186,23 +229,40 @@ function Flow({ setLang }) {
 
   return (
     <div className="app">
-      <TopBar onLanguage={changeLanguage} busy={busy} currentUser={currentUser} logout={logout} onShowTrips={() => setViewMode('trips')} />
+      <TopBar onLanguage={changeLanguage} busy={busy} currentUser={currentUser} logout={doLogout} onShowTrips={() => setViewMode('trips')} />
       {!currentUser ? (
         <AuthScreen />
       ) : viewMode === 'trips' ? (
-        <TripsScreen onSelect={selectTrip} onNew={newTrip} busy={busy} error={error} />
-      ) : (
         <>
+          <TripsScreen onSelect={selectTrip} onNew={newTrip} busy={busy} error={error} />
+          <footer className="foot"><button className="link logoutlink" onClick={doLogout}>{t('logout')}</button></footer>
+        </>
+      ) : (
+        docsPrompt && trip ? (
+          <main className="screen">
+            <DocsFoundScreen trip={trip} onContinue={() => answerDocsPrompt(false)} onReplace={() => answerDocsPrompt(true)} />
+          </main>
+        ) : <>
           <Stepper step={step} allowed={allowed} onGo={setStep} />
           <main className="screen">
             {updating && <div className="reading" role="status"><span className="spin" aria-hidden="true"></span>{t('updating')}</div>}
+            {dup && (
+              <div className="card form dupcard" role="alertdialog" aria-label={t('dup_title')}>
+                <h3>{t('dup_title')}</h3>
+                <b>{dup.traveller} · ✈ {dup.route}{dup.departure_date && ` · ${dup.departure_date}`}{dup.pnr && ` · ${dup.pnr}`}</b>
+                <span className="muted">{t('dup_body')}</span>
+                <button className="btn pri full" onClick={openExistingTrip} disabled={busy}>{t('dup_open')}</button>
+                <button className="btn sec full" onClick={() => setDup(null)} disabled={busy}>{t('dup_keep')}</button>
+              </div>
+            )}
             {error && step !== 'travellers' && <div className="err" role="alert">{error}</div>}
             {step === 'language' && <LanguageScreen onPick={pickLanguage} busy={busy} />}
             {step === 'travellers' && trip && (
               <TravellersScreen trip={trip} busy={busy} error={error} onAdd={addTraveller} onRemove={removeTraveller}
                 onReplaceDoc={replaceDocument} onNext={() => setStep('check')} toast={toast} />
             )}
-            {step === 'check' && trip && <CheckScreen trip={trip} onBack={() => setStep('travellers')} onNext={() => setStep('contacts')} toast={toast} />}
+            {step === 'check' && trip && <CheckScreen trip={trip} onBack={() => setStep('travellers')} onNext={() => setStep('contacts')}
+              onAnswer={answerQuick} busy={busy} toast={toast} />}
             {step === 'contacts' && trip && <ContactsScreen key={trip.id} trip={trip} busy={busy} onSave={saveContacts} toast={toast} />}
             {step === 'checklist' && trip && (
               <>
@@ -216,6 +276,7 @@ function Flow({ setLang }) {
           {trip && <footer className={'foot' + (hasTravellers ? ' dock-pad' : '')}>
             <button className="link" onClick={() => setViewMode('trips')}>{t('back_to_trips')}</button>
             <button className="link" onClick={startOver} style={{marginLeft: '20px'}}>{t('start_over')}</button>
+            <button className="link logoutlink" onClick={doLogout} style={{marginLeft: '20px'}}>{t('logout')}</button>
           </footer>}
           {hasTravellers && (
             <div className="dock">

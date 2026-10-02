@@ -12,7 +12,30 @@ function Check({ c }) {
   )
 }
 
-export default function CheckScreen({ trip, onBack, onNext, toast }) {
+// Yes/no questions after upload: "yes, already done" removes that task from the checklist.
+function QuickQuestions({ questions, onAnswer, busy }) {
+  const { t } = useI18n()
+  if (!questions?.length) return null
+  return (
+    <section className="card form quickq">
+      <h3>{t('quick_title')}</h3>
+      {questions.map((q) => (
+        <div key={q.id} className="qrow">
+          <b>{q.question}</b>
+          <div className="row2 even">
+            <button className={'btn sec' + (q.answer === true ? ' chosen' : '')} disabled={busy}
+              aria-pressed={q.answer === true} onClick={() => onAnswer(q.id, true)}>✓ {t('yes_done')}</button>
+            <button className={'btn sec' + (q.answer === false ? ' chosen' : '')} disabled={busy}
+              aria-pressed={q.answer === false} onClick={() => onAnswer(q.id, false)}>{t('not_yet')}</button>
+          </div>
+        </div>
+      ))}
+      <small className="muted">{t('quick_hint')}</small>
+    </section>
+  )
+}
+
+export default function CheckScreen({ trip, onBack, onNext, onAnswer, busy, toast }) {
   const { t } = useI18n()
   const ready = trip.status === 'ready'
   const groups = trip.travellers.map((p) => ({ key: p.id, title: p.name, checks: trip.checks.filter((c) => c.traveller_id === p.id) }))
@@ -35,6 +58,7 @@ export default function CheckScreen({ trip, onBack, onNext, toast }) {
           {g.checks.map((c) => <Check key={c.id} c={c} />)}
         </section>
       ))}
+      <QuickQuestions questions={trip.quick_questions} onAnswer={onAnswer} busy={busy} />
       <div className="nav2">
         <button className="btn sec" onClick={onBack}>{t('back')}</button>
         <button className="btn pri" onClick={onNext}>{t('go_contacts')} →</button>
