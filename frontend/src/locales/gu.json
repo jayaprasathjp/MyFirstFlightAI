@@ -193,6 +193,10 @@
   "yes_done": "હા, થઈ ગયું",
   "not_yet": "હજી નહીં",
   "quick_hint": "જો તે પહેલેથી જ થઈ ગયું હોય, તો અમે તેને તમારી ચેકલિસ્ટમાંથી કાઢી નાખીશું. તમે કોઈપણ સમયે અહીં તમારો જવાબ બદલી શકો છો.",
+  "dup_title": "તમારી પાસે આ ટ્રિપ પહેલેથી જ છે",
+  "dup_body": "આ દસ્તાવેજો તમારી એક ટ્રિપમાં પહેલેથી જ છે. શું તમે તે ટ્રિપ ખોલવા માંગો છો, જેથી બધું એક જ જગ્યાએ રહે?",
+  "dup_open": "મારી હાલની ટ્રિપ ખોલો",
+  "dup_keep": "નવી ટ્રિપ તરીકે રાખો",
   "__source": {
     "step_language": "Language",
     "step_travellers": "Travellers",
@@ -387,6 +391,10 @@
     "quick_title": "Quick questions",
     "yes_done": "Yes, done",
     "not_yet": "Not yet",
-    "quick_hint": "If it is already done, we leave it out of your checklist. You can change your answer here any time."
+    "quick_hint": "If it is already done, we leave it out of your checklist. You can change your answer here any time.",
+    "dup_title": "You already have this trip",
+    "dup_body": "These documents are already in one of your trips. Open that trip instead, so everything stays in one place?",
+    "dup_open": "Open my existing trip",
+    "dup_keep": "Keep as a new trip"
   }
 }

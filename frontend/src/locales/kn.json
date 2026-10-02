@@ -193,6 +193,10 @@
   "yes_done": "ಹೌದು, ಆಗಿದೆ",
   "not_yet": "ಇನ್ನೂ ಇಲ್ಲ",
   "quick_hint": "ಇದು ಈಗಾಗಲೇ ಆಗಿದ್ದರೆ, ನಾವು ಅದನ್ನು ನಿಮ್ಮ ಪಟ್ಟಿಯಿಂದ ತೆಗೆದುಹಾಕುತ್ತೇವೆ. ನೀವು ಯಾವುದೇ ಸಮಯದಲ್ಲಿ ನಿಮ್ಮ ಉತ್ತರವನ್ನು ಇಲ್ಲಿ ಬದಲಾಯಿಸಬಹುದು.",
+  "dup_title": "ಈಗಾಗಲೇ ಈ ಪ್ರಯಾಣ ನಿಮ್ಮಲ್ಲಿದೆ",
+  "dup_body": "ಈ ದಾಖಲೆಗಳು ಈಗಾಗಲೇ ನಿಮ್ಮ ಒಂದು ಪ್ರಯಾಣದಲ್ಲಿವೆ. ಎಲ್ಲವೂ ಒಂದೇ ಕಡೆ ಇರಲು, ಆ ಪ್ರಯಾಣವನ್ನು ತೆರೆಯುವಿರಾ?",
+  "dup_open": "ನನ್ನ ಅಸ್ತಿತ್ವದಲ್ಲಿರುವ ಪ್ರಯಾಣವನ್ನು ತೆರೆಯಿರಿ",
+  "dup_keep": "ಹೊಸ ಪ್ರಯಾಣವಾಗಿ ಇರಿಸಿಕೊಳ್ಳಿ",
   "__source": {
     "step_language": "Language",
     "step_travellers": "Travellers",
@@ -387,6 +391,10 @@
     "quick_title": "Quick questions",
     "yes_done": "Yes, done",
     "not_yet": "Not yet",
-    "quick_hint": "If it is already done, we leave it out of your checklist. You can change your answer here any time."
+    "quick_hint": "If it is already done, we leave it out of your checklist. You can change your answer here any time.",
+    "dup_title": "You already have this trip",
+    "dup_body": "These documents are already in one of your trips. Open that trip instead, so everything stays in one place?",
+    "dup_open": "Open my existing trip",
+    "dup_keep": "Keep as a new trip"
   }
 }

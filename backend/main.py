@@ -402,7 +402,46 @@ async def add_traveller(
     if await asyncio.to_thread(recompute, trip):
         background.add_task(refresh_advice, trip_id)  # country advice is ready by the time they reach the checklist
     save_trip(trip)
-    return await asyncio.to_thread(trip_view, trip)
+    view = await asyncio.to_thread(trip_view, trip)
+    view["duplicate_of"] = find_duplicate_trip(user_id, trip_id, ticket_data, passport_data)
+    return view
+
+
+def _norm(text):
+    return " ".join(sorted("".join(c for c in (text or "").upper() if c.isalnum() or c.isspace()).split()))
+
+
+def find_duplicate_trip(user_id, trip_id, ticket, passport):
+    """Another trip of this user with the same traveller: same passport number, or same booking + name."""
+    number, pnr = (passport.get("number") or "").upper(), (ticket.get("pnr") or "").upper()
+    name = _norm(passport_name(passport))
+    try:
+        others = store().query("trips", "owner_id", user_id) if user_id else {}
+    except StoreError:
+        return None
+    for tid, other in others.items():
+        if tid == trip_id:
+            continue
+        for t in other.get("travellers") or []:
+            docs = t.get("documents") or {}
+            same_passport = number and (docs.get("passport") or {}).get("number", "").upper() == number
+            same_booking = pnr and (docs.get("ticket") or {}).get("pnr", "").upper() == pnr \
+                and _norm(passport_name(docs.get("passport") or {})) == name
+            if same_passport or same_booking:
+                s = other.get("summary") or {}
+                return {"trip_id": tid, "traveller": t.get("name"), "pnr": s.get("pnr"),
+                        "route": f"{s.get('origin_city') or s.get('origin_code')} → {s.get('destination_city') or s.get('destination_code')}",
+                        "departure_date": s.get("departure_date")}
+    return None
+
+
+@app.delete("/api/trips/{trip_id}")
+def delete_trip(trip_id: str, user_id: str = Depends(get_current_user)):
+    """Delete a whole trip and its stored documents (owner only)."""
+    load_trip(trip_id, user_id)
+    store().delete_files(f"trips/{trip_id}/")
+    store().delete("trips", trip_id)
+    return {"deleted": trip_id}
 
 
 @app.delete("/api/trips/{trip_id}/travellers/{traveller_id}")

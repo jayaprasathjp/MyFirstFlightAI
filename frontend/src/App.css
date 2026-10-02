@@ -256,3 +256,4 @@ ul.do li::before { content: ""; position: absolute; inset-inline-start: 4px; top
 /* quick questions after upload */
 .quickq .qrow { display: grid; gap: 8px }
 .btn.chosen { border-color: var(--brand); background: var(--brand-soft); color: var(--brand) }
+.dupcard { border: 1.5px solid var(--warn); background: var(--warn-soft) }

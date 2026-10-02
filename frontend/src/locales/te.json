@@ -193,6 +193,10 @@
   "yes_done": "అవును, చేసారు",
   "not_yet": "ఇంకా లేదు",
   "quick_hint": "ఇది ఇప్పటికే పూర్తయితే, మేము దానిని మీ చెక్‌లిస్ట్ నుండి తీసివేస్తాము. మీరు ఎప్పుడైనా ఇక్కడ మీ సమాధానాన్ని మార్చవచ్చు.",
+  "dup_title": "మీరు ఇప్పటికే ఈ ప్రయాణాన్ని కలిగి ఉన్నారు",
+  "dup_body": "ఈ పత్రాలు ఇప్పటికే మీ ప్రయాణాలలో ఒకదానిలో ఉన్నాయి. అన్నీ ఒకే చోట ఉండేలా, దానికి బదులుగా ఆ ప్రయాణాన్ని తెరవాలా?",
+  "dup_open": "నా ప్రస్తుత ప్రయాణాన్ని తెరవండి",
+  "dup_keep": "కొత్త ప్రయాణంగా ఉంచండి",
   "__source": {
     "step_language": "Language",
     "step_travellers": "Travellers",
@@ -387,6 +391,10 @@
     "quick_title": "Quick questions",
     "yes_done": "Yes, done",
     "not_yet": "Not yet",
-    "quick_hint": "If it is already done, we leave it out of your checklist. You can change your answer here any time."
+    "quick_hint": "If it is already done, we leave it out of your checklist. You can change your answer here any time.",
+    "dup_title": "You already have this trip",
+    "dup_body": "These documents are already in one of your trips. Open that trip instead, so everything stays in one place?",
+    "dup_open": "Open my existing trip",
+    "dup_keep": "Keep as a new trip"
   }
 }

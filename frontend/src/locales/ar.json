@@ -193,6 +193,10 @@
   "yes_done": "نعم، تم",
   "not_yet": "ليس بعد",
   "quick_hint": "إذا كان الأمر قد تم بالفعل، فسنستبعده من قائمة مهامك. يمكنك تغيير إجابتك هنا في أي وقت.",
+  "dup_title": "لديك هذه الرحلة بالفعل",
+  "dup_body": "هذه المستندات موجودة بالفعل في إحدى رحلاتك. هل تود فتح تلك الرحلة بدلاً من إنشاء رحلة جديدة، لتبقى كل معلوماتك في مكان واحد؟",
+  "dup_open": "افتح رحلتي الحالية",
+  "dup_keep": "احتفظ بها كرحلة جديدة",
   "__source": {
     "step_language": "Language",
     "step_travellers": "Travellers",
@@ -387,6 +391,10 @@
     "quick_title": "Quick questions",
     "yes_done": "Yes, done",
     "not_yet": "Not yet",
-    "quick_hint": "If it is already done, we leave it out of your checklist. You can change your answer here any time."
+    "quick_hint": "If it is already done, we leave it out of your checklist. You can change your answer here any time.",
+    "dup_title": "You already have this trip",
+    "dup_body": "These documents are already in one of your trips. Open that trip instead, so everything stays in one place?",
+    "dup_open": "Open my existing trip",
+    "dup_keep": "Keep as a new trip"
   }
 }

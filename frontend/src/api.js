@@ -56,6 +56,7 @@ export const api = {
     return request(`/api/trips/${id}/travellers/${travellerId}/documents/${doc}`, { method: 'PUT', body: form })
   },
   saveChecklist: (id, done) => request(`/api/trips/${id}/checklist`, json('PUT', { done })),
+  deleteTrip: (id) => request(`/api/trips/${id}`, { method: 'DELETE' }),
   saveQuickAnswers: (id, answers) => request(`/api/trips/${id}/quick-answers`, json('PUT', { answers })),
   saveContacts: (id, contacts) => request(`/api/trips/${id}/contacts`, json('PUT', { contacts })),
   saveBoarding: (id, gate, boarding_time) => request(`/api/trips/${id}/boarding`, json('PUT', { gate, boarding_time })),

@@ -193,6 +193,10 @@
   "yes_done": "是的，已完成",
   "not_yet": "还没有",
   "quick_hint": "如果已经办好了，我们就会把它从您的清单中删除。您可以随时在这里更改您的答案。",
+  "dup_title": "您已经有这个行程了",
+  "dup_body": "这些文件已经在您的一个行程中了。要不打开那个行程，这样所有东西都在一个地方？",
+  "dup_open": "打开我已有的行程",
+  "dup_keep": "保留为新行程",
   "__source": {
     "step_language": "Language",
     "step_travellers": "Travellers",
@@ -387,6 +391,10 @@
     "quick_title": "Quick questions",
     "yes_done": "Yes, done",
     "not_yet": "Not yet",
-    "quick_hint": "If it is already done, we leave it out of your checklist. You can change your answer here any time."
+    "quick_hint": "If it is already done, we leave it out of your checklist. You can change your answer here any time.",
+    "dup_title": "You already have this trip",
+    "dup_body": "These documents are already in one of your trips. Open that trip instead, so everything stays in one place?",
+    "dup_open": "Open my existing trip",
+    "dup_keep": "Keep as a new trip"
   }
 }

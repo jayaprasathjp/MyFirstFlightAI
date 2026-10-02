@@ -193,6 +193,10 @@
   "yes_done": "होय, झाले आहे",
   "not_yet": "अजून नाही",
   "quick_hint": "जर हे आधीच झाले असेल, तर आम्ही ते तुमच्या चेकलिस्टमधून काढून टाकू. तुम्ही तुमचा प्रतिसाद इथे कधीही बदलू शकता.",
+  "dup_title": "तुमच्याकडे आधीच ही सहल आहे",
+  "dup_body": "ही कागदपत्रे तुमच्या आधीच्या एका सहलीत आहेत. तीच सहल उघडा म्हणजे सर्व माहिती एकाच ठिकाणी राहील.",
+  "dup_open": "माझी जुनी सहल उघडा",
+  "dup_keep": "नवीन सहल म्हणून ठेवा",
   "__source": {
     "step_language": "Language",
     "step_travellers": "Travellers",
@@ -387,6 +391,10 @@
     "quick_title": "Quick questions",
     "yes_done": "Yes, done",
     "not_yet": "Not yet",
-    "quick_hint": "If it is already done, we leave it out of your checklist. You can change your answer here any time."
+    "quick_hint": "If it is already done, we leave it out of your checklist. You can change your answer here any time.",
+    "dup_title": "You already have this trip",
+    "dup_body": "These documents are already in one of your trips. Open that trip instead, so everything stays in one place?",
+    "dup_open": "Open my existing trip",
+    "dup_keep": "Keep as a new trip"
   }
 }

@@ -182,7 +182,20 @@ function Flow({ setLang }) {
     await run(async () => applyTrip(await api.setLanguage(trip.id, code)))
     setUpdating(false)
   }
-  const addTraveller = (files, assistance) => run(async () => applyTrip(await api.addTraveller(trip.id, files, assistance)))
+  const [dup, setDup] = useState(null) // same traveller already in another trip of this user
+  const addTraveller = (files, assistance) => run(async () => {
+    const r = await api.addTraveller(trip.id, files, assistance)
+    applyTrip(r)
+    if (r.duplicate_of) setDup({ ...r.duplicate_of, newTravellerId: r.travellers[r.travellers.length - 1].id })
+  })
+  // "Open my existing trip": drop the new copy (whole trip if that was its only traveller), then open the old one.
+  const openExistingTrip = () => run(async () => {
+    if (trip.travellers.length <= 1) await api.deleteTrip(trip.id)
+    else await api.removeTraveller(trip.id, dup.newTravellerId)
+    const existing = await api.getTrip(dup.trip_id)
+    setDup(null)
+    selectTrip(existing)
+  })
   const removeTraveller = (tid) => run(async () => applyTrip(await api.removeTraveller(trip.id, tid)))
   const replaceDocument = (tid, doc, file) => run(async () => applyTrip(await api.replaceDocument(trip.id, tid, doc, file)))
   const answerQuick = (id, done) => run(async () => applyTrip(await api.saveQuickAnswers(trip.id, { [id]: done })))
@@ -233,6 +246,15 @@ function Flow({ setLang }) {
           <Stepper step={step} allowed={allowed} onGo={setStep} />
           <main className="screen">
             {updating && <div className="reading" role="status"><span className="spin" aria-hidden="true"></span>{t('updating')}</div>}
+            {dup && (
+              <div className="card form dupcard" role="alertdialog" aria-label={t('dup_title')}>
+                <h3>{t('dup_title')}</h3>
+                <b>{dup.traveller} · ✈ {dup.route}{dup.departure_date && ` · ${dup.departure_date}`}{dup.pnr && ` · ${dup.pnr}`}</b>
+                <span className="muted">{t('dup_body')}</span>
+                <button className="btn pri full" onClick={openExistingTrip} disabled={busy}>{t('dup_open')}</button>
+                <button className="btn sec full" onClick={() => setDup(null)} disabled={busy}>{t('dup_keep')}</button>
+              </div>
+            )}
             {error && step !== 'travellers' && <div className="err" role="alert">{error}</div>}
             {step === 'language' && <LanguageScreen onPick={pickLanguage} busy={busy} />}
             {step === 'travellers' && trip && (

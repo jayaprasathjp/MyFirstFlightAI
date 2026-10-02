@@ -193,6 +193,10 @@
   "yes_done": "ചെയ്തു",
   "not_yet": "ഇതുവരെയില്ല",
   "quick_hint": "ഇത് ചെയ്തുകഴിഞ്ഞെങ്കിൽ, നിങ്ങളുടെ ചെക്ക്‌ലിസ്റ്റിൽ നിന്ന് ഞങ്ങൾ ഇത് ഒഴിവാക്കും. നിങ്ങൾക്ക് എപ്പോൾ വേണമെങ്കിലും നിങ്ങളുടെ ഉത്തരം ഇവിടെ മാറ്റാം.",
+  "dup_title": "ഈ യാത്ര നിങ്ങൾക്കുണ്ട്",
+  "dup_body": "ഈ രേഖകൾ നിങ്ങളുടെ ഒരു യാത്രയിലുണ്ട്. എല്ലാം ഒരു സ്ഥലത്ത് സൂക്ഷിക്കാൻ ആ യാത്ര തുറക്കണോ?",
+  "dup_open": "എന്റെ നിലവിലുള്ള യാത്ര തുറക്കുക",
+  "dup_keep": "പുതിയ യാത്രയായി സൂക്ഷിക്കുക",
   "__source": {
     "step_language": "Language",
     "step_travellers": "Travellers",
@@ -387,6 +391,10 @@
     "quick_title": "Quick questions",
     "yes_done": "Yes, done",
     "not_yet": "Not yet",
-    "quick_hint": "If it is already done, we leave it out of your checklist. You can change your answer here any time."
+    "quick_hint": "If it is already done, we leave it out of your checklist. You can change your answer here any time.",
+    "dup_title": "You already have this trip",
+    "dup_body": "These documents are already in one of your trips. Open that trip instead, so everything stays in one place?",
+    "dup_open": "Open my existing trip",
+    "dup_keep": "Keep as a new trip"
   }
 }
