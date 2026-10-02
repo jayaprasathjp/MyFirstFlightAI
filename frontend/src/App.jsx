@@ -185,6 +185,7 @@ function Flow({ setLang }) {
   const addTraveller = (files, assistance) => run(async () => applyTrip(await api.addTraveller(trip.id, files, assistance)))
   const removeTraveller = (tid) => run(async () => applyTrip(await api.removeTraveller(trip.id, tid)))
   const replaceDocument = (tid, doc, file) => run(async () => applyTrip(await api.replaceDocument(trip.id, tid, doc, file)))
+  const answerQuick = (id, done) => run(async () => applyTrip(await api.saveQuickAnswers(trip.id, { [id]: done })))
   const saveContacts = (contacts) => run(async () => { applyTrip(await api.saveContacts(trip.id, contacts)); setStep('checklist') })
   const saveBoarding = (gate, time) => run(async () => applyTrip(await api.saveBoarding(trip.id, gate, time)))
   const toggle = (itemId) => {
@@ -238,7 +239,8 @@ function Flow({ setLang }) {
               <TravellersScreen trip={trip} busy={busy} error={error} onAdd={addTraveller} onRemove={removeTraveller}
                 onReplaceDoc={replaceDocument} onNext={() => setStep('check')} toast={toast} />
             )}
-            {step === 'check' && trip && <CheckScreen trip={trip} onBack={() => setStep('travellers')} onNext={() => setStep('contacts')} toast={toast} />}
+            {step === 'check' && trip && <CheckScreen trip={trip} onBack={() => setStep('travellers')} onNext={() => setStep('contacts')}
+              onAnswer={answerQuick} busy={busy} toast={toast} />}
             {step === 'contacts' && trip && <ContactsScreen key={trip.id} trip={trip} busy={busy} onSave={saveContacts} toast={toast} />}
             {step === 'checklist' && trip && (
               <>

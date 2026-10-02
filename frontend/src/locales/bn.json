@@ -189,6 +189,10 @@
   "continue_docs": "এগুলি দিয়েই এগিয়ে যান",
   "replace_docs": "কাগজপত্র বদলান",
   "logout_confirm": "লগ আউট করবেন? আপনার ট্রিপগুলি সেভ করা থাকবে। সেগুলি দেখতে আবার লগ ইন করুন।",
+  "quick_title": "তাড়াতাড়ি কিছু প্রশ্ন",
+  "yes_done": "হ্যাঁ, হয়ে গেছে",
+  "not_yet": "এখনো হয়নি",
+  "quick_hint": "যদি এটা ইতিমধ্যেই করা হয়ে থাকে, তাহলে আমরা আপনার চেকলিস্ট থেকে এটা বাদ দেবো। আপনি যেকোনো সময় এখানে আপনার উত্তর পরিবর্তন করতে পারবেন।",
   "__source": {
     "step_language": "Language",
     "step_travellers": "Travellers",
@@ -379,6 +383,10 @@
     "docs_found_hint": "We found the ticket, passport and visa you uploaded before. Continue with them, or replace any that are wrong or changed.",
     "continue_docs": "Continue with these",
     "replace_docs": "Replace documents",
-    "logout_confirm": "Log out? Your trips stay saved. Log in again to see them."
+    "logout_confirm": "Log out? Your trips stay saved. Log in again to see them.",
+    "quick_title": "Quick questions",
+    "yes_done": "Yes, done",
+    "not_yet": "Not yet",
+    "quick_hint": "If it is already done, we leave it out of your checklist. You can change your answer here any time."
   }
 }

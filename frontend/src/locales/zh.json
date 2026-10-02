@@ -189,6 +189,10 @@
   "continue_docs": "继续用这些",
   "replace_docs": "换掉证件",
   "logout_confirm": "要退出吗？您的行程会保留。再次登录即可查看。",
+  "quick_title": "快速提问",
+  "yes_done": "是的，已完成",
+  "not_yet": "还没有",
+  "quick_hint": "如果已经办好了，我们就会把它从您的清单中删除。您可以随时在这里更改您的答案。",
   "__source": {
     "step_language": "Language",
     "step_travellers": "Travellers",
@@ -379,6 +383,10 @@
     "docs_found_hint": "We found the ticket, passport and visa you uploaded before. Continue with them, or replace any that are wrong or changed.",
     "continue_docs": "Continue with these",
     "replace_docs": "Replace documents",
-    "logout_confirm": "Log out? Your trips stay saved. Log in again to see them."
+    "logout_confirm": "Log out? Your trips stay saved. Log in again to see them.",
+    "quick_title": "Quick questions",
+    "yes_done": "Yes, done",
+    "not_yet": "Not yet",
+    "quick_hint": "If it is already done, we leave it out of your checklist. You can change your answer here any time."
   }
 }

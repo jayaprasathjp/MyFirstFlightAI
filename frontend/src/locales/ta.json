@@ -189,6 +189,10 @@
   "continue_docs": "இவற்றைக் கொண்டே தொடரவும்",
   "replace_docs": "ஆவணங்களை மாற்றவும்",
   "logout_confirm": "வெளியேறவா? உங்கள் பயணங்கள் சேமிக்கப்படும். மீண்டும் உள்நுழைந்து அவற்றைப் பார்க்கலாம்.",
+  "quick_title": "விரைவான கேள்விகள்",
+  "yes_done": "ஆம், செய்துவிட்டேன்",
+  "not_yet": "இன்னும் இல்லை",
+  "quick_hint": "ஏற்கனவே செய்துவிட்டால், அதை உங்கள் சரிபார்ப்புப் பட்டியலிலிருந்து நீக்கிவிடுவோம். உங்கள் பதிலை எப்போது வேண்டுமானாலும் இங்கே மாற்றிக்கொள்ளலாம்.",
   "__source": {
     "step_language": "Language",
     "step_travellers": "Travellers",
@@ -379,6 +383,10 @@
     "docs_found_hint": "We found the ticket, passport and visa you uploaded before. Continue with them, or replace any that are wrong or changed.",
     "continue_docs": "Continue with these",
     "replace_docs": "Replace documents",
-    "logout_confirm": "Log out? Your trips stay saved. Log in again to see them."
+    "logout_confirm": "Log out? Your trips stay saved. Log in again to see them.",
+    "quick_title": "Quick questions",
+    "yes_done": "Yes, done",
+    "not_yet": "Not yet",
+    "quick_hint": "If it is already done, we leave it out of your checklist. You can change your answer here any time."
   }
 }

@@ -189,6 +189,10 @@
   "continue_docs": "ഇവയുമായി മുന്നോട്ട് പോകുക",
   "replace_docs": "രേഖകൾ മാറ്റുക",
   "logout_confirm": "പുറത്തുകടക്കണോ? നിങ്ങളുടെ യാത്രകൾ ഇവിടെത്തന്നെയുണ്ടാകും. അവ കാണാൻ വീണ്ടും പ്രവേശിക്കുക.",
+  "quick_title": "ചോദ്യങ്ങൾ",
+  "yes_done": "ചെയ്തു",
+  "not_yet": "ഇതുവരെയില്ല",
+  "quick_hint": "ഇത് ചെയ്തുകഴിഞ്ഞെങ്കിൽ, നിങ്ങളുടെ ചെക്ക്‌ലിസ്റ്റിൽ നിന്ന് ഞങ്ങൾ ഇത് ഒഴിവാക്കും. നിങ്ങൾക്ക് എപ്പോൾ വേണമെങ്കിലും നിങ്ങളുടെ ഉത്തരം ഇവിടെ മാറ്റാം.",
   "__source": {
     "step_language": "Language",
     "step_travellers": "Travellers",
@@ -379,6 +383,10 @@
     "docs_found_hint": "We found the ticket, passport and visa you uploaded before. Continue with them, or replace any that are wrong or changed.",
     "continue_docs": "Continue with these",
     "replace_docs": "Replace documents",
-    "logout_confirm": "Log out? Your trips stay saved. Log in again to see them."
+    "logout_confirm": "Log out? Your trips stay saved. Log in again to see them.",
+    "quick_title": "Quick questions",
+    "yes_done": "Yes, done",
+    "not_yet": "Not yet",
+    "quick_hint": "If it is already done, we leave it out of your checklist. You can change your answer here any time."
   }
 }

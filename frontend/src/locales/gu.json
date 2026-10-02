@@ -189,6 +189,10 @@
   "continue_docs": "આ દસ્તાવેજો સાથે આગળ વધો",
   "replace_docs": "દસ્તાવેજો બદલો",
   "logout_confirm": "બહાર નીકળવું છે? તમારી યાત્રાઓ સચવાયેલી રહેશે. તેમને જોવા માટે ફરીથી લોગ ઇન કરો.",
+  "quick_title": "ઝડપી પ્રશ્નો",
+  "yes_done": "હા, થઈ ગયું",
+  "not_yet": "હજી નહીં",
+  "quick_hint": "જો તે પહેલેથી જ થઈ ગયું હોય, તો અમે તેને તમારી ચેકલિસ્ટમાંથી કાઢી નાખીશું. તમે કોઈપણ સમયે અહીં તમારો જવાબ બદલી શકો છો.",
   "__source": {
     "step_language": "Language",
     "step_travellers": "Travellers",
@@ -379,6 +383,10 @@
     "docs_found_hint": "We found the ticket, passport and visa you uploaded before. Continue with them, or replace any that are wrong or changed.",
     "continue_docs": "Continue with these",
     "replace_docs": "Replace documents",
-    "logout_confirm": "Log out? Your trips stay saved. Log in again to see them."
+    "logout_confirm": "Log out? Your trips stay saved. Log in again to see them.",
+    "quick_title": "Quick questions",
+    "yes_done": "Yes, done",
+    "not_yet": "Not yet",
+    "quick_hint": "If it is already done, we leave it out of your checklist. You can change your answer here any time."
   }
 }

@@ -189,6 +189,10 @@
   "continue_docs": "వీటితో కొనసాగండి",
   "replace_docs": "పత్రాలను మార్చండి",
   "logout_confirm": "లాగ్ అవుట్ చేయాలా? మీ ప్రయాణాలు సేవ్ చేయబడతాయి. వాటిని చూడటానికి మళ్ళీ లాగిన్ అవ్వండి.",
+  "quick_title": "త్వరిత ప్రశ్నలు",
+  "yes_done": "అవును, చేసారు",
+  "not_yet": "ఇంకా లేదు",
+  "quick_hint": "ఇది ఇప్పటికే పూర్తయితే, మేము దానిని మీ చెక్‌లిస్ట్ నుండి తీసివేస్తాము. మీరు ఎప్పుడైనా ఇక్కడ మీ సమాధానాన్ని మార్చవచ్చు.",
   "__source": {
     "step_language": "Language",
     "step_travellers": "Travellers",
@@ -379,6 +383,10 @@
     "docs_found_hint": "We found the ticket, passport and visa you uploaded before. Continue with them, or replace any that are wrong or changed.",
     "continue_docs": "Continue with these",
     "replace_docs": "Replace documents",
-    "logout_confirm": "Log out? Your trips stay saved. Log in again to see them."
+    "logout_confirm": "Log out? Your trips stay saved. Log in again to see them.",
+    "quick_title": "Quick questions",
+    "yes_done": "Yes, done",
+    "not_yet": "Not yet",
+    "quick_hint": "If it is already done, we leave it out of your checklist. You can change your answer here any time."
   }
 }

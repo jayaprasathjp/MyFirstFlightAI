@@ -252,3 +252,7 @@ ul.do li::before { content: ""; position: absolute; inset-inline-start: 4px; top
 .docsfound { display: grid; gap: 6px }
 .tag.ok { border-color: var(--ok); color: var(--ok); background: var(--ok-soft) }
 .logoutlink { color: var(--bad) }
+
+/* quick questions after upload */
+.quickq .qrow { display: grid; gap: 8px }
+.btn.chosen { border-color: var(--brand); background: var(--brand-soft); color: var(--brand) }

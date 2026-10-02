@@ -189,6 +189,10 @@
   "continue_docs": "याच कागदपत्रांसह पुढे जा",
   "replace_docs": "कागदपत्रे बदला",
   "logout_confirm": "बाहेर पडायचे? तुमची प्रवासाची माहिती सुरक्षित राहील. ती पुन्हा पाहण्यासाठी, परत लॉग इन करा.",
+  "quick_title": "लगेच विचारायचे प्रश्न",
+  "yes_done": "होय, झाले आहे",
+  "not_yet": "अजून नाही",
+  "quick_hint": "जर हे आधीच झाले असेल, तर आम्ही ते तुमच्या चेकलिस्टमधून काढून टाकू. तुम्ही तुमचा प्रतिसाद इथे कधीही बदलू शकता.",
   "__source": {
     "step_language": "Language",
     "step_travellers": "Travellers",
@@ -379,6 +383,10 @@
     "docs_found_hint": "We found the ticket, passport and visa you uploaded before. Continue with them, or replace any that are wrong or changed.",
     "continue_docs": "Continue with these",
     "replace_docs": "Replace documents",
-    "logout_confirm": "Log out? Your trips stay saved. Log in again to see them."
+    "logout_confirm": "Log out? Your trips stay saved. Log in again to see them.",
+    "quick_title": "Quick questions",
+    "yes_done": "Yes, done",
+    "not_yet": "Not yet",
+    "quick_hint": "If it is already done, we leave it out of your checklist. You can change your answer here any time."
   }
 }
