@@ -25,11 +25,11 @@ if _creds and not Path(_creds).is_absolute():
 import gcp  # noqa: E402
 import gemini  # noqa: E402
 from advice import get_advice  # noqa: E402
-from checklist import build_checklist, group_dates  # noqa: E402
+from checklist import build_checklist, group_dates, quick_questions  # noqa: E402
 from db import StoreError, now_iso, store  # noqa: E402
 from journey import build_journey, destination_contact  # noqa: E402
 from schemas import (AssistRequest, BoardingRequest, ChatRequest, ChecklistToggle, ContactsRequest,  # noqa: E402
-                     CreateTripRequest, TranslateRequest, TTSRequest, UpdateTripRequest)
+                     CreateTripRequest, QuickAnswers, TranslateRequest, TTSRequest, UpdateTripRequest)
 from validation import check_trip, overall_status, passport_name, trip_summary  # noqa: E402
 
 log = logging.getLogger("myfirstflight")
@@ -202,6 +202,9 @@ def trip_view(trip):
     checks = trip.get("checks") or []
     travellers, contacts, advice = trip["travellers"], trip.get("contacts") or [], trip.get("advice")
     items = build_checklist(trip.get("summary"), travellers, checks, advice, contacts) if travellers else []
+    answers = trip.get("quick_answers") or {}
+    questions = quick_questions(trip.get("summary"), travellers, items)
+    items = [i for i in items if answers.get(i["id"]) is not True]  # "yes, already done": not shown in the checklist
     journey = build_journey(trip.get("summary"), travellers, advice, contacts, trip.get("boarding")) if travellers else []
 
     texts = {}
@@ -209,6 +212,8 @@ def trip_view(trip):
         texts[f"c.{c['id']}.t"], texts[f"c.{c['id']}.m"] = c["title"], c["message"]
     for i in items:
         texts[f"i.{i['id']}.t"], texts[f"i.{i['id']}.d"] = i["title"], i["detail"]
+    for q in questions:
+        texts[f"q.{q['id']}"] = q["question"]
     bp = trip.get("boarding_pass") or {}
     for n, f in enumerate(bp.get("fields") or []):
         texts[f"bp.{n}"] = f["meaning"]
@@ -248,6 +253,8 @@ def trip_view(trip):
             "items": [{**i, "title": tr[f"i.{i['id']}.t"], "detail": tr[f"i.{i['id']}.d"], "done": bool(done.get(i["id"]))}
                       for i in items],
         },
+        "quick_questions": [{"id": q["id"], "question": tr[f"q.{q['id']}"], "answer": answers.get(q["id"])}
+                            for q in questions],
         "contacts": contacts,
         "destination_contact": destination_contact(travellers, []),  # from the visa, to prefill the contacts form
         "boarding": trip.get("boarding") or {},
@@ -395,7 +402,46 @@ async def add_traveller(
     if await asyncio.to_thread(recompute, trip):
         background.add_task(refresh_advice, trip_id)  # country advice is ready by the time they reach the checklist
     save_trip(trip)
-    return await asyncio.to_thread(trip_view, trip)
+    view = await asyncio.to_thread(trip_view, trip)
+    view["duplicate_of"] = find_duplicate_trip(user_id, trip_id, ticket_data, passport_data)
+    return view
+
+
+def _norm(text):
+    return " ".join(sorted("".join(c for c in (text or "").upper() if c.isalnum() or c.isspace()).split()))
+
+
+def find_duplicate_trip(user_id, trip_id, ticket, passport):
+    """Another trip of this user with the same traveller: same passport number, or same booking + name."""
+    number, pnr = (passport.get("number") or "").upper(), (ticket.get("pnr") or "").upper()
+    name = _norm(passport_name(passport))
+    try:
+        others = store().query("trips", "owner_id", user_id) if user_id else {}
+    except StoreError:
+        return None
+    for tid, other in others.items():
+        if tid == trip_id:
+            continue
+        for t in other.get("travellers") or []:
+            docs = t.get("documents") or {}
+            same_passport = number and (docs.get("passport") or {}).get("number", "").upper() == number
+            same_booking = pnr and (docs.get("ticket") or {}).get("pnr", "").upper() == pnr \
+                and _norm(passport_name(docs.get("passport") or {})) == name
+            if same_passport or same_booking:
+                s = other.get("summary") or {}
+                return {"trip_id": tid, "traveller": t.get("name"), "pnr": s.get("pnr"),
+                        "route": f"{s.get('origin_city') or s.get('origin_code')} → {s.get('destination_city') or s.get('destination_code')}",
+                        "departure_date": s.get("departure_date")}
+    return None
+
+
+@app.delete("/api/trips/{trip_id}")
+def delete_trip(trip_id: str, user_id: str = Depends(get_current_user)):
+    """Delete a whole trip and its stored documents (owner only)."""
+    load_trip(trip_id, user_id)
+    store().delete_files(f"trips/{trip_id}/")
+    store().delete("trips", trip_id)
+    return {"deleted": trip_id}
 
 
 @app.delete("/api/trips/{trip_id}/travellers/{traveller_id}")
@@ -463,6 +509,15 @@ def get_document(trip_id: str, traveller_id: str, doc_type: str, user_id: str = 
         media_type=file_data["mime_type"],
         headers={"Cache-Control": "private, max-age=86400"}
     )
+
+
+@app.put("/api/trips/{trip_id}/quick-answers")
+def set_quick_answers(trip_id: str, req: QuickAnswers, user_id: str = Depends(get_current_user)):
+    """Answers to the post-upload questions; 'yes, already done' hides that checklist item."""
+    trip = load_trip(trip_id, user_id)
+    trip["quick_answers"] = {**(trip.get("quick_answers") or {}), **req.answers}
+    save_trip(trip)
+    return trip_view(trip)
 
 
 @app.put("/api/trips/{trip_id}/checklist")

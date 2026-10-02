@@ -140,6 +140,23 @@ def build_checklist(summary, travellers, checks, advice=None, contacts=None):
     return sorted(fixes + ai + rest, key=lambda i: order[i["group"]])
 
 
+def quick_questions(summary, travellers, items):
+    """Yes/no questions asked after upload; 'yes, already done' removes that item from the checklist."""
+    s = summary or {}
+    airline = s.get("airline") or "the airline"
+    ids = {i["id"] for i in items}
+    questions = []
+    if "webci" in ids:
+        questions.append({"id": "webci", "question": "Have you already done web check-in"
+                          + (f" (booking {s['pnr']})?" if s.get("pnr") else "?")})
+    if "assist" in ids:
+        needs = [t for t in travellers if t.get("assistance", "none") != "none"]
+        kinds = " and ".join(sorted({ASSIST_LABEL[t["assistance"]] for t in needs}))
+        names = ", ".join((t.get("name") or "traveller").title() for t in needs)
+        questions.append({"id": "assist", "question": f"Have you already asked {airline} for {kinds} for {names}?"})
+    return questions
+
+
 def group_dates(summary):
     """Actual calendar date for each checklist group, e.g. {'t3': '2026-10-12', ...}."""
     dep = parse_date((summary or {}).get("departure_date"))
