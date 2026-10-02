@@ -184,6 +184,10 @@
   "or_say": "অন্যান্য উত্তর যা আপনি দিতে পারেন",
   "contact_where": "এই ব্যক্তিটি কোথায় থাকেন?",
   "at_home": "বাড়িতে (যেখান থেকে আপনি যাত্রা শুরু করছেন)",
+  "docs_found_title": "আপনার কাগজপত্র আগে থেকেই সংরক্ষণ করা আছে",
+  "docs_found_hint": "আমরা আপনার আগের আপলোড করা টিকিট, পাসপোর্ট এবং ভিসা খুঁজে পেয়েছি। এগুলি দিয়েই এগিয়ে যান, অথবা যদি কোনোটি ভুল বা পরিবর্তন হয়ে থাকে তবে সেটি বদলে দিন।",
+  "continue_docs": "এগুলি দিয়েই এগিয়ে যান",
+  "replace_docs": "কাগজপত্র বদলান",
   "__source": {
     "step_language": "Language",
     "step_travellers": "Travellers",
@@ -369,6 +373,10 @@
     "official_site": "Open the official website",
     "or_say": "Other answers you can give",
     "contact_where": "Where does this person live?",
-    "at_home": "At home (where you start)"
+    "at_home": "At home (where you start)",
+    "docs_found_title": "Your documents are already saved",
+    "docs_found_hint": "We found the ticket, passport and visa you uploaded before. Continue with them, or replace any that are wrong or changed.",
+    "continue_docs": "Continue with these",
+    "replace_docs": "Replace documents"
   }
 }

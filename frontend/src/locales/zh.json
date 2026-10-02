@@ -184,6 +184,10 @@
   "or_say": "您还可以这样说",
   "contact_where": "这位亲友住在哪里？",
   "at_home": "在家里（您出发的地方）",
+  "docs_found_title": "您的证件已经保存好啦",
+  "docs_found_hint": "我们找到了您之前上传的机票、护照和签证。您可以继续用这些，或者换掉不对的或已经改了的。",
+  "continue_docs": "继续用这些",
+  "replace_docs": "换掉证件",
   "__source": {
     "step_language": "Language",
     "step_travellers": "Travellers",
@@ -369,6 +373,10 @@
     "official_site": "Open the official website",
     "or_say": "Other answers you can give",
     "contact_where": "Where does this person live?",
-    "at_home": "At home (where you start)"
+    "at_home": "At home (where you start)",
+    "docs_found_title": "Your documents are already saved",
+    "docs_found_hint": "We found the ticket, passport and visa you uploaded before. Continue with them, or replace any that are wrong or changed.",
+    "continue_docs": "Continue with these",
+    "replace_docs": "Replace documents"
   }
 }

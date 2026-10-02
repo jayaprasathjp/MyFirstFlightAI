@@ -184,6 +184,10 @@
   "or_say": "إجابات أخرى يمكنك قولها",
   "contact_where": "أين يعيش هذا الشخص؟",
   "at_home": "في المنزل (حيث تبدأ رحلتك)",
+  "docs_found_title": "تم حفظ وثائقك بالفعل",
+  "docs_found_hint": "لقد وجدنا التذكرة وجواز السفر والتأشيرة التي حملتها مسبقًا. يمكنك الاستمرار بها، أو استبدال أي منها إذا كانت خاطئة أو تغيرت.",
+  "continue_docs": "الاستمرار بهذه",
+  "replace_docs": "استبدال الوثائق",
   "__source": {
     "step_language": "Language",
     "step_travellers": "Travellers",
@@ -369,6 +373,10 @@
     "official_site": "Open the official website",
     "or_say": "Other answers you can give",
     "contact_where": "Where does this person live?",
-    "at_home": "At home (where you start)"
+    "at_home": "At home (where you start)",
+    "docs_found_title": "Your documents are already saved",
+    "docs_found_hint": "We found the ticket, passport and visa you uploaded before. Continue with them, or replace any that are wrong or changed.",
+    "continue_docs": "Continue with these",
+    "replace_docs": "Replace documents"
   }
 }

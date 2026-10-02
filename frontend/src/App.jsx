@@ -11,6 +11,7 @@ import CheckScreen from './screens/CheckScreen'
 import ContactsScreen from './screens/ContactsScreen'
 import ChecklistScreen from './screens/ChecklistScreen'
 import TripsScreen from './screens/TripsScreen'
+import DocsFoundScreen from './screens/DocsFoundScreen'
 import JourneyScreen from './screens/JourneyScreen'
 import LostCard from './components/LostCard'
 import HelpSheet from './components/HelpSheet'
@@ -95,10 +96,24 @@ function Flow({ setLang }) {
   const [toastMsg, setToastMsg] = useState('')
   const toastTimer = useRef(null)
   const saveQueue = useRef(Promise.resolve())
+  // "Documents already saved: continue or replace?" Asked once per login session per trip.
+  const [docsPrompt, setDocsPrompt] = useState(false)
+  const docsKey = (id) => `mff-docs-ok-${id}`
+  const needsDocsPrompt = (tr) => {
+    if (!tr?.travellers?.length) return false
+    try { return !sessionStorage.getItem(docsKey(tr.id)) } catch { return true }
+  }
+  const answerDocsPrompt = (replace) => {
+    try { sessionStorage.setItem(docsKey(trip.id), '1') } catch { /* storage unavailable */ }
+    setDocsPrompt(false)
+    if (replace) setStep('travellers')
+    else if (step === 'language' || step === 'travellers') setStep('check')
+  }
   const selectTrip = (t) => {
     applyTrip(t);
     setDone(t.checklist_done || {});
     setStep('travellers');
+    setDocsPrompt(needsDocsPrompt(t));
     setViewMode('trip');
   }
 
@@ -131,11 +146,15 @@ function Flow({ setLang }) {
     if (!currentUser) {
       setTrip(null);
       setDone({});
+      setDocsPrompt(false);
+      try {  // ask "continue or replace?" again after the next login
+        Object.keys(sessionStorage).filter((k) => k.startsWith('mff-docs-ok-')).forEach((k) => sessionStorage.removeItem(k))
+      } catch { /* storage unavailable */ }
       return;
     }
     const id = store.get('mff-trip', null)
     if (!id) return
-    api.getTrip(id).then(applyTrip).catch((e) => {
+    api.getTrip(id).then((tr) => { applyTrip(tr); setDocsPrompt(needsDocsPrompt(tr)) }).catch((e) => {
       if (e.status === 404 || e.status === 403 || e.status === 401) { 
         ['mff-trip', 'mff-trip-cache', 'mff-step'].forEach(store.del); 
         setTrip(null); 
@@ -192,7 +211,11 @@ function Flow({ setLang }) {
       ) : viewMode === 'trips' ? (
         <TripsScreen onSelect={selectTrip} onNew={newTrip} busy={busy} error={error} />
       ) : (
-        <>
+        docsPrompt && trip ? (
+          <main className="screen">
+            <DocsFoundScreen trip={trip} onContinue={() => answerDocsPrompt(false)} onReplace={() => answerDocsPrompt(true)} />
+          </main>
+        ) : <>
           <Stepper step={step} allowed={allowed} onGo={setStep} />
           <main className="screen">
             {updating && <div className="reading" role="status"><span className="spin" aria-hidden="true"></span>{t('updating')}</div>}

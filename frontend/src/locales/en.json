@@ -183,5 +183,9 @@
   "official_site": "Open the official website",
   "or_say": "Other answers you can give",
   "contact_where": "Where does this person live?",
-  "at_home": "At home (where you start)"
+  "at_home": "At home (where you start)",
+  "docs_found_title": "Your documents are already saved",
+  "docs_found_hint": "We found the ticket, passport and visa you uploaded before. Continue with them, or replace any that are wrong or changed.",
+  "continue_docs": "Continue with these",
+  "replace_docs": "Replace documents"
 }

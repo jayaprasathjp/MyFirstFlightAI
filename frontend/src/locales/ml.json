@@ -184,6 +184,10 @@
   "or_say": "നിങ്ങൾക്ക് നൽകാൻ കഴിയുന്ന മറ്റ് ഉത്തരങ്ങൾ",
   "contact_where": "ഈ വ്യക്തി എവിടെയാണ് താമസിക്കുന്നത്?",
   "at_home": "വീട്ടിൽ (യാത്ര തുടങ്ങുന്നിടത്ത്)",
+  "docs_found_title": "നിങ്ങളുടെ രേഖകൾ ഇതിനകം സൂക്ഷിച്ചിട്ടുണ്ട്",
+  "docs_found_hint": "നിങ്ങൾ മുമ്പ് അപ്‌ലോഡ് ചെയ്ത ടിക്കറ്റ്, പാസ്‌പോർട്ട്, വിസ എന്നിവ ഞങ്ങൾ കണ്ടെത്തി. അവ ഉപയോഗിച്ച് മുന്നോട്ട് പോകുക, അല്ലെങ്കിൽ തെറ്റായതോ മാറിയതോ ആയവ മാറ്റുക.",
+  "continue_docs": "ഇവയുമായി മുന്നോട്ട് പോകുക",
+  "replace_docs": "രേഖകൾ മാറ്റുക",
   "__source": {
     "step_language": "Language",
     "step_travellers": "Travellers",
@@ -369,6 +373,10 @@
     "official_site": "Open the official website",
     "or_say": "Other answers you can give",
     "contact_where": "Where does this person live?",
-    "at_home": "At home (where you start)"
+    "at_home": "At home (where you start)",
+    "docs_found_title": "Your documents are already saved",
+    "docs_found_hint": "We found the ticket, passport and visa you uploaded before. Continue with them, or replace any that are wrong or changed.",
+    "continue_docs": "Continue with these",
+    "replace_docs": "Replace documents"
   }
 }

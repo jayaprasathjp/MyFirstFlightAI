@@ -184,6 +184,10 @@
   "or_say": "तुम्ही देऊ शकता अशी इतर उत्तरे",
   "contact_where": "ही व्यक्ती कुठे राहते?",
   "at_home": "घरी (जिथून तुम्ही निघणार आहात)",
+  "docs_found_title": "तुमची कागदपत्रे आधीच सेव्ह केली आहेत",
+  "docs_found_hint": "तुम्ही आधी अपलोड केलेले तिकीट, पासपोर्ट आणि व्हिसा आम्हाला सापडले आहेत. तेच वापरून पुढे जा, किंवा काही चुकीचे असल्यास किंवा बदलले असल्यास ते बदला.",
+  "continue_docs": "याच कागदपत्रांसह पुढे जा",
+  "replace_docs": "कागदपत्रे बदला",
   "__source": {
     "step_language": "Language",
     "step_travellers": "Travellers",
@@ -369,6 +373,10 @@
     "official_site": "Open the official website",
     "or_say": "Other answers you can give",
     "contact_where": "Where does this person live?",
-    "at_home": "At home (where you start)"
+    "at_home": "At home (where you start)",
+    "docs_found_title": "Your documents are already saved",
+    "docs_found_hint": "We found the ticket, passport and visa you uploaded before. Continue with them, or replace any that are wrong or changed.",
+    "continue_docs": "Continue with these",
+    "replace_docs": "Replace documents"
   }
 }

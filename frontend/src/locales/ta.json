@@ -184,6 +184,10 @@
   "or_say": "நீங்கள் கொடுக்கக்கூடிய பிற பதில்கள்",
   "contact_where": "இந்த நபர் எங்கே வசிக்கிறார்?",
   "at_home": "வீட்டில் (நீங்கள் புறப்படும் இடம்)",
+  "docs_found_title": "உங்கள் ஆவணங்கள் ஏற்கனவே சேமிக்கப்பட்டுள்ளன",
+  "docs_found_hint": "நீங்கள் முன்பு பதிவேற்றிய டிக்கெட், பாஸ்போர்ட் மற்றும் விசாவை நாங்கள் கண்டறிந்துள்ளோம். இவற்றைக் கொண்டே தொடரலாம், அல்லது தவறான அல்லது மாற்றப்பட்ட ஆவணங்களை மாற்றலாம்.",
+  "continue_docs": "இவற்றைக் கொண்டே தொடரவும்",
+  "replace_docs": "ஆவணங்களை மாற்றவும்",
   "__source": {
     "step_language": "Language",
     "step_travellers": "Travellers",
@@ -369,6 +373,10 @@
     "official_site": "Open the official website",
     "or_say": "Other answers you can give",
     "contact_where": "Where does this person live?",
-    "at_home": "At home (where you start)"
+    "at_home": "At home (where you start)",
+    "docs_found_title": "Your documents are already saved",
+    "docs_found_hint": "We found the ticket, passport and visa you uploaded before. Continue with them, or replace any that are wrong or changed.",
+    "continue_docs": "Continue with these",
+    "replace_docs": "Replace documents"
   }
 }

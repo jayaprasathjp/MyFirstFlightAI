@@ -184,6 +184,10 @@
   "or_say": "Jawapan lain yang boleh anda berikan",
   "contact_where": "Di mana orang ini tinggal?",
   "at_home": "Di rumah (tempat anda bermula)",
+  "docs_found_title": "Dokumen anda sudah disimpan",
+  "docs_found_hint": "Kami jumpa tiket, pasport dan visa yang anda muat naik sebelum ini. Teruskan guna yang ini, atau tukar mana-mana yang salah atau sudah berubah.",
+  "continue_docs": "Teruskan dengan ini",
+  "replace_docs": "Tukar dokumen",
   "__source": {
     "step_language": "Language",
     "step_travellers": "Travellers",
@@ -369,6 +373,10 @@
     "official_site": "Open the official website",
     "or_say": "Other answers you can give",
     "contact_where": "Where does this person live?",
-    "at_home": "At home (where you start)"
+    "at_home": "At home (where you start)",
+    "docs_found_title": "Your documents are already saved",
+    "docs_found_hint": "We found the ticket, passport and visa you uploaded before. Continue with them, or replace any that are wrong or changed.",
+    "continue_docs": "Continue with these",
+    "replace_docs": "Replace documents"
   }
 }
