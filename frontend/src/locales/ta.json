@@ -188,6 +188,7 @@
   "docs_found_hint": "நீங்கள் முன்பு பதிவேற்றிய டிக்கெட், பாஸ்போர்ட் மற்றும் விசாவை நாங்கள் கண்டறிந்துள்ளோம். இவற்றைக் கொண்டே தொடரலாம், அல்லது தவறான அல்லது மாற்றப்பட்ட ஆவணங்களை மாற்றலாம்.",
   "continue_docs": "இவற்றைக் கொண்டே தொடரவும்",
   "replace_docs": "ஆவணங்களை மாற்றவும்",
+  "logout_confirm": "வெளியேறவா? உங்கள் பயணங்கள் சேமிக்கப்படும். மீண்டும் உள்நுழைந்து அவற்றைப் பார்க்கலாம்.",
   "__source": {
     "step_language": "Language",
     "step_travellers": "Travellers",
@@ -377,6 +378,7 @@
     "docs_found_title": "Your documents are already saved",
     "docs_found_hint": "We found the ticket, passport and visa you uploaded before. Continue with them, or replace any that are wrong or changed.",
     "continue_docs": "Continue with these",
-    "replace_docs": "Replace documents"
+    "replace_docs": "Replace documents",
+    "logout_confirm": "Log out? Your trips stay saved. Log in again to see them."
   }
 }

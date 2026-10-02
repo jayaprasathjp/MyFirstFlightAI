@@ -251,3 +251,4 @@ ul.do li::before { content: ""; position: absolute; inset-inline-start: 4px; top
 /* "documents already saved" choice */
 .docsfound { display: grid; gap: 6px }
 .tag.ok { border-color: var(--ok); color: var(--ok); background: var(--ok-soft) }
+.logoutlink { color: var(--bad) }

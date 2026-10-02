@@ -188,6 +188,7 @@
   "docs_found_hint": "আমরা আপনার আগের আপলোড করা টিকিট, পাসপোর্ট এবং ভিসা খুঁজে পেয়েছি। এগুলি দিয়েই এগিয়ে যান, অথবা যদি কোনোটি ভুল বা পরিবর্তন হয়ে থাকে তবে সেটি বদলে দিন।",
   "continue_docs": "এগুলি দিয়েই এগিয়ে যান",
   "replace_docs": "কাগজপত্র বদলান",
+  "logout_confirm": "লগ আউট করবেন? আপনার ট্রিপগুলি সেভ করা থাকবে। সেগুলি দেখতে আবার লগ ইন করুন।",
   "__source": {
     "step_language": "Language",
     "step_travellers": "Travellers",
@@ -377,6 +378,7 @@
     "docs_found_title": "Your documents are already saved",
     "docs_found_hint": "We found the ticket, passport and visa you uploaded before. Continue with them, or replace any that are wrong or changed.",
     "continue_docs": "Continue with these",
-    "replace_docs": "Replace documents"
+    "replace_docs": "Replace documents",
+    "logout_confirm": "Log out? Your trips stay saved. Log in again to see them."
   }
 }

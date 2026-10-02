@@ -188,6 +188,7 @@
   "docs_found_hint": "અમને તમારું ટિકિટ, પાસપોર્ટ અને વિઝા મળ્યા છે જે તમે પહેલા અપલોડ કર્યા હતા. આ જ દસ્તાવેજો સાથે આગળ વધો, અથવા જો કોઈ ખોટા હોય કે બદલાયા હોય તો તેને બદલો.",
   "continue_docs": "આ દસ્તાવેજો સાથે આગળ વધો",
   "replace_docs": "દસ્તાવેજો બદલો",
+  "logout_confirm": "બહાર નીકળવું છે? તમારી યાત્રાઓ સચવાયેલી રહેશે. તેમને જોવા માટે ફરીથી લોગ ઇન કરો.",
   "__source": {
     "step_language": "Language",
     "step_travellers": "Travellers",
@@ -377,6 +378,7 @@
     "docs_found_title": "Your documents are already saved",
     "docs_found_hint": "We found the ticket, passport and visa you uploaded before. Continue with them, or replace any that are wrong or changed.",
     "continue_docs": "Continue with these",
-    "replace_docs": "Replace documents"
+    "replace_docs": "Replace documents",
+    "logout_confirm": "Log out? Your trips stay saved. Log in again to see them."
   }
 }

@@ -188,6 +188,7 @@
   "docs_found_hint": "ನೀವು ಮೊದಲು ಅಪ್‌ಲೋಡ್ ಮಾಡಿದ ಟಿಕೆಟ್, ಪಾಸ್‌ಪೋರ್ಟ್ ಮತ್ತು ವೀಸಾವನ್ನು ನಾವು ಕಂಡುಕೊಂಡಿದ್ದೇವೆ. ಅವುಗಳೊಂದಿಗೆ ಮುಂದುವರಿಯಿರಿ, ಅಥವಾ ತಪ್ಪಾದ ಅಥವಾ ಬದಲಾದ ಯಾವುದನ್ನಾದರೂ ಬದಲಾಯಿಸಿ.",
   "continue_docs": "ಇವುಗಳೊಂದಿಗೆ ಮುಂದುವರಿಯಿರಿ",
   "replace_docs": "ದಾಖಲೆಗಳನ್ನು ಬದಲಾಯಿಸಿ",
+  "logout_confirm": "ಲಾಗ್ ಔಟ್ ಮಾಡಬೇಕೆ? ನಿಮ್ಮ ಪ್ರಯಾಣಗಳು ಉಳಿಯುತ್ತವೆ. ಅವುಗಳನ್ನು ನೋಡಲು ಮತ್ತೆ ಲಾಗ್ ಇನ್ ಮಾಡಿ.",
   "__source": {
     "step_language": "Language",
     "step_travellers": "Travellers",
@@ -377,6 +378,7 @@
     "docs_found_title": "Your documents are already saved",
     "docs_found_hint": "We found the ticket, passport and visa you uploaded before. Continue with them, or replace any that are wrong or changed.",
     "continue_docs": "Continue with these",
-    "replace_docs": "Replace documents"
+    "replace_docs": "Replace documents",
+    "logout_confirm": "Log out? Your trips stay saved. Log in again to see them."
   }
 }

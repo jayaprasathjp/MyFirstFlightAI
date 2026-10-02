@@ -188,6 +188,7 @@
   "docs_found_hint": "لقد وجدنا التذكرة وجواز السفر والتأشيرة التي حملتها مسبقًا. يمكنك الاستمرار بها، أو استبدال أي منها إذا كانت خاطئة أو تغيرت.",
   "continue_docs": "الاستمرار بهذه",
   "replace_docs": "استبدال الوثائق",
+  "logout_confirm": "هل تريد تسجيل الخروج؟ رحلاتك ستبقى محفوظة. سجل الدخول مرة أخرى لمشاهدتها.",
   "__source": {
     "step_language": "Language",
     "step_travellers": "Travellers",
@@ -377,6 +378,7 @@
     "docs_found_title": "Your documents are already saved",
     "docs_found_hint": "We found the ticket, passport and visa you uploaded before. Continue with them, or replace any that are wrong or changed.",
     "continue_docs": "Continue with these",
-    "replace_docs": "Replace documents"
+    "replace_docs": "Replace documents",
+    "logout_confirm": "Log out? Your trips stay saved. Log in again to see them."
   }
 }

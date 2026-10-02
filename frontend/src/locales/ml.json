@@ -188,6 +188,7 @@
   "docs_found_hint": "നിങ്ങൾ മുമ്പ് അപ്‌ലോഡ് ചെയ്ത ടിക്കറ്റ്, പാസ്‌പോർട്ട്, വിസ എന്നിവ ഞങ്ങൾ കണ്ടെത്തി. അവ ഉപയോഗിച്ച് മുന്നോട്ട് പോകുക, അല്ലെങ്കിൽ തെറ്റായതോ മാറിയതോ ആയവ മാറ്റുക.",
   "continue_docs": "ഇവയുമായി മുന്നോട്ട് പോകുക",
   "replace_docs": "രേഖകൾ മാറ്റുക",
+  "logout_confirm": "പുറത്തുകടക്കണോ? നിങ്ങളുടെ യാത്രകൾ ഇവിടെത്തന്നെയുണ്ടാകും. അവ കാണാൻ വീണ്ടും പ്രവേശിക്കുക.",
   "__source": {
     "step_language": "Language",
     "step_travellers": "Travellers",
@@ -377,6 +378,7 @@
     "docs_found_title": "Your documents are already saved",
     "docs_found_hint": "We found the ticket, passport and visa you uploaded before. Continue with them, or replace any that are wrong or changed.",
     "continue_docs": "Continue with these",
-    "replace_docs": "Replace documents"
+    "replace_docs": "Replace documents",
+    "logout_confirm": "Log out? Your trips stay saved. Log in again to see them."
   }
 }

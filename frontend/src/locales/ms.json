@@ -188,6 +188,7 @@
   "docs_found_hint": "Kami jumpa tiket, pasport dan visa yang anda muat naik sebelum ini. Teruskan guna yang ini, atau tukar mana-mana yang salah atau sudah berubah.",
   "continue_docs": "Teruskan dengan ini",
   "replace_docs": "Tukar dokumen",
+  "logout_confirm": "Nak keluar? Perjalanan-perjalanan pakcik/makcik masih disimpan. Masuk semula nanti untuk tengok ya.",
   "__source": {
     "step_language": "Language",
     "step_travellers": "Travellers",
@@ -377,6 +378,7 @@
     "docs_found_title": "Your documents are already saved",
     "docs_found_hint": "We found the ticket, passport and visa you uploaded before. Continue with them, or replace any that are wrong or changed.",
     "continue_docs": "Continue with these",
-    "replace_docs": "Replace documents"
+    "replace_docs": "Replace documents",
+    "logout_confirm": "Log out? Your trips stay saved. Log in again to see them."
   }
 }

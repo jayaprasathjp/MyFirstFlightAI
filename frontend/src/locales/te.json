@@ -188,6 +188,7 @@
   "docs_found_hint": "మీరు ఇంతకు ముందు అప్‌లోడ్ చేసిన టికెట్, పాస్‌పోర్ట్ మరియు వీసా మాకు దొరికాయి. వాటితోనే కొనసాగండి, లేదా తప్పుగా ఉన్నవి లేదా మారినవి ఏవైనా ఉంటే మార్చండి.",
   "continue_docs": "వీటితో కొనసాగండి",
   "replace_docs": "పత్రాలను మార్చండి",
+  "logout_confirm": "లాగ్ అవుట్ చేయాలా? మీ ప్రయాణాలు సేవ్ చేయబడతాయి. వాటిని చూడటానికి మళ్ళీ లాగిన్ అవ్వండి.",
   "__source": {
     "step_language": "Language",
     "step_travellers": "Travellers",
@@ -377,6 +378,7 @@
     "docs_found_title": "Your documents are already saved",
     "docs_found_hint": "We found the ticket, passport and visa you uploaded before. Continue with them, or replace any that are wrong or changed.",
     "continue_docs": "Continue with these",
-    "replace_docs": "Replace documents"
+    "replace_docs": "Replace documents",
+    "logout_confirm": "Log out? Your trips stay saved. Log in again to see them."
   }
 }

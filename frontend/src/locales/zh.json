@@ -188,6 +188,7 @@
   "docs_found_hint": "我们找到了您之前上传的机票、护照和签证。您可以继续用这些，或者换掉不对的或已经改了的。",
   "continue_docs": "继续用这些",
   "replace_docs": "换掉证件",
+  "logout_confirm": "要退出吗？您的行程会保留。再次登录即可查看。",
   "__source": {
     "step_language": "Language",
     "step_travellers": "Travellers",
@@ -377,6 +378,7 @@
     "docs_found_title": "Your documents are already saved",
     "docs_found_hint": "We found the ticket, passport and visa you uploaded before. Continue with them, or replace any that are wrong or changed.",
     "continue_docs": "Continue with these",
-    "replace_docs": "Replace documents"
+    "replace_docs": "Replace documents",
+    "logout_confirm": "Log out? Your trips stay saved. Log in again to see them."
   }
 }

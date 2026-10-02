@@ -194,6 +194,16 @@ function Flow({ setLang }) {
     // Serialize saves so an older request never overwrites a newer one.
     saveQueue.current = saveQueue.current.then(() => api.saveChecklist(trip.id, next)).catch(() => {})
   }
+  // Log out: confirm, then remove this trip's data from the phone (it stays safe in the database).
+  const doLogout = async () => {
+    if (!window.confirm(t('logout_confirm'))) return
+    try {
+      Object.keys(localStorage).filter((k) => k.startsWith('mff-') && k !== 'mff-lang' && !k.startsWith('mff-ui-'))
+        .forEach((k) => localStorage.removeItem(k))
+    } catch { /* storage unavailable */ }
+    setTrip(null); setDone({}); setStepState('language'); setViewMode('trips')
+    await logout()
+  }
   const startOver = () => {
     if (!window.confirm(t('start_over_confirm'))) return
     ;['mff-trip', 'mff-trip-cache', 'mff-step'].forEach(store.del)
@@ -205,11 +215,14 @@ function Flow({ setLang }) {
 
   return (
     <div className="app">
-      <TopBar onLanguage={changeLanguage} busy={busy} currentUser={currentUser} logout={logout} onShowTrips={() => setViewMode('trips')} />
+      <TopBar onLanguage={changeLanguage} busy={busy} currentUser={currentUser} logout={doLogout} onShowTrips={() => setViewMode('trips')} />
       {!currentUser ? (
         <AuthScreen />
       ) : viewMode === 'trips' ? (
-        <TripsScreen onSelect={selectTrip} onNew={newTrip} busy={busy} error={error} />
+        <>
+          <TripsScreen onSelect={selectTrip} onNew={newTrip} busy={busy} error={error} />
+          <footer className="foot"><button className="link logoutlink" onClick={doLogout}>{t('logout')}</button></footer>
+        </>
       ) : (
         docsPrompt && trip ? (
           <main className="screen">
@@ -239,6 +252,7 @@ function Flow({ setLang }) {
           {trip && <footer className={'foot' + (hasTravellers ? ' dock-pad' : '')}>
             <button className="link" onClick={() => setViewMode('trips')}>{t('back_to_trips')}</button>
             <button className="link" onClick={startOver} style={{marginLeft: '20px'}}>{t('start_over')}</button>
+            <button className="link logoutlink" onClick={doLogout} style={{marginLeft: '20px'}}>{t('logout')}</button>
           </footer>}
           {hasTravellers && (
             <div className="dock">
