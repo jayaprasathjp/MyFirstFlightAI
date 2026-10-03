@@ -7,7 +7,7 @@ import uuid
 from pathlib import Path
 
 from dotenv import load_dotenv
-from fastapi import FastAPI, File, Form, HTTPException, Request, UploadFile, Depends, Query
+from fastapi import BackgroundTasks, FastAPI, File, Form, HTTPException, Request, UploadFile, Depends, Query
 from typing import Optional
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
@@ -25,11 +25,11 @@ if _creds and not Path(_creds).is_absolute():
 import gcp  # noqa: E402
 import gemini  # noqa: E402
 from advice import get_advice  # noqa: E402
-from checklist import build_checklist, group_dates  # noqa: E402
+from checklist import build_checklist, group_dates, quick_questions  # noqa: E402
 from db import StoreError, now_iso, store  # noqa: E402
 from journey import build_journey, destination_contact  # noqa: E402
 from schemas import (AssistRequest, BoardingRequest, ChatRequest, ChecklistToggle, ContactsRequest,  # noqa: E402
-                     CreateTripRequest, TranslateRequest, TTSRequest, UpdateTripRequest)
+                     CreateTripRequest, QuickAnswers, TranslateRequest, TTSRequest, UpdateTripRequest)
 from validation import check_trip, overall_status, passport_name, trip_summary  # noqa: E402
 
 log = logging.getLogger("myfirstflight")
@@ -170,12 +170,30 @@ def save_trip(trip):
 
 
 def recompute(trip):
+    """Rules only (fast). Uses cached trip advice; returns True if advice must still be generated (slow, Gemini)."""
     travellers = trip["travellers"]
     first_ticket = next(((t.get("documents") or {}).get("ticket") for t in travellers), None)
     trip["summary"] = trip_summary(first_ticket) if first_ticket else None
     trip["checks"] = check_trip(travellers)
     trip["status"] = overall_status(trip["checks"]) if travellers else "empty"
-    trip["advice"] = get_advice(trip["summary"], travellers) if travellers else None  # Gemini, cached per route
+    trip["advice"] = get_advice(trip["summary"], travellers, generate=False) if travellers else None
+    return bool(travellers and trip["summary"] and trip["advice"] is None)
+
+
+def refresh_advice(trip_id):
+    """Background task: generate trip advice with Gemini and store just that field (other edits stay intact)."""
+    trip = store().get("trips", trip_id)
+    if not trip or not trip["travellers"]:
+        return
+    advice = get_advice(trip.get("summary"), trip["travellers"])
+    if advice:
+        store().update("trips", trip_id, {"advice": advice})
+
+
+def upload_documents(trip_id, traveller_id, files):
+    """Background task: keep the original uploads in Cloud Storage."""
+    for doc_type, (content, mime) in files.items():
+        store().set_file(f"trips/{trip_id}/travellers/{traveller_id}/{doc_type}", content, mime)
 
 
 def trip_view(trip):
@@ -184,6 +202,9 @@ def trip_view(trip):
     checks = trip.get("checks") or []
     travellers, contacts, advice = trip["travellers"], trip.get("contacts") or [], trip.get("advice")
     items = build_checklist(trip.get("summary"), travellers, checks, advice, contacts) if travellers else []
+    answers = trip.get("quick_answers") or {}
+    questions = quick_questions(trip.get("summary"), travellers, items)
+    items = [i for i in items if answers.get(i["id"]) is not True]  # "yes, already done": not shown in the checklist
     journey = build_journey(trip.get("summary"), travellers, advice, contacts, trip.get("boarding")) if travellers else []
 
     texts = {}
@@ -191,6 +212,8 @@ def trip_view(trip):
         texts[f"c.{c['id']}.t"], texts[f"c.{c['id']}.m"] = c["title"], c["message"]
     for i in items:
         texts[f"i.{i['id']}.t"], texts[f"i.{i['id']}.d"] = i["title"], i["detail"]
+    for q in questions:
+        texts[f"q.{q['id']}"] = q["question"]
     bp = trip.get("boarding_pass") or {}
     for n, f in enumerate(bp.get("fields") or []):
         texts[f"bp.{n}"] = f["meaning"]
@@ -201,6 +224,7 @@ def trip_view(trip):
         texts.update({f"{j}.d{n}": d for n, d in enumerate(st["do"])})
         for n, (q, a) in enumerate(st["qa"]):
             texts[f"{j}.q{n}"], texts[f"{j}.a{n}"] = q, a
+            texts.update({f"{j}.a{n}.{m}": alt for m, alt in enumerate(st["qa_alts"][n])})
     tr = localize(texts, lang, protect=protected_terms(trip))
 
     def journey_step(st):
@@ -210,7 +234,9 @@ def trip_view(trip):
             "where": [tr[f"{j}.w{n}"] for n in range(len(st["where"]))],
             "do": [tr[f"{j}.d{n}"] for n in range(len(st["do"]))],
             # Officers and staff speak English: keep the English line, show the translation under it.
-            "qa": [{"q_en": q, "a_en": a, "q": tr[f"{j}.q{n}"], "a": tr[f"{j}.a{n}"]} for n, (q, a) in enumerate(st["qa"])],
+            "qa": [{"q_en": q, "a_en": a, "q": tr[f"{j}.q{n}"], "a": tr[f"{j}.a{n}"],
+                    "alts": [{"en": alt, "tr": tr[f"{j}.a{n}.{m}"]} for m, alt in enumerate(st["qa_alts"][n])]}
+                   for n, (q, a) in enumerate(st["qa"])],
             "staff_en": st["staff"], "staff": tr[f"{j}.s"],
         }
 
@@ -227,6 +253,8 @@ def trip_view(trip):
             "items": [{**i, "title": tr[f"i.{i['id']}.t"], "detail": tr[f"i.{i['id']}.d"], "done": bool(done.get(i["id"]))}
                       for i in items],
         },
+        "quick_questions": [{"id": q["id"], "question": tr[f"q.{q['id']}"], "answer": answers.get(q["id"])}
+                            for q in questions],
         "contacts": contacts,
         "destination_contact": destination_contact(travellers, []),  # from the visa, to prefill the contacts form
         "boarding": trip.get("boarding") or {},
@@ -331,11 +359,12 @@ def update_trip(trip_id: str, req: UpdateTripRequest, user_id: str = Depends(get
 @app.post("/api/trips/{trip_id}/travellers")
 async def add_traveller(
     trip_id: str,
+    background: BackgroundTasks,
     ticket: UploadFile = File(...),
     passport: UploadFile = File(...),
     visa: UploadFile = File(...),
     assistance: str = Form("none"),
-    user_id: str = Depends(get_current_user)
+    user_id: str = Depends(get_current_user),
 ):
     trip = load_trip(trip_id, user_id)
     if assistance not in ASSISTANCE:
@@ -355,14 +384,13 @@ async def add_traveller(
         except Exception as exc:
             log.exception("extraction failed for %s", doc_type)
             raise HTTPException(status_code=502, detail=f"Could not read the {doc_type}. Try a clearer copy. ({exc})")
-            
-        path = f"trips/{trip_id}/travellers/{traveller_id}/{doc_type}"
-        await asyncio.to_thread(store().set_file, path, content, mime)
         return data
 
     ticket_data, passport_data, visa_data = await asyncio.gather(process("ticket"), process("passport"), process("visa"))
 
-    # Original files are in Cloud Storage (set_file above); Firestore keeps only the extracted text fields.
+    # Original files go to Cloud Storage after the response (the user does not wait for the upload);
+    # Firestore keeps only the extracted text fields.
+    background.add_task(upload_documents, trip_id, traveller_id, files)
     trip = load_trip(trip_id)  # reload in case another traveller was added meanwhile
     trip["travellers"].append({
         "id": traveller_id,
@@ -371,13 +399,54 @@ async def add_traveller(
         "documents": {"ticket": ticket_data, "passport": passport_data, "visa": visa_data},
         "added_at": now_iso(),
     })
-    await asyncio.to_thread(recompute, trip)  # may call Gemini for trip advice
+    if await asyncio.to_thread(recompute, trip):
+        background.add_task(refresh_advice, trip_id)  # country advice is ready by the time they reach the checklist
     save_trip(trip)
-    return await asyncio.to_thread(trip_view, trip)
+    view = await asyncio.to_thread(trip_view, trip)
+    view["duplicate_of"] = find_duplicate_trip(user_id, trip_id, ticket_data, passport_data)
+    return view
+
+
+def _norm(text):
+    return " ".join(sorted("".join(c for c in (text or "").upper() if c.isalnum() or c.isspace()).split()))
+
+
+def find_duplicate_trip(user_id, trip_id, ticket, passport):
+    """Another trip of this user with the same traveller: same passport number, or same booking + name."""
+    number, pnr = (passport.get("number") or "").upper(), (ticket.get("pnr") or "").upper()
+    name = _norm(passport_name(passport))
+    try:
+        others = store().query("trips", "owner_id", user_id) if user_id else {}
+    except StoreError:
+        return None
+    for tid, other in others.items():
+        if tid == trip_id:
+            continue
+        for t in other.get("travellers") or []:
+            docs = t.get("documents") or {}
+            same_passport = number and (docs.get("passport") or {}).get("number", "").upper() == number
+            same_booking = pnr and (docs.get("ticket") or {}).get("pnr", "").upper() == pnr \
+                and _norm(passport_name(docs.get("passport") or {})) == name
+            if same_passport or same_booking:
+                s = other.get("summary") or {}
+                return {"trip_id": tid, "traveller": t.get("name"), "pnr": s.get("pnr"),
+                        "route": f"{s.get('origin_city') or s.get('origin_code')} → {s.get('destination_city') or s.get('destination_code')}",
+                        "departure_date": s.get("departure_date")}
+    return None
+
+
+@app.delete("/api/trips/{trip_id}")
+def delete_trip(trip_id: str, user_id: str = Depends(get_current_user)):
+    """Delete a whole trip and its stored documents (owner only)."""
+    load_trip(trip_id, user_id)
+    store().delete_files(f"trips/{trip_id}/")
+    store().delete("trips", trip_id)
+    return {"deleted": trip_id}
 
 
 @app.delete("/api/trips/{trip_id}/travellers/{traveller_id}")
-def remove_traveller(trip_id: str, traveller_id: str, user_id: str = Depends(get_current_user)):
+def remove_traveller(trip_id: str, traveller_id: str, background: BackgroundTasks,
+                     user_id: str = Depends(get_current_user)):
     trip = load_trip(trip_id, user_id)
     before = len(trip["travellers"])
     trip["travellers"] = [t for t in trip["travellers"] if t["id"] != traveller_id]
@@ -386,10 +455,44 @@ def remove_traveller(trip_id: str, traveller_id: str, user_id: str = Depends(get
     
     for doc in ("ticket", "passport", "visa"):
         store().delete_file(f"trips/{trip_id}/travellers/{traveller_id}/{doc}")
-        
-    recompute(trip)
+
+    if recompute(trip):
+        background.add_task(refresh_advice, trip_id)
     save_trip(trip)
     return trip_view(trip)
+
+
+@app.put("/api/trips/{trip_id}/travellers/{traveller_id}/documents/{doc_type}")
+async def replace_document(trip_id: str, traveller_id: str, doc_type: str, file: UploadFile = File(...),
+                            user_id: str = Depends(get_current_user)):
+    if doc_type not in ("ticket", "passport", "visa"):
+        raise HTTPException(status_code=400, detail="Invalid document type.")
+    trip = load_trip(trip_id, user_id)
+    if not any(t["id"] == traveller_id for t in trip["travellers"]):
+        raise HTTPException(status_code=404, detail="Traveller not found.")
+
+    content, mime = await read_upload(file, doc_type.title())
+    try:
+        data = await asyncio.to_thread(gemini.extract_document, content, mime, doc_type)
+    except ValueError as exc:  # missing Gemini configuration
+        raise HTTPException(status_code=503, detail=str(exc))
+    except Exception as exc:
+        log.exception("extraction failed for %s", doc_type)
+        raise HTTPException(status_code=502, detail=f"Could not read the {doc_type}. Try a clearer copy. ({exc})")
+
+    path = f"trips/{trip_id}/travellers/{traveller_id}/{doc_type}"
+    await asyncio.to_thread(store().set_file, path, content, mime)
+
+    trip = load_trip(trip_id)  # reload in case of a concurrent edit
+    traveller = next((t for t in trip["travellers"] if t["id"] == traveller_id), None)
+    if not traveller:
+        raise HTTPException(status_code=404, detail="Traveller not found.")
+    traveller["documents"][doc_type] = data
+    if doc_type == "passport":
+        traveller["name"] = passport_name(data).title() or traveller["name"]
+    await asyncio.to_thread(recompute, trip)  # may call Gemini for trip advice
+    save_trip(trip)
+    return await asyncio.to_thread(trip_view, trip)
 
 
 @app.get("/api/trips/{trip_id}/travellers/{traveller_id}/documents/{doc_type}")
@@ -402,10 +505,19 @@ def get_document(trip_id: str, traveller_id: str, doc_type: str, user_id: str = 
     if not file_data:
         raise HTTPException(status_code=404, detail="Document not found.")
     return Response(
-        content=file_data["content"], 
+        content=file_data["content"],
         media_type=file_data["mime_type"],
-        headers={"Cache-Control": "public, max-age=86400"}
+        headers={"Cache-Control": "private, max-age=86400"}
     )
+
+
+@app.put("/api/trips/{trip_id}/quick-answers")
+def set_quick_answers(trip_id: str, req: QuickAnswers, user_id: str = Depends(get_current_user)):
+    """Answers to the post-upload questions; 'yes, already done' hides that checklist item."""
+    trip = load_trip(trip_id, user_id)
+    trip["quick_answers"] = {**(trip.get("quick_answers") or {}), **req.answers}
+    save_trip(trip)
+    return trip_view(trip)
 
 
 @app.put("/api/trips/{trip_id}/checklist")

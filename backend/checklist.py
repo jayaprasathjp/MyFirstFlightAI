@@ -18,11 +18,24 @@ GENERIC_TITLES = [
     "web check-in", "request wheelchair/assistance", "cabin and check-in bag weight", "liquids 100 ml rule",
     "power banks in cabin bag", "no sharp items", "medicines with prescription", "print tickets and visas",
     "carry some local currency", "charge phone and roaming", "leave home 3 hours before", "documents in hand",
+    "food and shopping on the plane may be paid",
 ]
 
 
-def _item(id, group, title, detail, key=False, ai=False):
-    return {"id": id, "group": group, "title": title, "detail": detail, "key": key, "ai": ai}
+# Official online arrival-card websites, checked by hand. Never take URLs from Gemini (it can invent them).
+OFFICIAL_ARRIVAL_CARD = {
+    "singapore": "https://eservices.ica.gov.sg/arrivalcard",
+}
+ARRIVAL_CARD = re.compile(r"arrival card|sgac|arrival form|entry card", re.I)
+
+
+def _item(id, group, title, detail, key=False, ai=False, optional=False, link=None):
+    return {"id": id, "group": group, "title": title, "detail": detail, "key": key, "ai": ai,
+            "optional": optional, "link": link}
+
+
+def arrival_card_link(summary):
+    return OFFICIAL_ARRIVAL_CARD.get(((summary or {}).get("destination_country") or "").strip().casefold())
 
 
 def airport_plan(summary):
@@ -40,7 +53,7 @@ def airport_plan(summary):
     }
 
 
-def advice_items(advice):
+def advice_items(advice, card_link=None):
     items, seen = [], set()
     for a in (advice or {}).get("items") or []:
         slug = re.sub(r"[^a-z0-9]+", "_", (a.get("id") or a.get("title") or "").lower()).strip("_")[:40]
@@ -48,7 +61,8 @@ def advice_items(advice):
             continue
         seen.add(slug)
         group = a.get("group") if a.get("group") in GROUPS else "t3"
-        items.append(_item("ai:" + slug, group, a["title"], a.get("detail") or "", key=bool(a.get("key")), ai=True))
+        link = card_link if ARRIVAL_CARD.search(f"{slug} {a['title']}") else None
+        items.append(_item("ai:" + slug, group, a["title"], a.get("detail") or "", key=bool(a.get("key")), ai=True, link=link))
     return items
 
 
@@ -63,26 +77,28 @@ def build_checklist(summary, travellers, checks, advice=None, contacts=None):
         if c["status"] in ("warn", "fail") and c["traveller_id"]:
             items.append(_item("fix:" + c["id"], "t3", "Fix: " + c["title"], c["message"], key=True))
 
-    ai = advice_items(advice)
+    card_link = arrival_card_link(s)
+    ai = advice_items(advice, card_link)
     if not ai:  # Gemini advice unavailable: fall back to a safe generic reminder
         items.append(_item("arrival_card", "t3", f"Check if {country} needs an arrival card",
-                           "If it does, fill it only on the official government website. It is usually free.", key=True))
+                           "If it does, fill it only on the official government website. It is usually free.",
+                           key=True, link=card_link))
     items.append(_item("webci", "t3", "Do web check-in",
+                       "Most useful if you have no check-in bag: you can skip the check-in counter. "
                        f"Opens on {airline}'s website 48 hours before the flight. Choose seats together"
-                       + (f" (booking {s['pnr']})." if s.get("pnr") else ".")))
+                       + (f" (booking {s['pnr']})." if s.get("pnr") else "."), optional=True))
     needs = [t for t in travellers if t.get("assistance", "none") != "none"]
     if needs:
         kinds = sorted({ASSIST_LABEL[t["assistance"]] for t in needs})
         names = ", ".join((t.get("name") or "traveller").title() for t in needs)
         items.append(_item("assist", "t3", f"Request {' and '.join(kinds)} for {names}",
-                           f"Tell {airline} at least 48 hours before departure. It is free.", key=True))
-    items.append(_item("lost_card", "t3", "Check the I'm Lost card",
-                       "Open the red I'm Lost button and check the names and family phone number." if contacts
-                       else "Add a family phone number in the Contacts step. It appears on the I'm Lost card.", key=True))
+                           f"If needed, tell {airline} at least 48 hours before departure. It is free.", optional=True))
 
     # ----- T-1 day -----
     cabin, checked = s.get("cabin_bag_kg"), s.get("checked_bag_kg")
     currency = (advice or {}).get("currency_code") or "local currency"
+    home_currency = (advice or {}).get("origin_currency_code")
+    onboard_cash = " or ".join(c for c in (home_currency, (advice or {}).get("currency_code")) if c) or "some cash"
     items += [
         _item("cabin_bag", "t1", f"Cabin bag {cabin:g} kg or less" if cabin else "Cabin bag within the weight on your ticket",
               "One cabin bag plus one small handbag per person. Weigh it at home."),
@@ -95,7 +111,10 @@ def build_checklist(summary, travellers, checks, advice=None, contacts=None):
         _item("medicines", "t1", "Medicines with prescription in the cabin bag", "Enough for the trip plus 2 extra days."),
         _item("print_docs", "t1", "Print or download tickets and visas", "Airport entry needs your ticket and passport."),
         _item("forex", "t1", f"Carry some {currency} or a forex card", "For a taxi or food right after landing."),
-        _item("phone", "t1", "Charge phone and turn on roaming", "Keep the I'm Lost card saved for offline use."),
+        _item("onboard_money", "t1", "Food and shopping on the plane may cost money",
+              f"Only what your fare includes is free. Extra snacks, drinks and shopping are paid: keep {onboard_cash}"
+              " or a debit/credit card in your handbag."),
+        _item("phone", "t1", "Charge phone and turn on roaming", "So your family can reach you after landing."),
     ]
 
     # ----- Day of travel -----
@@ -109,7 +128,9 @@ def build_checklist(summary, travellers, checks, advice=None, contacts=None):
         items.append(_item("leave_home", "t0", "Leave home early", "Reach the airport 3 hours before an international flight.", key=True))
     items += [
         _item("docs_in_hand", "t0", "Passports, visas and tickets in hand", "Keep them together in one pouch, not in the suitcase."),
-        _item("test_lost", "t0", "Test the I'm Lost button once", "It works even without internet."),
+        _item("lost_card", "t0", "Check the I'm Lost card once",
+              "Tap the red I'm Lost button and check the names and family phone number. It works even without internet."
+              if contacts else "Add a family phone number in the Contacts step. It appears on the I'm Lost card.", key=True),
     ]
 
     # AI items go first within their group, after fixes (they are the destination-specific tasks).
@@ -117,6 +138,23 @@ def build_checklist(summary, travellers, checks, advice=None, contacts=None):
     fixes = [i for i in items if i["id"].startswith("fix:")]
     rest = [i for i in items if not i["id"].startswith("fix:")]
     return sorted(fixes + ai + rest, key=lambda i: order[i["group"]])
+
+
+def quick_questions(summary, travellers, items):
+    """Yes/no questions asked after upload; 'yes, already done' removes that item from the checklist."""
+    s = summary or {}
+    airline = s.get("airline") or "the airline"
+    ids = {i["id"] for i in items}
+    questions = []
+    if "webci" in ids:
+        questions.append({"id": "webci", "question": "Have you already done web check-in"
+                          + (f" (booking {s['pnr']})?" if s.get("pnr") else "?")})
+    if "assist" in ids:
+        needs = [t for t in travellers if t.get("assistance", "none") != "none"]
+        kinds = " and ".join(sorted({ASSIST_LABEL[t["assistance"]] for t in needs}))
+        names = ", ".join((t.get("name") or "traveller").title() for t in needs)
+        questions.append({"id": "assist", "question": f"Have you already asked {airline} for {kinds} for {names}?"})
+    return questions
 
 
 def group_dates(summary):

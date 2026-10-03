@@ -14,7 +14,7 @@ from db import now_iso, store
 
 log = logging.getLogger("myfirstflight")
 
-ADVICE_VERSION = 2  # bump when the prompt or schema changes to invalidate the cache
+ADVICE_VERSION = 3  # bump when the prompt or schema changes to invalidate the cache
 ADVICE_TTL = timedelta(days=30)
 
 
@@ -43,8 +43,12 @@ def _signature(ctx):
     return hashlib.sha256(raw.encode()).hexdigest()[:32]
 
 
-def get_advice(summary, travellers):
-    """Cached or freshly generated advice for this route; None if it cannot be generated."""
+def get_advice(summary, travellers, generate=True):
+    """Cached or freshly generated advice for this route; None if unavailable.
+
+    generate=False only reads the cache (fast), so requests never wait for Gemini; the caller then
+    generates in the background.
+    """
     if not summary or not summary.get("destination_country"):
         return None
     ctx = advice_context(summary, travellers)
@@ -55,6 +59,8 @@ def get_advice(summary, travellers):
         age = datetime.now(timezone.utc) - datetime.fromisoformat(cached["created_at"])
         if age < ADVICE_TTL:
             return cached["advice"]
+    if not generate:
+        return None
     try:
         advice = gemini.trip_advice(ctx, GENERIC_TITLES)
     except Exception:

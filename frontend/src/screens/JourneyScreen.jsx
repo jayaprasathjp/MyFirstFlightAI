@@ -1,6 +1,8 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { store } from '../api'
 import { useI18n } from '../i18n'
+import { stopSpeaking } from '../voice'
+import Listen from '../components/Listen'
 
 function BoardingForm({ boarding, onSave, busy }) {
   const { t } = useI18n()
@@ -27,10 +29,14 @@ export default function JourneyScreen({ trip, onSaveBoarding, busy, toast }) {
   const key = `mff-jstep-${trip.id}`
   const [n, setN] = useState(() => Math.min(store.get(key, 0), steps.length - 1))
   const [big, setBig] = useState(false)
-  const go = (i) => { setN(i); store.set(key, i); window.scrollTo({ top: 0 }) }
+  const go = (i) => { stopSpeaking(); setN(i); store.set(key, i); window.scrollTo({ top: 0 }) }
+  useEffect(() => stopSpeaking, []) // stop reading if the traveller leaves this screen mid-playback
   const s = steps[n]
   if (!s) return null
   const last = n === steps.length - 1
+  const stepText = () => [s.title, ...s.where, ...s.do,
+    ...s.qa.map((x) => [`${t('they_ask')}: ${x.q}. ${t('you_say')}: ${x.a}`,
+      ...(x.alts || []).map((alt) => `${t('or_say')}: ${alt.tr}`)].join('. '))].join('. ')
 
   return (
     <>
@@ -42,7 +48,10 @@ export default function JourneyScreen({ trip, onSaveBoarding, busy, toast }) {
         ))}
       </div>
       <article className="stepcard">
-        <div className="stepno">{t('step_of', { n: n + 1, t: steps.length })}</div>
+        <div className="gh">
+          <div className="stepno">{t('step_of', { n: n + 1, t: steps.length })}</div>
+          <Listen text={stepText} toast={toast} />
+        </div>
         <h2>{s.title}</h2>
         {s.where.length > 0 && <div className="where">{s.where.map((w) => <span key={w}>{w}</span>)}</div>}
         <ul className="do">{s.do.map((d) => <li key={d}>{d}</li>)}</ul>
@@ -54,6 +63,16 @@ export default function JourneyScreen({ trip, onSaveBoarding, busy, toast }) {
                 <q lang="en">{x.q_en}</q>{x.q !== x.q_en && <span className="loc">{x.q}</span>}
                 <span className="ans">{t('you_say')}: <b lang="en">{x.a_en}</b></span>
                 {x.a !== x.a_en && <span className="loc">{x.a}</span>}
+                {x.alts?.length > 0 && (
+                  <details className="alts">
+                    <summary>{t('or_say')}</summary>
+                    <ul>
+                      {x.alts.map((alt) => (
+                        <li key={alt.en}><b lang="en">{alt.en}</b>{alt.tr !== alt.en && <span className="loc">{alt.tr}</span>}</li>
+                      ))}
+                    </ul>
+                  </details>
+                )}
               </div>
             ))}
           </div>

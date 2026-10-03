@@ -39,6 +39,19 @@ class MemoryStore:
         for i, v in docs.items():
             self.set(collection, i, v)
 
+    def update(self, collection, doc_id, fields):
+        doc = self._data.get(collection, {}).get(doc_id)
+        if doc is not None:
+            doc.update(copy.deepcopy(fields))
+
+    def delete(self, collection, doc_id):
+        self._data.get(collection, {}).pop(doc_id, None)
+
+    def delete_files(self, prefix):
+        files = self._data.get("files", {})
+        for path in [p for p in files if p.startswith(prefix)]:
+            files.pop(path)
+
     def set_file(self, path, content, mime_type):
         self._data.setdefault("files", {})[path] = {"content": content, "mime_type": mime_type}
 
@@ -126,16 +139,41 @@ class FirestoreStore:
             log.exception("Firestore batch write failed")
             raise StoreError(_explain(exc)) from exc
 
+    def delete(self, collection, doc_id):
+        try:
+            self._db.collection(collection).document(doc_id).delete()
+        except Exception as exc:
+            log.exception("Firestore delete failed")
+            raise StoreError(_explain(exc)) from exc
+
+    def delete_files(self, prefix):
+        """Delete every stored file under a path prefix, e.g. all documents of one trip."""
+        try:
+            for blob in self._storage.bucket(self._bucket_name).list_blobs(prefix=prefix):
+                blob.delete()
+        except Exception as exc:
+            log.warning(f"GCS delete failed for '{prefix}': {exc}")
+
+    def update(self, collection, doc_id, fields):
+        """Change only these fields (does not overwrite edits made meanwhile by another request)."""
+        try:
+            self._db.collection(collection).document(doc_id).update(fields)
+        except Exception as exc:
+            log.exception("Firestore update failed")
+            raise StoreError(_explain(exc)) from exc
+
     def set_file(self, path, content, mime_type):
         try:
             from google.api_core.exceptions import Forbidden, NotFound
             bucket = self._storage.bucket(self._bucket_name)
-            try:
-                if not bucket.exists():
-                    bucket.create(location=os.getenv("GCP_LOCATION", "us-central1"))
-            except Forbidden:
-                log.warning(f"GCS: No permission to create bucket '{self._bucket_name}'. Please create it manually in GCP console.")
-            
+            if not getattr(self, "_bucket_checked", False):  # check/create the bucket once, not on every upload
+                try:
+                    if not bucket.exists():
+                        bucket.create(location=os.getenv("GCP_LOCATION", "us-central1"))
+                    self._bucket_checked = True
+                except Forbidden:
+                    log.warning(f"GCS: No permission to create bucket '{self._bucket_name}'. Please create it manually in GCP console.")
+
             blob = bucket.blob(path)
             blob.upload_from_string(content, content_type=mime_type)
         except Exception as exc:

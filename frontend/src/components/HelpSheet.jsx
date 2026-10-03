@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { api, errorText } from '../api'
 import { useI18n } from '../i18n'
-import { speak, useRecorder } from '../voice'
+import { speak, stopSpeaking, useRecorder } from '../voice'
 
 const TABS = ['ask', 'staff', 'pass', 'assist']
 
@@ -180,7 +180,7 @@ export default function HelpSheet({ trip, onTrip, onClose, toast }) {
     closeRef.current?.focus()
     const onKey = (e) => e.key === 'Escape' && onClose()
     document.addEventListener('keydown', onKey)
-    return () => document.removeEventListener('keydown', onKey)
+    return () => { document.removeEventListener('keydown', onKey); stopSpeaking() }
   }, [onClose])
   const props = { trip, onTrip, toast }
   return (

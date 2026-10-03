@@ -12,6 +12,7 @@ from conftest import GAUTAM, SG_ADVICE
 @pytest.fixture
 def client(monkeypatch):
     monkeypatch.setattr(db, "_store", None)  # fresh in-memory store (and translation cache) per test
+    main.app.dependency_overrides[main.get_current_user] = lambda: "test-user"  # signed-in user
     monkeypatch.setattr(gemini, "extract_document", lambda content, mime, doc_type: copy.deepcopy(GAUTAM[doc_type]))
     monkeypatch.setattr(gemini, "translate", lambda texts, lang: {k: f"[{lang}] {v}" for k, v in texts.items()})
     monkeypatch.setattr(gemini, "trip_advice", lambda ctx, generic: copy.deepcopy(SG_ADVICE))
@@ -202,3 +203,77 @@ def test_assist_request_is_stored(client):
     assert db.store().get("assist_requests", req["id"])["traveller"] == "Gautam Guru"
     assert r.json()["trip"]["assist_requests"][0]["id"] == req["id"]
     assert client.post(f"/api/trips/{trip['id']}/assist", json={"traveller_id": "nope", "kind": "lost"}).status_code == 404
+
+
+def test_other_user_cannot_open_trip(client):
+    trip = client.post("/api/trips", json={"language": "en"}).json()
+    main.app.dependency_overrides[main.get_current_user] = lambda: "someone-else"
+    assert client.get(f"/api/trips/{trip['id']}").status_code == 403
+    main.app.dependency_overrides.pop(main.get_current_user)
+    assert client.get(f"/api/trips/{trip['id']}").status_code in (401, 403)   # no token at all
+
+
+def test_replace_document_updates_only_that_document(client):
+    trip = _trip_with_traveller(client)
+    tid, trav = trip["id"], trip["travellers"][0]
+    before_ticket = trav["documents"]["ticket"]
+
+    r = client.put(f"/api/trips/{tid}/travellers/{trav['id']}/documents/visa",
+                    files={"file": ("new_visa.pdf", b"%PDF-1.4 new visa", "application/pdf")})
+    assert r.status_code == 200, r.text
+    updated = next(t for t in r.json()["travellers"] if t["id"] == trav["id"])
+    assert updated["documents"]["ticket"] == before_ticket   # untouched
+    assert len(r.json()["travellers"]) == 1                  # no new traveller created
+
+    assert client.put(f"/api/trips/{tid}/travellers/{trav['id']}/documents/bogus",
+                       files={"file": ("x.pdf", b"%PDF-1.4", "application/pdf")}).status_code == 400
+    assert client.put(f"/api/trips/{tid}/travellers/nope/documents/visa",
+                       files={"file": ("x.pdf", b"%PDF-1.4", "application/pdf")}).status_code == 404
+
+
+def test_other_user_cannot_replace_document(client):
+    trip = _trip_with_traveller(client)
+    tid, trav = trip["id"], trip["travellers"][0]
+    main.app.dependency_overrides[main.get_current_user] = lambda: "someone-else"
+    r = client.put(f"/api/trips/{tid}/travellers/{trav['id']}/documents/visa",
+                    files={"file": ("x.pdf", b"%PDF-1.4", "application/pdf")})
+    assert r.status_code == 403
+    main.app.dependency_overrides.pop(main.get_current_user)
+    r = client.put(f"/api/trips/{tid}/travellers/{trav['id']}/documents/visa",
+                    files={"file": ("x.pdf", b"%PDF-1.4", "application/pdf")})
+    assert r.status_code in (401, 403)   # no token at all
+
+
+def test_quick_answers_hide_done_items(client):
+    trip = client.post("/api/trips", json={"language": "en"}).json()
+    trip = client.post(f"/api/trips/{trip['id']}/travellers", files=FILES, data={"assistance": "wheelchair"}).json()
+    qs = {q["id"]: q for q in trip["quick_questions"]}
+    assert set(qs) == {"webci", "assist"} and all(q["answer"] is None for q in qs.values())
+    assert "TST7Q2" in qs["webci"]["question"] and "Gautam Guru" in qs["assist"]["question"]
+
+    trip = client.put(f"/api/trips/{trip['id']}/quick-answers", json={"answers": {"webci": True, "assist": False}}).json()
+    ids = [i["id"] for i in trip["checklist"]["items"]]
+    assert "webci" not in ids                       # yes, already done -> not in the checklist
+    assert "assist" in ids                          # not yet -> still there (optional)
+    assert {q["id"]: q["answer"] for q in trip["quick_questions"]} == {"webci": True, "assist": False}
+
+    trip = client.put(f"/api/trips/{trip['id']}/quick-answers", json={"answers": {"webci": False}}).json()
+    assert "webci" in [i["id"] for i in trip["checklist"]["items"]]   # answer can be changed back
+
+
+def test_duplicate_trip_detected_and_trip_delete(client):
+    first = client.post("/api/trips", json={"language": "en"}).json()
+    r = client.post(f"/api/trips/{first['id']}/travellers", files=FILES).json()
+    assert r["duplicate_of"] is None                                    # first time: no duplicate
+
+    second = client.post("/api/trips", json={"language": "en"}).json()
+    r = client.post(f"/api/trips/{second['id']}/travellers", files=FILES).json()
+    dup = r["duplicate_of"]
+    assert dup["trip_id"] == first["id"] and dup["pnr"] == "TST7Q2" and dup["route"] == "Chennai → Singapore"
+
+    main.app.dependency_overrides[main.get_current_user] = lambda: "someone-else"
+    assert client.delete(f"/api/trips/{second['id']}").status_code == 403   # only the owner can delete
+    main.app.dependency_overrides[main.get_current_user] = lambda: "test-user"
+    assert client.delete(f"/api/trips/{second['id']}").json() == {"deleted": second["id"]}
+    assert client.get(f"/api/trips/{second['id']}").status_code == 404
+    assert client.get(f"/api/trips/{first['id']}").status_code == 200       # the original is untouched
