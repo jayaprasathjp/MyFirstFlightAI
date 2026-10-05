@@ -94,7 +94,7 @@ export default function AuthScreen({ onLogged }) {
   return (
     <div className="screen" style={{ alignContent: 'center' }}>
       <div id={recaptchaId}></div>
-      <div className="card" style={{ padding: '24px', display: 'grid', gap: '20px' }}>
+      <div className="card" style={{ padding: '24px', display: 'grid', gap: '20px', maxWidth: '420px', margin: '0 auto', width: '100%' }}>
         <h2 style={{ textAlign: 'center', marginBottom: '8px' }}>{t('auth_sign_in_up')}</h2>
         <p style={{ textAlign: 'center', fontSize: '14px', color: 'var(--muted)', marginTop: '-12px' }}>
           {t('auth_phone_desc')}

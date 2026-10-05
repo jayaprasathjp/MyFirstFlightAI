@@ -29,8 +29,10 @@ export default function DocsFoundScreen({ trip, onContinue, onReplace }) {
           </div>
         ))}
       </div>
-      <button className="btn pri full" onClick={onContinue}>{t('continue_docs')} →</button>
-      <button className="btn sec full" onClick={onReplace}>{t('replace_docs')}</button>
+      <div className="docs-actions">
+        <button className="btn pri full" onClick={onContinue}>{t('continue_docs')} →</button>
+        <button className="btn sec full" onClick={onReplace}>{t('replace_docs')}</button>
+      </div>
     </>
   )
 }

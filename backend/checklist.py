@@ -22,11 +22,25 @@ GENERIC_TITLES = [
 ]
 
 
-# Official online arrival-card websites, checked by hand. Never take URLs from Gemini (it can invent them).
+# Official online arrival-card / pre-arrival declaration websites. Each one was opened and checked to load from
+# the government site (Oct 2026). Never take URLs from Gemini (it can invent them). Re-check before adding more.
 OFFICIAL_ARRIVAL_CARD = {
-    "singapore": "https://eservices.ica.gov.sg/arrivalcard",
+    "singapore": "https://eservices.ica.gov.sg/arrivalcard",                      # SG Arrival Card (ICA)
+    "malaysia": "https://imigresen-online.imi.gov.my/mdac/main",                  # MDAC
+    "thailand": "https://tdac.immigration.go.th/arrival-card/",                   # TDAC
+    "indonesia": "https://allindonesia.imigrasi.go.id/",                          # All Indonesia
+    "japan": "https://services.digital.go.jp/en/visit-japan-web/",                # Visit Japan Web
+    "philippines": "https://etravel.gov.ph/",                                     # eTravel
+    "taiwan": "https://twac.immigration.gov.tw/",                                 # Taiwan Arrival Card
+    "new zealand": "https://www.travellerdeclaration.govt.nz/",                   # NZ Traveller Declaration
+    "maldives": "https://imuga.immigration.gov.mv/",                              # IMUGA
+    "india": "https://indianvisaonline.gov.in/earrival/",                         # e-Arrival (foreign nationals)
+    "cambodia": "https://arrival.gov.kh/",                                        # Cambodia e-Arrival
+    "mexico": "https://www.inm.gob.mx/fmme/publico/en/solicitud.html",            # FMM (multiple migration form)
 }
-ARRIVAL_CARD = re.compile(r"arrival card|sgac|arrival form|entry card", re.I)
+ARRIVAL_CARD = re.compile(
+    r"arrival card|arrival form|entry card|e-?arrival|digital arrival|arrival declaration|traveller declaration|"
+    r"travel declaration|sgac|mdac|tdac|twac|visit japan web|etravel|all indonesia|imuga|fmm|forma migratoria", re.I)
 
 
 def _item(id, group, title, detail, key=False, ai=False, optional=False, link=None):
@@ -35,7 +49,11 @@ def _item(id, group, title, detail, key=False, ai=False, optional=False, link=No
 
 
 def arrival_card_link(summary):
-    return OFFICIAL_ARRIVAL_CARD.get(((summary or {}).get("destination_country") or "").strip().casefold())
+    country = ((summary or {}).get("destination_country") or "").strip().casefold()
+    if country in OFFICIAL_ARRIVAL_CARD:
+        return OFFICIAL_ARRIVAL_CARD[country]
+    # Name variants, e.g. "Republic of the Philippines", "Taiwan (ROC)", "Kingdom of Thailand"
+    return next((url for name, url in OFFICIAL_ARRIVAL_CARD.items() if country and name in country), None)
 
 
 def airport_plan(summary):

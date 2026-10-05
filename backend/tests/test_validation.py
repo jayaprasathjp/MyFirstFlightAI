@@ -236,3 +236,15 @@ def test_purpose_answer_options(gautam_docs):
     assert not any("family" in a for a in emig["qa_alts"][0])               # visa purpose not repeated
     assert {"Tourism, a holiday.", "A personal visit.", "Meeting a friend."} <= set(arr["qa_alts"][0])
     assert emig["qa_alts"][1] == []                                          # other questions: no options
+
+
+def test_official_arrival_links_by_country():
+    from checklist import advice_items, arrival_card_link
+    link = lambda c: arrival_card_link({"destination_country": c})
+    assert link("Malaysia") == "https://imigresen-online.imi.gov.my/mdac/main"
+    assert link("Japan") == "https://services.digital.go.jp/en/visit-japan-web/"
+    assert link("Republic of the Philippines") == "https://etravel.gov.ph/"          # name variant
+    assert link("Australia") is None and link("United Arab Emirates") is None       # not verified -> no button
+    jp = advice_items({"items": [{"id": "vjw", "group": "t3", "title": "Register on Visit Japan Web"},
+                                 {"id": "yen", "group": "t1", "title": "Carry some yen"}]}, link("Japan"))
+    assert jp[0]["link"] == link("Japan") and jp[1]["link"] is None
