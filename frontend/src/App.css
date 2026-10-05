@@ -1543,6 +1543,11 @@ ul.do li::before {
     grid-template-columns: 1fr 1fr;
     gap: 24px;
   }
+  .boardingform button {
+    grid-column: 2;
+    justify-self: end;
+    min-width: 120px;
+  }
   .row2.even {
     grid-template-columns: 1fr 1fr;
   }
