@@ -27,6 +27,7 @@ import gemini  # noqa: E402
 from advice import get_advice  # noqa: E402
 from checklist import build_checklist, group_dates, quick_questions  # noqa: E402
 from db import StoreError, now_iso, store  # noqa: E402
+from flight_status import flight_status, status_alert  # noqa: E402
 from journey import build_journey, destination_contact  # noqa: E402
 from schemas import (AssistRequest, BoardingRequest, ChatRequest, ChecklistToggle, ContactsRequest,  # noqa: E402
                      CreateTripRequest, QuickAnswers, TranslateRequest, TTSRequest, UpdateTripRequest)
@@ -509,6 +510,18 @@ def get_document(trip_id: str, traveller_id: str, doc_type: str, user_id: str = 
         media_type=file_data["mime_type"],
         headers={"Cache-Control": "private, max-age=86400"}
     )
+
+
+@app.get("/api/trips/{trip_id}/flight-status")
+def get_flight_status(trip_id: str, user_id: str = Depends(get_current_user)):
+    """Live status of the trip's flight (delay, cancellation, gate change) and a popup message if needed."""
+    trip = load_trip(trip_id, user_id)
+    status = flight_status(trip.get("summary"))
+    alert = status_alert(status, trip.get("summary"), trip.get("boarding"))
+    if alert:
+        tr = localize({"t": alert["title"], "m": alert["message"]}, trip.get("language", "en"), protect=protected_terms(trip))
+        alert = {**alert, "title": tr["t"], "message": tr["m"], "title_en": alert["title"], "message_en": alert["message"]}
+    return {"status": status, "alert": alert}
 
 
 @app.put("/api/trips/{trip_id}/quick-answers")

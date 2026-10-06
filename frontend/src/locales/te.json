@@ -197,6 +197,7 @@
   "dup_body": "ఈ పత్రాలు ఇప్పటికే మీ ప్రయాణాలలో ఒకదానిలో ఉన్నాయి. అన్నీ ఒకే చోట ఉండేలా, దానికి బదులుగా ఆ ప్రయాణాన్ని తెరవాలా?",
   "dup_open": "నా ప్రస్తుత ప్రయాణాన్ని తెరవండి",
   "dup_keep": "కొత్త ప్రయాణంగా ఉంచండి",
+  "ok_got_it": "సరే, అర్థమైంది",
   "__source": {
     "step_language": "Language",
     "step_travellers": "Travellers",
@@ -395,6 +396,7 @@
     "dup_title": "You already have this trip",
     "dup_body": "These documents are already in one of your trips. Open that trip instead, so everything stays in one place?",
     "dup_open": "Open my existing trip",
-    "dup_keep": "Keep as a new trip"
+    "dup_keep": "Keep as a new trip",
+    "ok_got_it": "OK, got it"
   }
 }

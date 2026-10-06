@@ -277,3 +277,25 @@ def test_duplicate_trip_detected_and_trip_delete(client):
     assert client.delete(f"/api/trips/{second['id']}").json() == {"deleted": second["id"]}
     assert client.get(f"/api/trips/{second['id']}").status_code == 404
     assert client.get(f"/api/trips/{first['id']}").status_code == 200       # the original is untouched
+
+
+def test_flight_status_demo_popup(client, monkeypatch):
+    monkeypatch.setenv("FLIGHT_STATUS_DEMO", "SL301=delayed:45:B12")
+    trip = client.post("/api/trips", json={"language": "en"}).json()
+    client.post(f"/api/trips/{trip['id']}/travellers", files=FILES)
+    r = client.get(f"/api/trips/{trip['id']}/flight-status").json()
+    assert r["status"]["delay_min"] == 45 and r["status"]["demo"]
+    assert r["alert"]["level"] == "warn" and "delayed by 45 minutes" in r["alert"]["message"]
+    assert "Gate: B12" in r["alert"]["message"]
+
+    client.put(f"/api/trips/{trip['id']}/boarding", json={"gate": "B7", "boarding_time": "23:10"})
+    r = client.get(f"/api/trips/{trip['id']}/flight-status").json()
+    assert "Gate changed from B7 to B12" in r["alert"]["message"]
+
+    monkeypatch.setenv("FLIGHT_STATUS_DEMO", "SL301=cancelled")
+    r = client.get(f"/api/trips/{trip['id']}/flight-status").json()
+    assert r["alert"]["level"] == "bad" and "cancelled" in r["alert"]["title"]
+
+    monkeypatch.setenv("FLIGHT_STATUS_DEMO", "")
+    monkeypatch.delenv("AVIATIONSTACK_KEY", raising=False)
+    assert client.get(f"/api/trips/{trip['id']}/flight-status").json() == {"status": None, "alert": None}

@@ -197,6 +197,7 @@
   "dup_body": "هذه المستندات موجودة بالفعل في إحدى رحلاتك. هل تود فتح تلك الرحلة بدلاً من إنشاء رحلة جديدة، لتبقى كل معلوماتك في مكان واحد؟",
   "dup_open": "افتح رحلتي الحالية",
   "dup_keep": "احتفظ بها كرحلة جديدة",
+  "ok_got_it": "تمام، فهمت",
   "__source": {
     "step_language": "Language",
     "step_travellers": "Travellers",
@@ -395,6 +396,7 @@
     "dup_title": "You already have this trip",
     "dup_body": "These documents are already in one of your trips. Open that trip instead, so everything stays in one place?",
     "dup_open": "Open my existing trip",
-    "dup_keep": "Keep as a new trip"
+    "dup_keep": "Keep as a new trip",
+    "ok_got_it": "OK, got it"
   }
 }
