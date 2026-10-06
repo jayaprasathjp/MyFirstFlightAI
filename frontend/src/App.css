@@ -1597,3 +1597,30 @@ ul.do li::before {
 .flightalert.bad { border-top-color: var(--bad) }
 .flightalert strong { font-size: 19px }
 .flightalert p { margin: 0; font-size: 17px }
+/* Arrived Modal */
+.arrived-modal-content {
+  padding: 40px 20px;
+  text-align: center;
+  gap: 24px;
+  align-items: center;
+  max-width: 360px;
+}
+.arrived-tick-box {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: var(--ok-soft);
+  color: var(--ok);
+  display: grid;
+  place-items: center;
+  margin: 0 auto;
+}
+.arrived-tick {
+  width: 48px;
+  height: 48px;
+}
+.arrived-msg {
+  font-size: 24px;
+  margin-top: 16px;
+  margin-bottom: 24px;
+}
