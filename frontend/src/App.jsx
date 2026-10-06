@@ -12,6 +12,7 @@ import ContactsScreen from './screens/ContactsScreen'
 import ChecklistScreen from './screens/ChecklistScreen'
 import TripsScreen from './screens/TripsScreen'
 import DocsFoundScreen from './screens/DocsFoundScreen'
+import FlightAlert from './components/FlightAlert'
 import JourneyScreen from './screens/JourneyScreen'
 import LostCard from './components/LostCard'
 import HelpSheet from './components/HelpSheet'
@@ -284,6 +285,7 @@ function Flow({ setLang }) {
               <button className="sos" onClick={() => setLostOpen(true)}><span aria-hidden="true">!</span>{t('lost')}</button>
             </div>
           )}
+          {hasTravellers && <FlightAlert tripId={trip.id} toast={toast} />}
           {helpOpen && hasTravellers && <HelpSheet trip={trip} onTrip={applyTrip} onClose={closeHelp} toast={toast} />}
           {lostOpen && hasTravellers && <LostCard trip={trip} onTrip={applyTrip} onClose={closeLost} toast={toast} />}
         </>
