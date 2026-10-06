@@ -14,6 +14,8 @@ LANGUAGES = {
     "en": "English", "hi": "Hindi", "ta": "Tamil", "te": "Telugu", "kn": "Kannada",
     "ml": "Malayalam", "bn": "Bengali", "mr": "Marathi", "gu": "Gujarati",
     "ms": "Malay", "zh": "Simplified Chinese", "ar": "Arabic",
+    "es": "Spanish", "fr": "French", "de": "German",
+    "ja": "Japanese", "ko": "Korean", "ru": "Russian",
 }
 
 
@@ -93,7 +95,7 @@ def translate_model():
 SCRIPT = {
     "hi": "Devanagari", "mr": "Devanagari", "ta": "Tamil", "te": "Telugu", "kn": "Kannada", "ml": "Malayalam",
     "bn": "Bengali", "gu": "Gujarati", "zh": "Simplified Chinese characters", "ar": "Arabic (Modern Standard Arabic, not Urdu)",
-    "ms": "Latin",
+    "ms": "Latin", "ja": "Japanese script (Kanji, Hiragana, Katakana)", "ko": "Hangul", "ru": "Cyrillic",
 }
 LATIN_WORD = re.compile(r"[a-z]{3,}")  # lowercase words; ALL-CAPS codes like SIN or MAA stay as they are
 

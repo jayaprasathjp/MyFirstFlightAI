@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { store } from '../api'
 import { useI18n } from '../i18n'
-import { stopSpeaking } from '../voice'
+import { stopSpeaking, speak } from '../voice'
 import Listen from '../components/Listen'
 
 function BoardingForm({ boarding, onSave, busy }) {
@@ -24,11 +24,12 @@ function BoardingForm({ boarding, onSave, busy }) {
 }
 
 export default function JourneyScreen({ trip, onSaveBoarding, busy, toast }) {
-  const { t } = useI18n()
+  const { t, lang } = useI18n()
   const steps = trip.journey
   const key = `mff-jstep-${trip.id}`
   const [n, setN] = useState(() => Math.min(store.get(key, 0), steps.length - 1))
   const [big, setBig] = useState(false)
+  const [showArrived, setShowArrived] = useState(false)
   const go = (i) => { stopSpeaking(); setN(i); store.set(key, i); window.scrollTo({ top: 0 }) }
   useEffect(() => stopSpeaking, []) // stop reading if the traveller leaves this screen mid-playback
   const s = steps[n]
@@ -86,7 +87,14 @@ export default function JourneyScreen({ trip, onSaveBoarding, busy, toast }) {
       {(s.id === 'checkin' || s.id === 'gate') && <BoardingForm key={s.id} boarding={trip.boarding} onSave={onSaveBoarding} busy={busy} />}
       <div className="nav2">
         <button className="btn sec" disabled={n === 0} onClick={() => go(n - 1)}>{t('back')}</button>
-        <button className="btn pri" onClick={() => (last ? toast(t('arrived')) : go(n + 1))}>
+        <button className="btn pri" onClick={() => {
+          if (last) {
+            setShowArrived(true)
+            speak(t('arrived'), lang)
+          } else {
+            go(n + 1)
+          }
+        }}>
           {last ? t('done_btn') + ' ✓' : t('next_step') + ' →'}
         </button>
       </div>
@@ -94,6 +102,19 @@ export default function JourneyScreen({ trip, onSaveBoarding, busy, toast }) {
         <div className="bigtext" role="dialog" aria-label={t('show_staff')} onClick={() => setBig(false)}>
           <p lang="en">{s.staff_en}</p>
           <button className="btn sec">{t('close')}</button>
+        </div>
+      )}
+      {showArrived && (
+        <div className="modal-overlay" onClick={() => setShowArrived(false)}>
+          <div className="modal-content arrived-modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="arrived-tick-box">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="arrived-tick">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </div>
+            <h2 className="arrived-msg">{t('arrived')}</h2>
+            <button className="btn pri full" onClick={() => setShowArrived(false)}>{t('done_btn')}</button>
+          </div>
         </div>
       )}
     </>

@@ -11,6 +11,12 @@ export const LANGUAGES = [
   { code: 'ms', native: 'Bahasa Melayu', english: 'Malay', locale: 'ms-MY' },
   { code: 'zh', native: '中文', english: 'Mandarin', locale: 'zh-CN' },
   { code: 'ar', native: 'العربية', english: 'Arabic', locale: 'ar', rtl: true },
+  { code: 'es', native: 'Español', english: 'Spanish', locale: 'es-ES' },
+  { code: 'fr', native: 'Français', english: 'French', locale: 'fr-FR' },
+  { code: 'de', native: 'Deutsch', english: 'German', locale: 'de-DE' },
+  { code: 'ja', native: '日本語', english: 'Japanese', locale: 'ja-JP' },
+  { code: 'ko', native: '한국어', english: 'Korean', locale: 'ko-KR' },
+  { code: 'ru', native: 'Русский', english: 'Russian', locale: 'ru-RU' },
 ]
 
 // English source strings live in locales/en.json. The other languages are pre-translated files in locales/
