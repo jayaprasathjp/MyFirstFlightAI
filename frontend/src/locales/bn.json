@@ -197,6 +197,7 @@
   "dup_body": "এই কাগজপত্রগুলি আপনার অন্য একটি ভ্রমণে আগে থেকেই আছে। বরং সেই ভ্রমণটি খুলুন, যাতে সবকিছু এক জায়গায় থাকে?",
   "dup_open": "আমার আগের ভ্রমণটি খুলুন",
   "dup_keep": "নতুন ভ্রমণ হিসাবে রাখুন",
+  "ok_got_it": "ঠিক আছে, বুঝেছি",
   "__source": {
     "step_language": "Language",
     "step_travellers": "Travellers",
@@ -395,6 +396,7 @@
     "dup_title": "You already have this trip",
     "dup_body": "These documents are already in one of your trips. Open that trip instead, so everything stays in one place?",
     "dup_open": "Open my existing trip",
-    "dup_keep": "Keep as a new trip"
+    "dup_keep": "Keep as a new trip",
+    "ok_got_it": "OK, got it"
   }
 }

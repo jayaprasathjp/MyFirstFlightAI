@@ -197,6 +197,7 @@
   "dup_body": "ഈ രേഖകൾ നിങ്ങളുടെ ഒരു യാത്രയിലുണ്ട്. എല്ലാം ഒരു സ്ഥലത്ത് സൂക്ഷിക്കാൻ ആ യാത്ര തുറക്കണോ?",
   "dup_open": "എന്റെ നിലവിലുള്ള യാത്ര തുറക്കുക",
   "dup_keep": "പുതിയ യാത്രയായി സൂക്ഷിക്കുക",
+  "ok_got_it": "മനസ്സിലായി",
   "__source": {
     "step_language": "Language",
     "step_travellers": "Travellers",
@@ -395,6 +396,7 @@
     "dup_title": "You already have this trip",
     "dup_body": "These documents are already in one of your trips. Open that trip instead, so everything stays in one place?",
     "dup_open": "Open my existing trip",
-    "dup_keep": "Keep as a new trip"
+    "dup_keep": "Keep as a new trip",
+    "ok_got_it": "OK, got it"
   }
 }

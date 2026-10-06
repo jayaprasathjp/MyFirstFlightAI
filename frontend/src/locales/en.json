@@ -196,5 +196,6 @@
   "dup_title": "You already have this trip",
   "dup_body": "These documents are already in one of your trips. Open that trip instead, so everything stays in one place?",
   "dup_open": "Open my existing trip",
-  "dup_keep": "Keep as a new trip"
+  "dup_keep": "Keep as a new trip",
+  "ok_got_it": "OK, got it"
 }

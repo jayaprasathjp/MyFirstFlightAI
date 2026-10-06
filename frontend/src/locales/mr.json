@@ -197,6 +197,7 @@
   "dup_body": "ही कागदपत्रे तुमच्या आधीच्या एका सहलीत आहेत. तीच सहल उघडा म्हणजे सर्व माहिती एकाच ठिकाणी राहील.",
   "dup_open": "माझी जुनी सहल उघडा",
   "dup_keep": "नवीन सहल म्हणून ठेवा",
+  "ok_got_it": "ठीक आहे, समजले",
   "__source": {
     "step_language": "Language",
     "step_travellers": "Travellers",
@@ -395,6 +396,7 @@
     "dup_title": "You already have this trip",
     "dup_body": "These documents are already in one of your trips. Open that trip instead, so everything stays in one place?",
     "dup_open": "Open my existing trip",
-    "dup_keep": "Keep as a new trip"
+    "dup_keep": "Keep as a new trip",
+    "ok_got_it": "OK, got it"
   }
 }

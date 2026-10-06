@@ -197,6 +197,7 @@
   "dup_body": "这些文件已经在您的一个行程中了。要不打开那个行程，这样所有东西都在一个地方？",
   "dup_open": "打开我已有的行程",
   "dup_keep": "保留为新行程",
+  "ok_got_it": "好的，明白了",
   "__source": {
     "step_language": "Language",
     "step_travellers": "Travellers",
@@ -395,6 +396,7 @@
     "dup_title": "You already have this trip",
     "dup_body": "These documents are already in one of your trips. Open that trip instead, so everything stays in one place?",
     "dup_open": "Open my existing trip",
-    "dup_keep": "Keep as a new trip"
+    "dup_keep": "Keep as a new trip",
+    "ok_got_it": "OK, got it"
   }
 }
