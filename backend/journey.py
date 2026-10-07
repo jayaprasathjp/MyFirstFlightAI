@@ -3,7 +3,7 @@
 Each step: {id, title, where[], do[], qa[[question, answer]], qa_alts[[other answers]], staff}. `qa` and `staff`
 stay in English for officers and staff; the API adds translations alongside them.
 """
-from checklist import airport_plan
+from checklist import airport_plan, boarding_estimate
 from validation import fmt_date, parse_date
 
 # Other honest answers to "why are you travelling?" (keyword, departure answer, arrival answer).
@@ -94,8 +94,9 @@ def build_journey(summary, travellers, advice=None, contacts=None, boarding=None
          "A beep is normal. They may check you by hand."],
         "Can I keep my medicines with me?"))
 
-    steps.append(_step("gate", "Wait at the gate", [f"Gate {gate}" if gate else "Gate: see boarding pass",
-                                                   boarding_time and f"Boarding {boarding_time}"],
+    est = boarding_estimate(s)
+    boarding_chip = f"Boarding {boarding_time}" if boarding_time else (est and f"Boarding about {est} (estimated)")
+    steps.append(_step("gate", "Wait at the gate", [f"Gate {gate}" if gate else "Gate: see boarding pass", boarding_chip],
         [f"Walk to Gate {gate}. Follow the gate signs." if gate else "Walk to the gate printed on your boarding pass.",
          "Watch the screens. Gates can change.",
          s.get("gate_closes") and f"The gate closes at {s['gate_closes']}. Be there before that.",

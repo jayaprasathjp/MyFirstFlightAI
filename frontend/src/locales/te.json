@@ -201,6 +201,8 @@
   "help_intro": "మీ పత్రాలు సిద్ధంగా ఉన్నాయి. మీకు ఎప్పుడైనా సహాయం కావాలంటే, స్క్రీన్ దిగువన ఉన్న నీలి రంగు 'సహాయం' బటన్‌ను నొక్కండి. మీరు దారి తప్పితే, ఎరుపు రంగు 'నేను దారి తప్పాను' బటన్‌ను నొక్కండి.",
   "bag_not_on_ticket": "మీ టికెట్‌పై ముద్రించబడలేదు: ఇది సాధారణ పరిమితి. దయచేసి విమానయాన సంస్థతో నిర్ధారించుకోండి.",
   "help_hint_short": "సహాయం కావాలా? స్క్రీన్ దిగువన ఉన్న నీలి రంగు సహాయం బటన్ లేదా ఎరుపు రంగు 'నేను దారి తప్పాను' బటన్‌ను ఉపయోగించండి. ఇది వినడానికి ఇక్కడ నొక్కండి.",
+  "estimated": "సుమారు",
+  "boarding_estimated": "సుమారు: బయలుదేరడానికి 45 నిమిషాల ముందు. మీ బోర్డింగ్ పాస్‌లో ఉన్న సమయానికి మార్చి, సేవ్ చేయండి.",
   "__source": {
     "step_language": "Language",
     "step_travellers": "Travellers",
@@ -403,6 +405,8 @@
     "ok_got_it": "OK, got it",
     "help_intro": "Your documents are ready. If you need help at any time, tap the blue Help button at the bottom of the screen. If you are lost, tap the red I'm Lost button.",
     "bag_not_on_ticket": "Not printed on your ticket: this is the usual limit. Please confirm with the airline.",
-    "help_hint_short": "Need help? Use the blue Help button or the red I'm Lost button at the bottom of the screen. Tap here to hear this."
+    "help_hint_short": "Need help? Use the blue Help button or the red I'm Lost button at the bottom of the screen. Tap here to hear this.",
+    "estimated": "estimated",
+    "boarding_estimated": "Estimated: about 45 minutes before departure. Change it to the time on your boarding pass and tap Save."
   }
 }
