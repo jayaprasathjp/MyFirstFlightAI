@@ -165,7 +165,7 @@ def test_journey_transit_and_missing_gate(gautam_docs):
     assert steps["transit_0"]["title"] == "Change planes at Kuala Lumpur"
     assert "You have 2h 30m to change planes." in steps["transit_0"]["do"]
     assert "SL 900" in steps["transit_0"]["staff"]
-    assert steps["gate"]["where"] == ["Gate: see boarding pass"]
+    assert steps["gate"]["where"] == ["Gate: see boarding pass", "Boarding about 23:05 (estimated)"]
     assert "Priya" in dict(steps["arrival"]["qa"])["Where will you stay?"]                # saved contact wins
 
 
@@ -263,3 +263,14 @@ def test_luggage_never_blank(gautam_docs):
     assert (b["cabin_bag_kg"], b["checked_bag_kg"], b["cabin_bag_source"]) == (7, 15, "default")  # safe default
     items = {i["id"]: i for i in build_checklist(s, [traveller(gautam_docs)], [], None)}
     assert items["checked_bag"]["title"] == "Check-in bag 15 kg or less" and "please confirm" in items["checked_bag"]["detail"]
+
+
+def test_boarding_time_estimated_until_known(gautam_docs):
+    from checklist import boarding_estimate
+    from journey import build_journey
+    summary = trip_summary(gautam_docs["ticket"])
+    assert boarding_estimate(summary) == "23:05"                                   # 23:50 departure - 45 min
+    gate = {st["id"]: st for st in build_journey(summary, [traveller(gautam_docs)])}["gate"]
+    assert "Boarding about 23:05 (estimated)" in gate["where"]
+    gate = {st["id"]: st for st in build_journey(summary, [traveller(gautam_docs)], boarding={"boarding_time": "23:10"})}["gate"]
+    assert "Boarding 23:10" in gate["where"]                                      # real time replaces the estimate

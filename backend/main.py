@@ -25,7 +25,7 @@ if _creds and not Path(_creds).is_absolute():
 import gcp  # noqa: E402
 import gemini  # noqa: E402
 from advice import get_advice  # noqa: E402
-from checklist import build_checklist, group_dates, quick_questions, with_baggage  # noqa: E402
+from checklist import boarding_estimate, build_checklist, group_dates, quick_questions, with_baggage  # noqa: E402
 from db import StoreError, now_iso, store  # noqa: E402
 from flight_status import flight_status, status_alert  # noqa: E402
 from journey import build_journey, destination_contact  # noqa: E402
@@ -258,7 +258,8 @@ def trip_view(trip):
                             for q in questions],
         "contacts": contacts,
         "destination_contact": destination_contact(travellers, []),  # from the visa, to prefill the contacts form
-        "boarding": trip.get("boarding") or {},
+        # boarding_estimate: shown until the real time comes from the boarding pass (typed in or photo)
+        "boarding": {**(trip.get("boarding") or {}), "boarding_estimate": boarding_estimate(trip.get("summary"))},
         "journey": [journey_step(st) for st in journey],
         "boarding_pass": {**bp, "fields": [{**f, "meaning": tr[f"bp.{n}"]} for n, f in enumerate(bp.get("fields") or [])]}
                          if bp else None,

@@ -7,8 +7,10 @@ import Listen from '../components/Listen'
 function BoardingForm({ boarding, onSave, busy }) {
   const { t } = useI18n()
   const [gate, setGate] = useState(boarding.gate || '')
-  const [time, setTime] = useState(boarding.boarding_time || '')
+  // Until the real time is saved, start from the estimate (45 min before departure) so the field is never empty.
+  const [time, setTime] = useState(boarding.boarding_time || boarding.boarding_estimate || '')
   const saved = gate === (boarding.gate || '') && time === (boarding.boarding_time || '') && (gate || time)
+  const estimated = !boarding.boarding_time && boarding.boarding_estimate && time === boarding.boarding_estimate
   return (
     <div className="card form boardingform">
       <h3>{t('boarding_title')}</h3>
@@ -16,6 +18,7 @@ function BoardingForm({ boarding, onSave, busy }) {
         <label>{t('gate')}<input type="text" value={gate} maxLength={8} placeholder="B7" onChange={(e) => setGate(e.target.value)} /></label>
         <label>{t('boarding_time')}<input type="time" value={time} onChange={(e) => setTime(e.target.value)} /></label>
       </div>
+      {estimated && <small className="muted">{t('boarding_estimated')}</small>}
       <button className="btn sec" disabled={busy || saved} onClick={() => onSave(gate.trim(), time)}>
         {saved ? '✓ ' + t('saved') : t('save')}
       </button>
