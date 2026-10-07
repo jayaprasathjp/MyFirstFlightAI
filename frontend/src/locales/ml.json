@@ -198,6 +198,9 @@
   "dup_open": "എന്റെ നിലവിലുള്ള യാത്ര തുറക്കുക",
   "dup_keep": "പുതിയ യാത്രയായി സൂക്ഷിക്കുക",
   "ok_got_it": "മനസ്സിലായി",
+  "help_intro": "നിങ്ങളുടെ രേഖകൾ തയ്യാറാണ്. എപ്പോൾ വേണമെങ്കിലും സഹായം വേണമെങ്കിൽ, സ്ക്രീനിന്റെ താഴെയുള്ള നീല 'സഹായം' ബട്ടൺ അമർത്തുക. വഴി തെറ്റിയാൽ, ചുവന്ന 'ഞാൻ വഴി തെറ്റി' ബട്ടൺ അമർത്തുക.",
+  "bag_not_on_ticket": "നിങ്ങളുടെ ടിക്കറ്റിൽ ഇത് അച്ചടിച്ചിട്ടില്ല: ഇത് സാധാരണ പരിധിയാണ്. ദയവായി എയർലൈനുമായി ഉറപ്പുവരുത്തുക.",
+  "help_hint_short": "സഹായം വേണോ? സ്ക്രീനിന്റെ താഴെയുള്ള നീല 'സഹായം' ബട്ടണോ ചുവന്ന 'ഞാൻ വഴിതെറ്റി' ബട്ടണോ ഉപയോഗിക്കുക. ഇത് കേൾക്കാൻ ഇവിടെ ടാപ്പ് ചെയ്യുക.",
   "__source": {
     "step_language": "Language",
     "step_travellers": "Travellers",
@@ -397,6 +400,9 @@
     "dup_body": "These documents are already in one of your trips. Open that trip instead, so everything stays in one place?",
     "dup_open": "Open my existing trip",
     "dup_keep": "Keep as a new trip",
-    "ok_got_it": "OK, got it"
+    "ok_got_it": "OK, got it",
+    "help_intro": "Your documents are ready. If you need help at any time, tap the blue Help button at the bottom of the screen. If you are lost, tap the red I'm Lost button.",
+    "bag_not_on_ticket": "Not printed on your ticket: this is the usual limit. Please confirm with the airline.",
+    "help_hint_short": "Need help? Use the blue Help button or the red I'm Lost button at the bottom of the screen. Tap here to hear this."
   }
 }

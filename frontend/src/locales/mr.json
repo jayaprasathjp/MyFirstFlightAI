@@ -198,6 +198,9 @@
   "dup_open": "माझी जुनी सहल उघडा",
   "dup_keep": "नवीन सहल म्हणून ठेवा",
   "ok_got_it": "ठीक आहे, समजले",
+  "help_intro": "तुमची कागदपत्रे तयार आहेत. तुम्हाला कधीही मदत लागल्यास, स्क्रीनच्या खालच्या बाजूला असलेल्या निळ्या 'मदत' बटणावर टॅप करा. जर तुम्ही हरवला असाल, तर लाल 'मी हरवले आहे' बटणावर टॅप करा.",
+  "bag_not_on_ticket": "तुमच्या तिकिटावर छापलेले नाही: ही सामान्य मर्यादा आहे. कृपया एअरलाईनशी खात्री करून घ्या.",
+  "help_hint_short": "मदत हवी आहे? स्क्रीनच्या खालच्या बाजूला असलेले निळे 'मदत' बटन किंवा लाल 'मी हरवले आहे' बटन वापरा. हे ऐकण्यासाठी इथे टॅप करा.",
   "__source": {
     "step_language": "Language",
     "step_travellers": "Travellers",
@@ -397,6 +400,9 @@
     "dup_body": "These documents are already in one of your trips. Open that trip instead, so everything stays in one place?",
     "dup_open": "Open my existing trip",
     "dup_keep": "Keep as a new trip",
-    "ok_got_it": "OK, got it"
+    "ok_got_it": "OK, got it",
+    "help_intro": "Your documents are ready. If you need help at any time, tap the blue Help button at the bottom of the screen. If you are lost, tap the red I'm Lost button.",
+    "bag_not_on_ticket": "Not printed on your ticket: this is the usual limit. Please confirm with the airline.",
+    "help_hint_short": "Need help? Use the blue Help button or the red I'm Lost button at the bottom of the screen. Tap here to hear this."
   }
 }

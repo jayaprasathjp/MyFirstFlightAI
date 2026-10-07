@@ -1624,3 +1624,12 @@ ul.do li::before {
   margin-top: 16px;
   margin-bottom: 24px;
 }
+/* luggage note + help buttons pulse after upload */
+.bagnote { display: block; margin-top: 8px; font-size: 12px; opacity: .9 }
+.dock.pulse .helpbtn, .dock.pulse .sos { animation: helppulse 1.2s ease-in-out 7 }
+@keyframes helppulse { 50% { transform: scale(1.12); box-shadow: 0 0 0 10px color-mix(in srgb, var(--brand) 25%, transparent) } }
+
+/* Check screen: where to find help */
+.helphint { display: flex; gap: 10px; align-items: center; text-align: start; width: 100%; border: 1.5px solid var(--bad);
+  background: var(--bad-soft); color: var(--ink); border-radius: 14px; padding: 12px 14px; font-weight: 600; font-size: 15px }
+.helphint-play { margin-inline-start: auto; font-size: 20px }

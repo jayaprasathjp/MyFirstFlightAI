@@ -95,14 +95,27 @@ def build_itinerary(ticket):
     }
 
 
+CABIN_WORDS = r"cabin|hand|carry[- ]?on"
+CHECKED_WORDS = r"check(?:ed)?[- ]?in|checked|hold|registered"
+
+
+def bag_kg_from_text(text, words):
+    """Weight in kg next to a bag word in the ticket's baggage text, e.g. 'Checked bag: 1 piece, 20 kg' -> 20."""
+    m = re.search(rf"(?:{words})[^.;|\n]{{0,40}}?(\d{{1,2}}(?:\.\d)?)\s*(?:kg|kgs|k)\b", text or "", re.I)
+    return float(m.group(1)) if m else None
+
+
 def trip_summary(ticket):
     it = build_itinerary(ticket or {})
     if not it:
         return None
+    text = ticket.get("baggage_allowance_text")
     return {
         **it,
         "pnr": ticket.get("pnr"), "airline": ticket.get("airline"),
-        "cabin_bag_kg": ticket.get("cabin_bag_kg"), "checked_bag_kg": ticket.get("checked_bag_kg"),
+        # Weights from the ticket fields, else from the ticket's baggage text (airline/default fill-in: checklist.py)
+        "cabin_bag_kg": ticket.get("cabin_bag_kg") or bag_kg_from_text(text, CABIN_WORDS),
+        "checked_bag_kg": ticket.get("checked_bag_kg") or bag_kg_from_text(text, CHECKED_WORDS),
         "checkin_closes": ticket.get("checkin_closes"), "gate_closes": ticket.get("gate_closes"),
     }
 
