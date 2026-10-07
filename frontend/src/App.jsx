@@ -339,15 +339,27 @@ function Flow({ setLang }) {
     setUpdating(false);
   };
   const [dup, setDup] = useState(null); // same traveller already in another trip of this user
-  const [pulseHelp, setPulseHelp] = useState(false); // highlight Help / I'm Lost after the first upload
+  const [pulseHelp, setPulseHelp] = useState(false); // highlight Help / I'm Lost while the intro is spoken
+  const announceHelp = () => {
+    setPulseHelp(true);
+    setTimeout(() => setPulseHelp(false), 9000);
+    speak(t("help_intro"), lang);
+  };
+  // On the Check screen (the page after uploading), say once per trip and session where Help and I'm Lost are.
+  useEffect(() => {
+    if (step !== "check" || !trip?.travellers?.length) return;
+    const key = `mff-helpintro-${trip.id}`;
+    try {
+      if (sessionStorage.getItem(key)) return;
+      sessionStorage.setItem(key, "1");
+    } catch { /* storage unavailable: announce anyway */ }
+    announceHelp();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [step, trip?.id]);
   const addTraveller = (files, assistance) =>
     run(async () => {
       const r = await api.addTraveller(trip.id, files, assistance);
       applyTrip(r);
-      // Tell them, out loud in their language, where help is; the two buttons pulse meanwhile.
-      setPulseHelp(true);
-      setTimeout(() => setPulseHelp(false), 9000);
-      speak(t("help_intro"), lang);
       if (r.duplicate_of)
         setDup({
           ...r.duplicate_of,
@@ -513,6 +525,7 @@ function Flow({ setLang }) {
                 onBack={() => setStep("travellers")}
                 onNext={() => setStep("contacts")}
                 onAnswer={answerQuick}
+                onHelpIntro={announceHelp}
                 busy={busy}
                 toast={toast}
               />

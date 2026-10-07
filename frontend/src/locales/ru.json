@@ -200,6 +200,7 @@
   "ok_got_it": "Понятно",
   "help_intro": "Ваши документы готовы. Если вам понадобится помощь, нажмите синюю кнопку «Помощь» внизу экрана. Если вы потерялись, нажмите красную кнопку «Я потерялся».",
   "bag_not_on_ticket": "Не напечатано на вашем билете: это обычный лимит. Пожалуйста, уточните у авиакомпании.",
+  "help_hint_short": "Нужна помощь? Нажмите синюю кнопку «Помощь» или красную кнопку «Я потерялся» внизу экрана. Нажмите здесь, чтобы прослушать.",
   "__source": {
     "step_language": "Language",
     "step_travellers": "Travellers",
@@ -401,6 +402,7 @@
     "dup_keep": "Keep as a new trip",
     "ok_got_it": "OK, got it",
     "help_intro": "Your documents are ready. If you need help at any time, tap the blue Help button at the bottom of the screen. If you are lost, tap the red I'm Lost button.",
-    "bag_not_on_ticket": "Not printed on your ticket: this is the usual limit. Please confirm with the airline."
+    "bag_not_on_ticket": "Not printed on your ticket: this is the usual limit. Please confirm with the airline.",
+    "help_hint_short": "Need help? Use the blue Help button or the red I'm Lost button at the bottom of the screen. Tap here to hear this."
   }
 }

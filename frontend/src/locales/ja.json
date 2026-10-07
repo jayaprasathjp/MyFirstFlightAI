@@ -200,6 +200,7 @@
   "ok_got_it": "はい、わかりました",
   "help_intro": "書類の準備ができました。もし困ったことがあれば、画面の下にある青い「ヘルプ」ボタンを押してください。道に迷ったら、赤い「道に迷いました」ボタンを押してくださいね。",
   "bag_not_on_ticket": "航空券には書いてありませんが、これが一般的な制限です。念のため、航空会社に確認してくださいね。",
+  "help_hint_short": "お困りですか？画面の下にある青い「ヘルプ」ボタンか、赤い「道に迷った」ボタンを押してください。ここをタップすると、このメッセージが聞けます。",
   "__source": {
     "step_language": "Language",
     "step_travellers": "Travellers",
@@ -401,6 +402,7 @@
     "dup_keep": "Keep as a new trip",
     "ok_got_it": "OK, got it",
     "help_intro": "Your documents are ready. If you need help at any time, tap the blue Help button at the bottom of the screen. If you are lost, tap the red I'm Lost button.",
-    "bag_not_on_ticket": "Not printed on your ticket: this is the usual limit. Please confirm with the airline."
+    "bag_not_on_ticket": "Not printed on your ticket: this is the usual limit. Please confirm with the airline.",
+    "help_hint_short": "Need help? Use the blue Help button or the red I'm Lost button at the bottom of the screen. Tap here to hear this."
   }
 }

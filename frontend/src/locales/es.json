@@ -200,6 +200,7 @@
   "ok_got_it": "OK, entendido",
   "help_intro": "Sus documentos están listos. Si necesita ayuda en cualquier momento, toque el botón azul de Ayuda en la parte inferior de la pantalla. Si está perdido, toque el botón rojo de Estoy Perdido.",
   "bag_not_on_ticket": "No impreso en su boleto: este es el límite usual. Por favor, confirme con la aerolínea.",
+  "help_hint_short": "Necesita ayuda? Use el botón azul de Ayuda o el botón rojo de Estoy Perdido en la parte de abajo de la pantalla. Toque aquí para escuchar esto.",
   "__source": {
     "step_language": "Language",
     "step_travellers": "Travellers",
@@ -401,6 +402,7 @@
     "dup_keep": "Keep as a new trip",
     "ok_got_it": "OK, got it",
     "help_intro": "Your documents are ready. If you need help at any time, tap the blue Help button at the bottom of the screen. If you are lost, tap the red I'm Lost button.",
-    "bag_not_on_ticket": "Not printed on your ticket: this is the usual limit. Please confirm with the airline."
+    "bag_not_on_ticket": "Not printed on your ticket: this is the usual limit. Please confirm with the airline.",
+    "help_hint_short": "Need help? Use the blue Help button or the red I'm Lost button at the bottom of the screen. Tap here to hear this."
   }
 }

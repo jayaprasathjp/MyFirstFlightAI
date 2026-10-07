@@ -199,5 +199,6 @@
   "dup_keep": "Keep as a new trip",
   "ok_got_it": "OK, got it",
   "help_intro": "Your documents are ready. If you need help at any time, tap the blue Help button at the bottom of the screen. If you are lost, tap the red I'm Lost button.",
-  "bag_not_on_ticket": "Not printed on your ticket: this is the usual limit. Please confirm with the airline."
+  "bag_not_on_ticket": "Not printed on your ticket: this is the usual limit. Please confirm with the airline.",
+  "help_hint_short": "Need help? Use the blue Help button or the red I'm Lost button at the bottom of the screen. Tap here to hear this."
 }
