@@ -139,7 +139,7 @@ def test_contacts_and_boarding(client):
 
     assert client.put(f"/api/trips/{trip['id']}/boarding", json={"gate": "B7", "boarding_time": "25:99"}).status_code == 422
     trip = client.put(f"/api/trips/{trip['id']}/boarding", json={"gate": " b7 ", "boarding_time": "23:10"}).json()
-    assert trip["boarding"] == {"gate": "B7", "boarding_time": "23:10"}
+    assert trip["boarding"] == {"gate": "B7", "boarding_time": "23:10", "boarding_estimate": "23:05"}
     gate = next(st for st in trip["journey"] if st["id"] == "gate")
     assert gate["where"] == ["Gate B7", "Boarding 23:10"]
 
@@ -189,7 +189,7 @@ def test_boarding_pass_fills_gate(client, monkeypatch):
         "fields": [{"field": "GATE", "value": "B12", "meaning": "Board the plane here."}]})
     trip = _trip_with_traveller(client)
     trip = client.post(f"/api/trips/{trip['id']}/boarding-pass", files={"file": ("bp.jpg", b"img", "image/jpeg")}).json()
-    assert trip["boarding"] == {"gate": "B12", "boarding_time": "23:05"}
+    assert trip["boarding"] == {"gate": "B12", "boarding_time": "23:05", "boarding_estimate": "23:05"}
     assert trip["boarding_pass"]["fields"][0]["meaning"] == "Board the plane here."
     assert next(st for st in trip["journey"] if st["id"] == "gate")["where"][0] == "Gate B12"
 

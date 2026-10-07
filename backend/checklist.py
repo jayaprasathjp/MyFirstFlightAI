@@ -81,6 +81,16 @@ def with_baggage(summary, advice=None):
     return s
 
 
+BOARDING_BEFORE_DEPARTURE = timedelta(minutes=45)  # typical boarding start for international flights
+
+
+def boarding_estimate(summary):
+    """Estimated boarding time (HH:MM) until the real one comes from the boarding pass; None if unknown."""
+    s = summary or {}
+    dep = parse_dt(s.get("departure_date"), s.get("departure_time"))
+    return f"{dep - BOARDING_BEFORE_DEPARTURE:%H:%M}" if dep and s.get("departure_time") else None
+
+
 def airport_plan(summary):
     """Departure time, when to reach the airport and when to leave home; None if the time is unknown."""
     s = summary or {}

@@ -70,7 +70,8 @@ export default function LostCard({ trip, onTrip, onClose, toast }) {
         <div><span><Label k="l_name" /></span><b>{person.name}</b></div>
         <div><span><Label k="l_flight" /></span><b className="m">{flight} → {s.destination_city || s.destination_code}</b></div>
         <div><span><Label k="l_gate" /></span><b className="m">{gate || <em>{t('on_pass')}</em>}</b></div>
-        <div><span><Label k="l_boarding" /></span><b className="m">{boardingTime || <em>{t('on_pass')}</em>}</b></div>
+        <div><span><Label k="l_boarding" /></span><b className="m">{boardingTime
+          || (trip.boarding?.boarding_estimate ? <>~{trip.boarding.boarding_estimate} <em>({t('estimated')})</em></> : <em>{t('on_pass')}</em>)}</b></div>
         <div><span><Label k="l_help" /></span><b className="help">{EN.help_val}{lang !== 'en' && <small>{t('help_val')}</small>}</b></div>
       </div>
       <section className="family">
