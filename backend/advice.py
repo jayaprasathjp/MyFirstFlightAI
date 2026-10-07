@@ -14,7 +14,7 @@ from db import now_iso, store
 
 log = logging.getLogger("myfirstflight")
 
-ADVICE_VERSION = 3  # bump when the prompt or schema changes to invalidate the cache
+ADVICE_VERSION = 4  # bump when the prompt or schema changes to invalidate the cache
 ADVICE_TTL = timedelta(days=30)
 
 
@@ -35,7 +35,7 @@ def advice_context(summary, travellers):
 
 
 def _signature(ctx):
-    key = {k: ctx[k] for k in ("origin", "destination", "transits", "passport_nationalities", "visa_types")}
+    key = {k: ctx[k] for k in ("origin", "destination", "transits", "passport_nationalities", "visa_types", "airline")}
     key["origin"] = ctx["origin"]["country"]
     key["destination"] = ctx["destination"]["country"]
     key["transits"] = [t["country"] for t in ctx["transits"]]

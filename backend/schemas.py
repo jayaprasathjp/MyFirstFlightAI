@@ -78,6 +78,8 @@ class AdviceItem(BaseModel):
 class TripAdvice(BaseModel):
     currency_code: Optional[str] = Field(None, description="ISO code of the destination currency")
     origin_currency_code: Optional[str] = Field(None, description="ISO code of the origin (home) country currency")
+    typical_cabin_kg: Optional[float] = Field(None, description="this airline's usual economy cabin bag limit in kg for this route")
+    typical_checked_kg: Optional[float] = Field(None, description="this airline's usual economy check-in bag allowance in kg for this route")
     items: List[AdviceItem] = []
     emigration_tips: List[str] = Field([], description="departure passport control tips for the origin country")
     transit_tips: List[str] = Field([], description="tips for the transit airports, empty if none")

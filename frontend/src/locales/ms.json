@@ -198,6 +198,8 @@
   "dup_open": "Buka perjalanan saya yang sedia ada",
   "dup_keep": "Simpan sebagai perjalanan baharu",
   "ok_got_it": "OK, faham",
+  "help_intro": "Dokumen-dokumen anda sudah siap. Jika anda perlukan bantuan pada bila-bila masa, tekan butang 'Bantuan' yang berwarna biru di bahagian bawah skrin. Jika anda sesat, tekan butang 'Saya Sesat' yang berwarna merah.",
+  "bag_not_on_ticket": "Tidak tercetak pada tiket anda: ini adalah had biasa. Sila sahkan dengan syarikat penerbangan.",
   "__source": {
     "step_language": "Language",
     "step_travellers": "Travellers",
@@ -397,6 +399,8 @@
     "dup_body": "These documents are already in one of your trips. Open that trip instead, so everything stays in one place?",
     "dup_open": "Open my existing trip",
     "dup_keep": "Keep as a new trip",
-    "ok_got_it": "OK, got it"
+    "ok_got_it": "OK, got it",
+    "help_intro": "Your documents are ready. If you need help at any time, tap the blue Help button at the bottom of the screen. If you are lost, tap the red I'm Lost button.",
+    "bag_not_on_ticket": "Not printed on your ticket: this is the usual limit. Please confirm with the airline."
   }
 }

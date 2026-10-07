@@ -198,6 +198,8 @@
   "dup_open": "打开我已有的行程",
   "dup_keep": "保留为新行程",
   "ok_got_it": "好的，明白了",
+  "help_intro": "您的文件都准备好了。如果您在任何时候需要帮助，请点击屏幕底部的蓝色“帮助”按钮。如果您迷路了，请点击红色的“我迷路了”按钮。",
+  "bag_not_on_ticket": "您的机票上没有打印：这是通常的限制。请和航空公司确认一下。",
   "__source": {
     "step_language": "Language",
     "step_travellers": "Travellers",
@@ -397,6 +399,8 @@
     "dup_body": "These documents are already in one of your trips. Open that trip instead, so everything stays in one place?",
     "dup_open": "Open my existing trip",
     "dup_keep": "Keep as a new trip",
-    "ok_got_it": "OK, got it"
+    "ok_got_it": "OK, got it",
+    "help_intro": "Your documents are ready. If you need help at any time, tap the blue Help button at the bottom of the screen. If you are lost, tap the red I'm Lost button.",
+    "bag_not_on_ticket": "Not printed on your ticket: this is the usual limit. Please confirm with the airline."
   }
 }

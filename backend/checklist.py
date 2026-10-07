@@ -56,6 +56,31 @@ def arrival_card_link(summary):
     return next((url for name, url in OFFICIAL_ARRIVAL_CARD.items() if country and name in country), None)
 
 
+# Safe fallbacks when neither the ticket nor the airline's usual allowance is known (kept low on purpose:
+# packing to a lower limit never causes extra fees at the airport).
+DEFAULT_BAG_KG = {"cabin_bag_kg": 7, "checked_bag_kg": 15}
+ADVICE_BAG = {"cabin_bag_kg": "typical_cabin_kg", "checked_bag_kg": "typical_checked_kg"}
+
+
+def with_baggage(summary, advice=None):
+    """Summary with cabin/check-in weights always filled: ticket > airline's usual (Gemini) > safe default.
+
+    Adds cabin_bag_source / checked_bag_source = "ticket" | "airline" | "default" so the app can say where it came from.
+    """
+    if not summary:
+        return summary
+    s = dict(summary)
+    for field, default in DEFAULT_BAG_KG.items():
+        source = field.replace("_kg", "_source")
+        if s.get(field):
+            s[source] = "ticket"
+        elif (advice or {}).get(ADVICE_BAG[field]):
+            s[field], s[source] = float(advice[ADVICE_BAG[field]]), "airline"
+        else:
+            s[field], s[source] = float(default), "default"
+    return s
+
+
 def airport_plan(summary):
     """Departure time, when to reach the airport and when to leave home; None if the time is unknown."""
     s = summary or {}
@@ -113,15 +138,19 @@ def build_checklist(summary, travellers, checks, advice=None, contacts=None):
                            f"If needed, tell {airline} at least 48 hours before departure. It is free.", optional=True))
 
     # ----- T-1 day -----
+    s = with_baggage(s, advice)
     cabin, checked = s.get("cabin_bag_kg"), s.get("checked_bag_kg")
+    bag_note = {"ticket": "", "airline": f" This is {airline}'s usual limit; your ticket does not show it, so please confirm.",
+                "default": " Your ticket does not show it, so this is a safe limit; please confirm with the airline."}
     currency = (advice or {}).get("currency_code") or "local currency"
     home_currency = (advice or {}).get("origin_currency_code")
     onboard_cash = " or ".join(c for c in (home_currency, (advice or {}).get("currency_code")) if c) or "some cash"
     items += [
-        _item("cabin_bag", "t1", f"Cabin bag {cabin:g} kg or less" if cabin else "Cabin bag within the weight on your ticket",
-              "One cabin bag plus one small handbag per person. Weigh it at home."),
-        _item("checked_bag", "t1", f"Check-in bag {checked:g} kg or less" if checked else "Check-in bag within your ticket allowance",
-              "As printed on your ticket. Extra weight is costly at the airport."),
+        _item("cabin_bag", "t1", f"Cabin bag {cabin:g} kg or less",
+              "One cabin bag plus one small handbag per person. Weigh it at home." + bag_note[s["cabin_bag_source"]]),
+        _item("checked_bag", "t1", f"Check-in bag {checked:g} kg or less",
+              ("As printed on your ticket. " if s["checked_bag_source"] == "ticket" else "")
+              + "Extra weight is costly at the airport." + bag_note[s["checked_bag_source"]]),
         _item("liquids", "t1", "Liquids in cabin: 100 ml each, in one clear bag",
               "Shampoo, pickle, ghee, creams. Bigger bottles go in the check-in bag, well sealed."),
         _item("power_banks", "t1", "Power banks only in the cabin bag", "Never in the check-in bag. It will be taken out."),

@@ -198,6 +198,8 @@
   "dup_open": "افتح رحلتي الحالية",
   "dup_keep": "احتفظ بها كرحلة جديدة",
   "ok_got_it": "تمام، فهمت",
+  "help_intro": "مستنداتك جاهزة. إذا احتجت مساعدة في أي وقت، اضغط على زر المساعدة الأزرق في أسفل الشاشة. إذا تهت، اضغط على زر أنا تائه الأحمر.",
+  "bag_not_on_ticket": "غير مطبوع على تذكرتك: هذا هو الحد المعتاد. يرجى التأكد مع شركة الطيران.",
   "__source": {
     "step_language": "Language",
     "step_travellers": "Travellers",
@@ -397,6 +399,8 @@
     "dup_body": "These documents are already in one of your trips. Open that trip instead, so everything stays in one place?",
     "dup_open": "Open my existing trip",
     "dup_keep": "Keep as a new trip",
-    "ok_got_it": "OK, got it"
+    "ok_got_it": "OK, got it",
+    "help_intro": "Your documents are ready. If you need help at any time, tap the blue Help button at the bottom of the screen. If you are lost, tap the red I'm Lost button.",
+    "bag_not_on_ticket": "Not printed on your ticket: this is the usual limit. Please confirm with the airline."
   }
 }

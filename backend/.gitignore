@@ -38,3 +38,6 @@ wheels/
 htmlcov/
 .vscode/
 .idea/
+
+# Debug output from the login check
+auth_error.txt

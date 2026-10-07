@@ -25,7 +25,7 @@ if _creds and not Path(_creds).is_absolute():
 import gcp  # noqa: E402
 import gemini  # noqa: E402
 from advice import get_advice  # noqa: E402
-from checklist import build_checklist, group_dates, quick_questions  # noqa: E402
+from checklist import build_checklist, group_dates, quick_questions, with_baggage  # noqa: E402
 from db import StoreError, now_iso, store  # noqa: E402
 from flight_status import flight_status, status_alert  # noqa: E402
 from journey import build_journey, destination_contact  # noqa: E402
@@ -206,7 +206,7 @@ def trip_view(trip):
     answers = trip.get("quick_answers") or {}
     questions = quick_questions(trip.get("summary"), travellers, items)
     items = [i for i in items if answers.get(i["id"]) is not True]  # "yes, already done": not shown in the checklist
-    journey = build_journey(trip.get("summary"), travellers, advice, contacts, trip.get("boarding")) if travellers else []
+    journey = build_journey(with_baggage(trip.get("summary"), advice), travellers, advice, contacts, trip.get("boarding")) if travellers else []
 
     texts = {}
     for c in checks:
@@ -246,7 +246,7 @@ def trip_view(trip):
         "id": trip["id"],
         "language": lang,
         "status": trip.get("status", "empty"),
-        "summary": trip.get("summary"),
+        "summary": with_baggage(trip.get("summary"), advice),  # luggage never blank
         "travellers": [{k: t.get(k) for k in ("id", "name", "assistance", "documents")} for t in trip["travellers"]],
         "checks": [{**c, "title": tr[f"c.{c['id']}.t"], "message": tr[f"c.{c['id']}.m"]} for c in checks],
         "checklist": {
@@ -581,7 +581,7 @@ def trip_facts(trip):
     done = trip.get("checklist_done") or {}
     return {
         "today": now_iso()[:10],
-        "trip": trip.get("summary"),
+        "trip": with_baggage(trip.get("summary"), advice),
         "travellers": [{"name": t["name"], "assistance": t.get("assistance")} for t in travellers],
         "document_checks": [{"status": c["status"], "result": c["title"], "detail": c["message"]}
                             for c in trip.get("checks") or []],

@@ -16,6 +16,7 @@ import FlightAlert from "./components/FlightAlert";
 import JourneyScreen from "./screens/JourneyScreen";
 import LostCard from "./components/LostCard";
 import HelpSheet from "./components/HelpSheet";
+import { speak } from "./voice";
 import "./App.css";
 
 const STEPS = [
@@ -182,7 +183,7 @@ function Stepper({ step, allowed, onGo }) {
 
 function Flow({ setLang }) {
   const { currentUser, logout } = useAuth();
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const [viewMode, setViewMode] = useState(() =>
     store.get("mff-trip", null) ? "trip" : "trips",
   );
@@ -338,10 +339,15 @@ function Flow({ setLang }) {
     setUpdating(false);
   };
   const [dup, setDup] = useState(null); // same traveller already in another trip of this user
+  const [pulseHelp, setPulseHelp] = useState(false); // highlight Help / I'm Lost after the first upload
   const addTraveller = (files, assistance) =>
     run(async () => {
       const r = await api.addTraveller(trip.id, files, assistance);
       applyTrip(r);
+      // Tell them, out loud in their language, where help is; the two buttons pulse meanwhile.
+      setPulseHelp(true);
+      setTimeout(() => setPulseHelp(false), 9000);
+      speak(t("help_intro"), lang);
       if (r.duplicate_of)
         setDup({
           ...r.duplicate_of,
@@ -570,7 +576,7 @@ function Flow({ setLang }) {
             </footer>
           )}
           {hasTravellers && (
-            <div className="dock">
+            <div className={"dock" + (pulseHelp ? " pulse" : "")}>
               <button className="helpbtn" onClick={() => setHelpOpen(true)}>
                 <span aria-hidden="true">?</span>
                 {t("help_btn")}

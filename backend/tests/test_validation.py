@@ -248,3 +248,18 @@ def test_official_arrival_links_by_country():
     jp = advice_items({"items": [{"id": "vjw", "group": "t3", "title": "Register on Visit Japan Web"},
                                  {"id": "yen", "group": "t1", "title": "Carry some yen"}]}, link("Japan"))
     assert jp[0]["link"] == link("Japan") and jp[1]["link"] is None
+
+
+def test_luggage_never_blank(gautam_docs):
+    from checklist import with_baggage
+    t = dict(gautam_docs["ticket"], cabin_bag_kg=None, checked_bag_kg=None,
+             baggage_allowance_text="Cabin bag: 1 piece, max 7 kg. Checked bag: 1 piece, 25 kg")
+    s = trip_summary(t)
+    assert (s["cabin_bag_kg"], s["checked_bag_kg"]) == (7, 25)                    # read from the ticket's text
+    s = trip_summary(dict(t, baggage_allowance_text=None))
+    b = with_baggage(s, {"typical_cabin_kg": 7, "typical_checked_kg": 30})
+    assert (b["cabin_bag_kg"], b["checked_bag_source"]) == (7, "airline")          # airline's usual allowance
+    b = with_baggage(s, None)
+    assert (b["cabin_bag_kg"], b["checked_bag_kg"], b["cabin_bag_source"]) == (7, 15, "default")  # safe default
+    items = {i["id"]: i for i in build_checklist(s, [traveller(gautam_docs)], [], None)}
+    assert items["checked_bag"]["title"] == "Check-in bag 15 kg or less" and "please confirm" in items["checked_bag"]["detail"]

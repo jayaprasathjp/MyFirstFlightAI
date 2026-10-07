@@ -14,6 +14,7 @@ log = logging.getLogger("myfirstflight")
 TTS_VOICE = {
     "en": "en-IN", "hi": "hi-IN", "ta": "ta-IN", "te": "te-IN", "kn": "kn-IN", "ml": "ml-IN", "bn": "bn-IN",
     "mr": "mr-IN", "gu": "gu-IN", "ms": "ms-MY", "zh": "cmn-CN", "ar": "ar-XA",
+    "es": "es-ES", "fr": "fr-FR", "de": "de-DE", "ja": "ja-JP", "ko": "ko-KR", "ru": "ru-RU",
 }
 
 _session = None

@@ -197,5 +197,7 @@
   "dup_body": "These documents are already in one of your trips. Open that trip instead, so everything stays in one place?",
   "dup_open": "Open my existing trip",
   "dup_keep": "Keep as a new trip",
-  "ok_got_it": "OK, got it"
+  "ok_got_it": "OK, got it",
+  "help_intro": "Your documents are ready. If you need help at any time, tap the blue Help button at the bottom of the screen. If you are lost, tap the red I'm Lost button.",
+  "bag_not_on_ticket": "Not printed on your ticket: this is the usual limit. Please confirm with the airline."
 }

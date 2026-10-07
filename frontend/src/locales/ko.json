@@ -197,6 +197,9 @@
   "dup_body": "이 서류들은 이미 다른 여행에 있어요. 모든 것을 한곳에 모아두려면, 그 여행을 여는 게 어떠세요?",
   "dup_open": "기존 여행 열기",
   "dup_keep": "새로운 여행으로 유지하기",
+  "ok_got_it": "네, 알겠습니다",
+  "help_intro": "서류 준비는 다 됐어요. 언제든 도움이 필요하시면, 화면 아래 파란색 '도움' 버튼을 눌러주세요. 길을 잃으셨다면, 빨간색 '길을 잃었어요' 버튼을 눌러주세요.",
+  "bag_not_on_ticket": "항공권에 인쇄되어 있지 않아요: 이건 보통 허용되는 무게예요. 항공사에 다시 한번 확인해 주세요.",
   "__source": {
     "step_language": "Language",
     "step_travellers": "Travellers",
@@ -395,6 +398,9 @@
     "dup_title": "You already have this trip",
     "dup_body": "These documents are already in one of your trips. Open that trip instead, so everything stays in one place?",
     "dup_open": "Open my existing trip",
-    "dup_keep": "Keep as a new trip"
+    "dup_keep": "Keep as a new trip",
+    "ok_got_it": "OK, got it",
+    "help_intro": "Your documents are ready. If you need help at any time, tap the blue Help button at the bottom of the screen. If you are lost, tap the red I'm Lost button.",
+    "bag_not_on_ticket": "Not printed on your ticket: this is the usual limit. Please confirm with the airline."
   }
 }

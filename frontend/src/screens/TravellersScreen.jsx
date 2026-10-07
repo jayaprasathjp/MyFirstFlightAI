@@ -49,6 +49,9 @@ const TrashIcon = () => (
   </svg>
 )
 
+// "*" when the weight is not printed on the ticket (airline's usual limit or a safe default)
+const bagMark = (source) => (source && source !== 'ticket' ? '*' : '')
+
 export function TripCard({ summary }) {
   const { t, fmtDate } = useI18n()
   if (!summary) return null
@@ -62,9 +65,12 @@ export function TripCard({ summary }) {
       <div className="meta">
         <div><span>{t('flight')}</span><b>{summary.flights.join(' + ')}</b></div>
         <div><span>{t('date')}</span><b>{fmtDate(summary.departure_date)}</b></div>
-        <div><span>{t('cabin')}</span><b>{summary.cabin_bag_kg ? `${summary.cabin_bag_kg} kg` : '—'}</b></div>
-        <div><span>{t('checked')}</span><b>{summary.checked_bag_kg ? `${summary.checked_bag_kg} kg` : '—'}</b></div>
+        <div><span>{t('cabin')}</span><b>{summary.cabin_bag_kg ? `${summary.cabin_bag_kg} kg` : '—'}{bagMark(summary.cabin_bag_source)}</b></div>
+        <div><span>{t('checked')}</span><b>{summary.checked_bag_kg ? `${summary.checked_bag_kg} kg` : '—'}{bagMark(summary.checked_bag_source)}</b></div>
       </div>
+      {[summary.cabin_bag_source, summary.checked_bag_source].some((s) => s && s !== 'ticket') && (
+        <small className="bagnote">* {t('bag_not_on_ticket')}</small>
+      )}
     </div>
   )
 }
