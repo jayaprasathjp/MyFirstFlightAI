@@ -16,6 +16,7 @@ LANGUAGES = {
     "ms": "Malay", "zh": "Simplified Chinese", "ar": "Arabic",
     "es": "Spanish", "fr": "French", "de": "German",
     "ja": "Japanese", "ko": "Korean", "ru": "Russian",
+    "th": "Thai", "it": "Italian",
 }
 
 
@@ -96,6 +97,7 @@ SCRIPT = {
     "hi": "Devanagari", "mr": "Devanagari", "ta": "Tamil", "te": "Telugu", "kn": "Kannada", "ml": "Malayalam",
     "bn": "Bengali", "gu": "Gujarati", "zh": "Simplified Chinese characters", "ar": "Arabic (Modern Standard Arabic, not Urdu)",
     "ms": "Latin", "ja": "Japanese script (Kanji, Hiragana, Katakana)", "ko": "Hangul", "ru": "Cyrillic",
+    "th": "Thai",
 }
 LATIN_WORD = re.compile(r"[a-z]{3,}")  # lowercase words; ALL-CAPS codes like SIN or MAA stay as they are
 
