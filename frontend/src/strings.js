@@ -17,6 +17,8 @@ export const LANGUAGES = [
   { code: 'ja', native: '日本語', english: 'Japanese', locale: 'ja-JP' },
   { code: 'ko', native: '한국어', english: 'Korean', locale: 'ko-KR' },
   { code: 'ru', native: 'Русский', english: 'Russian', locale: 'ru-RU' },
+  { code: 'th', native: 'ไทย', english: 'Thai', locale: 'th-TH' },
+  { code: 'it', native: 'Italiano', english: 'Italian', locale: 'it-IT' },
 ]
 
 // English source strings live in locales/en.json. The other languages are pre-translated files in locales/
