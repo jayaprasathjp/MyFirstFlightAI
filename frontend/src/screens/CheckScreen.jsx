@@ -35,7 +35,7 @@ function QuickQuestions({ questions, onAnswer, busy }) {
   )
 }
 
-export default function CheckScreen({ trip, onBack, onNext, onAnswer, onHelpIntro, busy, toast }) {
+export default function CheckScreen({ trip, onBack, onNext, onAnswer, onHelpIntro, busy, toast, walkthrough }) {
   const { t } = useI18n()
   const ready = trip.status === 'ready'
   const groups = trip.travellers.map((p) => ({ key: p.id, title: p.name, checks: trip.checks.filter((c) => c.traveller_id === p.id) }))
@@ -57,6 +57,7 @@ export default function CheckScreen({ trip, onBack, onNext, onAnswer, onHelpIntr
         <strong>{ready ? t('ready_title') + ' ✓' : t('fix_title')}</strong>
         <span>{ready ? t('ready_body') : t('fix_body')}</span>
       </div>
+      {walkthrough}
       {groups.map((g) => (
         <section className="group" key={g.key}>
           <h3>{g.title}</h3>

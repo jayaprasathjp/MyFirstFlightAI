@@ -229,6 +229,27 @@ def ask(trip_facts: dict, lang: str, text: str = "", audio: bytes | None = None,
     return out
 
 
+def pick_language(audio: bytes, mime: str) -> dict:
+    """Language page: which of the app's languages the person asks for (or speaks). code is None if unclear."""
+    from schemas import LanguagePick
+    options = ", ".join(f"{c} = {n}" for c, n in LANGUAGES.items())
+    prompt = ("A first-time flyer is choosing the language for an app by speaking. They may name a language in any "
+              "language (\"Tamil\", \"தமிழ்\", \"Hindi please\", \"मुझे हिंदी चाहिए\") or simply talk in their own language. "
+              "Often it is one short word naming the language, said in English with an Indian accent (\"Thai\", \"Tamil\", "
+              "\"Telugu\", \"Hindi\"), so first check whether the sound is the English name of a language in the list. "
+              f"Choose from: {options}. If they name a language, return that one; if they only talk, return the language "
+              "they speak. Write only words you actually hear; never guess. If there is no clear speech, or the language "
+              "is not in the list, return none.")
+    response = get_genai_client().models.generate_content(
+        model=model_name(), contents=[*_media_part(audio, mime), prompt],
+        config=types.GenerateContentConfig(response_mime_type="application/json", response_schema=LanguagePick,
+                                           temperature=0, thinking_config=types.ThinkingConfig(thinking_budget=256)),
+    )
+    out = LanguagePick.model_validate_json(response.text).model_dump()
+    code = (out["code"] or "").strip().lower()
+    return {"code": code if code in LANGUAGES else None, "heard": out["heard"]}
+
+
 def to_english(lang: str, text: str = "", audio: bytes | None = None, mime: str | None = None, context: str = "") -> dict:
     """Turn what the traveller says (any language, text or audio) into one polite English sentence for staff."""
     from schemas import StaffPhrase

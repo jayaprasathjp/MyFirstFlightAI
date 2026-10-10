@@ -41,31 +41,63 @@ export function useRecorder() {
 }
 
 let current = null
+let generation = 0 // bumped by stopSpeaking, so audio that arrives after a stop is never played
 
 export function stopSpeaking() {
+  generation++
   try { current?.pause() } catch { /* nothing playing */ }
+  current = null
   try { speechSynthesis.cancel() } catch { /* not supported */ }
 }
 
-// Speak text in the app language: Cloud Text-to-Speech first, then the phone's own voice. Returns false if neither works.
-export async function speak(text, lang) {
+export function pauseSpeaking() {
+  try { current?.pause() } catch { /* nothing playing */ }
+  try { speechSynthesis.pause() } catch { /* not supported */ }
+}
+
+export function resumeSpeaking() {
+  try { if (current?.paused && !current.ended) current.play() } catch { /* nothing to resume */ }
+  try { speechSynthesis.resume() } catch { /* not supported */ }
+}
+
+// Starts speaking; resolves with a promise that settles when the speech ends, or null if nothing can speak.
+async function start(text, lang) {
   stopSpeaking()
+  const gen = generation
   try {
     const r = await api.tts(text, lang)
-    current = new Audio(`data:${r.mime};base64,${r.audio}`)
-    await current.play()
-    return true
+    if (gen !== generation) return null
+    const audio = new Audio(`data:${r.mime};base64,${r.audio}`)
+    current = audio
+    const ended = new Promise((resolve) => { audio.onended = resolve; audio.onerror = resolve })
+    await audio.play()
+    return ended
   } catch {
+    if (gen !== generation) return null
     const locale = (LANGUAGES.find((l) => l.code === lang) || LANGUAGES[0]).locale
     const voices = window.speechSynthesis?.getVoices() || []
     const voice = voices.find((v) => v.lang.replace('_', '-').toLowerCase() === locale.toLowerCase())
       || voices.find((v) => v.lang.toLowerCase().startsWith(lang))
-    if (!voice) return false
+    if (!voice) return null
     const u = new SpeechSynthesisUtterance(text)
     u.voice = voice
     u.lang = voice.lang
     u.rate = 0.9
+    const ended = new Promise((resolve) => { u.onend = resolve; u.onerror = resolve })
     speechSynthesis.speak(u)
-    return true
+    return ended
   }
+}
+
+// Speak text in the app language: Cloud Text-to-Speech first, then the phone's own voice. Returns false if neither works.
+export async function speak(text, lang) {
+  return (await start(text, lang)) !== null
+}
+
+// Like speak(), but resolves only when the speech has finished (false right away if nothing can speak).
+export async function speakToEnd(text, lang) {
+  const ended = await start(text, lang)
+  if (!ended) return false
+  await ended
+  return true
 }

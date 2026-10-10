@@ -16,11 +16,12 @@ import FlightAlert from "./components/FlightAlert";
 import JourneyScreen from "./screens/JourneyScreen";
 import LostCard from "./components/LostCard";
 import HelpSheet from "./components/HelpSheet";
+import Walkthrough from "./components/Walkthrough";
 import { speak } from "./voice";
 import "./App.css";
 
+// The language is chosen before login, so the trip steps start at Travellers.
 const STEPS = [
-  "language",
   "travellers",
   "check",
   "contacts",
@@ -188,11 +189,12 @@ function Flow({ setLang }) {
     store.get("mff-trip", null) ? "trip" : "trips",
   );
   const [trip, setTrip] = useState(() => store.get("mff-trip-cache", null));
-  const [step, setStepState] = useState(() =>
-    store.get("mff-trip", null)
-      ? store.get("mff-step", "travellers")
-      : "language",
-  );
+  const [step, setStepState] = useState(() => {
+    const saved = store.get("mff-trip", null) && store.get("mff-step", "travellers");
+    return STEPS.includes(saved) ? saved : "travellers"; // older sessions may have saved "language"
+  });
+  // Logged out: pick the language first, then sign in (shown again after every logout).
+  const [langPicked, setLangPicked] = useState(false);
   const [done, setDone] = useState(() =>
     store.get(`mff-done-${store.get("mff-trip", "")}`, {}),
   );
@@ -223,7 +225,7 @@ function Flow({ setLang }) {
     }
     setDocsPrompt(false);
     if (replace) setStep("travellers");
-    else if (step === "language" || step === "travellers") setStep("check");
+    else if (step === "travellers") setStep("check");
   };
   const selectTrip = (t) => {
     applyTrip(t);
@@ -233,12 +235,14 @@ function Flow({ setLang }) {
     setViewMode("trip");
   };
 
-  const newTrip = () => {
-    setTrip(null);
-    setDone({});
-    setStep("language");
-    setViewMode("trip");
-  };
+  // New trip in the language already chosen; it opens on Travellers.
+  const newTrip = () =>
+    run(async () => {
+      applyTrip(await api.createTrip(lang));
+      setDone({});
+      setStep("travellers");
+      setViewMode("trip");
+    });
 
   const closeLost = useCallback(() => setLostOpen(false), []);
   const closeHelp = useCallback(() => setHelpOpen(false), []);
@@ -300,7 +304,7 @@ function Flow({ setLang }) {
         if (e.status === 404 || e.status === 403 || e.status === 401) {
           ["mff-trip", "mff-trip-cache", "mff-step"].forEach(store.del);
           setTrip(null);
-          setStepState("language");
+          setStepState("travellers");
           setViewMode("trips");
         }
       });
@@ -321,16 +325,10 @@ function Flow({ setLang }) {
     }
   };
 
-  const pickLanguage = (code) =>
-    run(async () => {
-      setLang(code);
-      applyTrip(
-        trip
-          ? await api.setLanguage(trip.id, code)
-          : await api.createTrip(code),
-      );
-      if (step === "language") setStep("travellers");
-    });
+  const pickLanguage = (code) => {
+    setLang(code);
+    setLangPicked(true);
+  };
   const changeLanguage = async (code) => {
     setLang(code);
     if (!currentUser || !trip) return;
@@ -392,6 +390,8 @@ function Flow({ setLang }) {
     });
   const saveBoarding = (gate, time) =>
     run(async () => applyTrip(await api.saveBoarding(trip.id, gate, time)));
+  const saveFeedback = (feedback) =>
+    run(async () => applyTrip(await api.saveFeedback(trip.id, feedback)));
   const toggle = (itemId) => {
     const next = { ...done, [itemId]: !done[itemId] };
     setDone(next);
@@ -418,21 +418,19 @@ function Flow({ setLang }) {
     }
     setTrip(null);
     setDone({});
-    setStepState("language");
+    setStepState("travellers");
     setViewMode("trips");
+    setLangPicked(false);
     await logout();
   };
   const startOver = () => {
     if (!window.confirm(t("start_over_confirm"))) return;
     ["mff-trip", "mff-trip-cache", "mff-step"].forEach(store.del);
-    setTrip(null);
-    setDone({});
-    setStep("language");
+    newTrip();
   };
 
   const hasTravellers = !!trip && trip.travellers.length > 0;
-  const allowed = (s) =>
-    s === "language" || (trip && (s === "travellers" || hasTravellers));
+  const allowed = (s) => trip && (s === "travellers" || hasTravellers);
 
   return (
     <div className="app">
@@ -444,7 +442,13 @@ function Flow({ setLang }) {
         onShowTrips={() => setViewMode("trips")}
       />
       {!currentUser ? (
-        <AuthScreen />
+        langPicked ? (
+          <AuthScreen onChangeLanguage={() => setLangPicked(false)} />
+        ) : (
+          <main className="screen">
+            <LanguageScreen onPick={pickLanguage} voice />
+          </main>
+        )
       ) : viewMode === "trips" ? (
         <TripsScreen
           onSelect={selectTrip}
@@ -504,9 +508,6 @@ function Flow({ setLang }) {
                 {error}
               </div>
             )}
-            {step === "language" && (
-              <LanguageScreen onPick={pickLanguage} busy={busy} />
-            )}
             {step === "travellers" && trip && (
               <TravellersScreen
                 trip={trip}
@@ -528,6 +529,7 @@ function Flow({ setLang }) {
                 onHelpIntro={announceHelp}
                 busy={busy}
                 toast={toast}
+                walkthrough={<Walkthrough trip={trip} />}
               />
             )}
             {step === "contacts" && trip && (
@@ -560,10 +562,12 @@ function Flow({ setLang }) {
                 trip={trip}
                 busy={busy}
                 onSaveBoarding={saveBoarding}
+                onFeedback={saveFeedback}
+                walkthrough={<Walkthrough trip={trip} />}
                 toast={toast}
               />
             )}
-            {step !== "language" && !trip && (
+            {!trip && (
               <p className="muted">{t("loading")}</p>
             )}
           </main>
