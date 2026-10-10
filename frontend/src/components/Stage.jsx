@@ -52,19 +52,46 @@ export function useRoute(summary) {
   }, [table, summary])
 }
 
+// Rendered size of an element in px, so drawings fit the real frame on phone and desktop alike.
+function useSize(ref, fallback) {
+  const [size, setSize] = useState(fallback)
+  useEffect(() => {
+    const el = ref.current
+    if (!el || !window.ResizeObserver) return
+    const ro = new ResizeObserver(([e]) => {
+      const { width, height } = e.contentRect
+      if (width && height) setSize([width, height])
+    })
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [ref])
+  return size
+}
+
 function MapView({ summary, trip }) {
   const route = useRoute(summary)
   const { t } = useI18n()
-  const AR = 2.1 // stage aspect ratio (width / height)
+  const ref = useRef(null)
+  const [pw, ph] = useSize(ref, [480, 228])
   let vb
   if (route) {
-    const cx = (route.a[0] + route.b[0]) / 2, cy = (route.a[1] + route.b[1]) / 2
-    const w = Math.max(route.dist * 1.55, Math.abs(route.b[1] - route.a[1]) * 1.9 * AR, 260)
-    vb = [cx - w / 2, cy - w / AR / 2, w, w / AR]
+    // fit both airports and the top of the arc, leaving room in px for the pins and city names
+    const q = [(route.a[0] + 2 * route.c[0] + route.b[0]) / 4, (route.a[1] + 2 * route.c[1] + route.b[1]) / 4]
+    const xs = [route.a[0], route.b[0], q[0]], ys = [route.a[1], route.b[1], q[1]]
+    const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys)
+    const MX = 80, MY = 40
+    const s = Math.min( // px per map unit; pw / 260 stops very short routes from zooming in too far
+      Math.max(pw - 2 * MX, 40) / Math.max(x1 - x0, 1),
+      Math.max(ph - 2 * MY, 40) / Math.max(y1 - y0, 1),
+      pw / 260,
+    )
+    const w = pw / s, h = ph / s
+    vb = [(x0 + x1) / 2 - w / 2, (y0 + y1) / 2 - h / 2, w, h]
   } else {
-    vb = [260, 330, 1500, 1500 / AR] // wide view when the route cannot be placed
+    vb = [260, 330, 1500, (1500 * ph) / pw] // wide view when the route cannot be placed
   }
-  const k = vb[2] / 480 // map units per screen px
+  const k = vb[2] / pw // map units per screen px
+  const aUp = route && route.a[1] <= route.b[1] // the higher airport gets its name above the pin, the lower one below
   const o = summary?.origin_code, d = summary?.destination_code
   const oc = summary?.origin_city || o, dc = summary?.destination_city || d
   const label = (p, text, anchor, dyp) => (
@@ -72,10 +99,9 @@ function MapView({ summary, trip }) {
       stroke="#0A1F3C" strokeWidth={5 * k} paintOrder="stroke" strokeLinejoin="round">{text}</text>
   )
   return (
-    <svg className="stage-svg" viewBox={vb.join(' ')} preserveAspectRatio="xMidYMid slice" role="img" aria-label={trip ? `${oc} → ${dc}` : t('step_language')}>
+    <svg ref={ref} className="stage-svg" viewBox={vb.join(' ')} preserveAspectRatio="xMidYMid slice" role="img" aria-label={trip ? `${oc} → ${dc}` : t('step_language')}>
       <defs>
         <linearGradient id="seaG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#1B4A63" /><stop offset="1" stopColor="#0E2F47" /></linearGradient>
-        <filter id="seaNoise" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="4" /><feColorMatrix type="saturate" values="0" /></filter>
       </defs>
       <rect x="0" y="0" width={MW} height={MH} fill="url(#seaG)" />
       <path d={LAND} fill="#BDB79A" stroke="#8F8A6E" strokeWidth={0.8 * k} strokeLinejoin="round" />
@@ -84,8 +110,8 @@ function MapView({ summary, trip }) {
         <>
           <path d={route.d} fill="none" stroke="#FFC83D" strokeWidth={3.2 * k} strokeDasharray={`${9 * k} ${7 * k}`} strokeLinecap="round" />
           {[route.a, route.b].map((p, i) => <circle key={i} cx={p[0]} cy={p[1]} r={7 * k} fill="#FFC83D" stroke="#0A1F3C" strokeWidth={2.4 * k} />)}
-          {label(route.a, oc, 'middle', -14)}
-          {label(route.b, dc, 'middle', 24)}
+          {label(route.a, oc, 'middle', aUp ? -14 : 24)}
+          {label(route.b, dc, 'middle', aUp ? 24 : -14)}
         </>
       )}
     </svg>
@@ -93,10 +119,13 @@ function MapView({ summary, trip }) {
 }
 
 // Passport, visa and boarding pass on a wooden table, filled from the real trip.
-function DeskView({ trip, flagged }) {
+function DeskView({ trip, check }) {
   const { t, fmtDate } = useI18n()
   const s = trip?.summary || {}
-  const p = trip?.travellers?.[0]
+  // show the traveller who has a problem (else the first); only their own checks colour the name
+  const bad = new Set((trip?.checks || []).filter((c) => c.status === 'warn' || c.status === 'fail').map((c) => c.traveller_id))
+  const p = trip?.travellers?.find((x) => bad.has(x.id)) || trip?.travellers?.[0]
+  const flagged = !check || !p ? undefined : bad.has(p.id) ? 'bad' : trip.status === 'ready' ? 'ok' : undefined
   const docs = p?.documents || {}
   const name = (p?.name || '').toUpperCase()
   const dim = (k) => (trip && !docs[k] ? 0.28 : 1)
@@ -168,15 +197,16 @@ function PlanView({ trip }) {
   const line = (arr) => arr.map((p) => p.join(',')).join(' ')
   return (
     <div className="plan" aria-hidden="true">
-      <svg viewBox="0 0 390 186" preserveAspectRatio="xMidYMid slice">
+      <svg viewBox="0 0 390 186" preserveAspectRatio="xMidYMid meet">
         <defs><pattern id="pGrid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M20 0H0V20" fill="none" stroke="rgba(255,255,255,.07)" /></pattern></defs>
-        <rect width="390" height="186" fill="#0C2748" /><rect width="390" height="186" fill="url(#pGrid)" />
+        {/* background runs past the plan so letterboxing (meet) never shows an edge */}
+        <rect x="-1000" y="-500" width="2390" height="1186" fill="#0C2748" /><rect x="-1000" y="-500" width="2390" height="1186" fill="url(#pGrid)" />
         <rect x="14" y="30" width="300" height="140" rx="4" fill="rgba(255,255,255,.04)" stroke="#6F93C4" strokeWidth="2" />
         <g fill="#6F93C4" opacity=".55"><rect x="82" y="44" width="8" height="26" /><rect x="96" y="44" width="8" height="26" /><rect x="110" y="44" width="8" height="26" /><rect x="124" y="44" width="8" height="26" /></g>
         <path d="M150 90V170M150 90H200V170M214 36V90H262M262 90V130" stroke="#6F93C4" strokeWidth="1.5" fill="none" opacity=".6" />
         <g fill="#6F93C4" opacity=".5"><rect x="270" y="122" width="9" height="9" /><rect x="284" y="122" width="9" height="9" /><rect x="298" y="122" width="9" height="9" /></g>
         <path d="M314 90H390M314 112H390" stroke="#6F93C4" strokeWidth="1.5" opacity=".6" />
-        <g transform="translate(352,70) rotate(-90) scale(1.3)" fill="rgba(255,255,255,.75)"><path d="M18 0 L6-3 L2-14 L-1-14 L0-3 L-11-2 L-13-6 L-16-6 L-15 0 L-16 6 L-13 6 L-11 2 L0 3 L-1 14 L2 14 L6 3Z" /></g>
+        <g transform="translate(366,150) rotate(-90) scale(1.3)" fill="rgba(255,255,255,.75)"><path d="M18 0 L6-3 L2-14 L-1-14 L0-3 L-11-2 L-13-6 L-16-6 L-15 0 L-16 6 L-13 6 L-11 2 L0 3 L-1 14 L2 14 L6 3Z" /></g>
         <g transform="translate(0,-34)">
           <polyline points={line(pts)} fill="none" stroke="rgba(255,200,61,.35)" strokeWidth="4" strokeDasharray="3 6" strokeLinecap="round" strokeLinejoin="round" />
           <polyline points={line(pts.slice(0, cur + 1))} fill="none" stroke="#FFC83D" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
@@ -198,16 +228,16 @@ function PlanView({ trip }) {
 }
 
 export default function Stage({ step, trip }) {
-  const flagged = trip ? (trip.status === 'ready' ? 'ok' : 'bad') : undefined
   let body = null
   if (step === 'language' || step === 'contacts') body = <MapView summary={trip?.summary} trip={trip} />
-  else if (step === 'travellers' || step === 'check') body = <DeskView trip={trip} flagged={step === 'check' ? flagged : undefined} />
+  else if (step === 'travellers' || step === 'check') body = <DeskView trip={trip} check={step === 'check'} />
   else if (step === 'checklist') body = <CalendarView summary={trip?.summary} />
   else if (step === 'journey') body = <PlanView trip={trip} />
   if (!body) return null
   return (
     <div className={'stage stage-' + step} aria-hidden="true">
       <svg width="0" height="0" style={{ position: 'absolute' }}>
+        <filter id="seaNoise" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="4" /><feColorMatrix type="saturate" values="0" /></filter>
         <symbol id="planeIcon" viewBox="0 0 24 24"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.2.4c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z" /></symbol>
       </svg>
       {body}
@@ -233,7 +263,7 @@ export function FlightScene({ trip, onDone }) {
     const vh = (vw * WH) / WW
     from = [route.a[0] - vw / 2, route.a[1] - vh / 2]
     to = [route.b[0] - vw / 2, route.b[1] - vh / 2]
-  } else { vw = 600; const vh = (vw * WH) / WW; from = [800, 500 - vh / 2]; to = [1000, 500 - vh / 2] }
+  } else { vw = MW * 0.6; const vh = (vw * WH) / WW; from = to = [(MW - vw) / 2, (MH - vh) / 2] } // route unknown: still view of the world, no made-up path
   const vh = (vw * WH) / WW
   const k = vw / WW
   return (

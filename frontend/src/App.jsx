@@ -114,6 +114,7 @@ function TopBar({ onLanguage, busy, currentUser, logout, onShowTrips, auto, onAu
                   right: 0,
                   top: "48px",
                   background: "var(--card)",
+                  color: "var(--ink)", // the top bar's white text would otherwise carry into this card
                   border: "1px solid var(--line)",
                   borderRadius: "12px",
                   padding: "8px",
