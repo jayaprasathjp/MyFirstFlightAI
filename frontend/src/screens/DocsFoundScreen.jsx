@@ -1,15 +1,16 @@
 import { useI18n } from '../i18n'
+import Listen from '../components/Listen'
 
 const DOCS = ['ticket', 'passport', 'visa']
 
 // Shown when a signed-in user opens a trip whose documents are already saved:
 // continue with them, or go to the Travellers screen to replace any of them.
-export default function DocsFoundScreen({ trip, onContinue, onReplace }) {
+export default function DocsFoundScreen({ trip, onContinue, onReplace, toast }) {
   const { t, fmtDate } = useI18n()
   const s = trip.summary
   return (
     <>
-      <h2>{t('docs_found_title')}</h2>
+      <div className="gh"><h2>{t('docs_found_title')}</h2><Listen text={`${t('docs_found_title')}. ${t('docs_found_hint')}`} toast={toast} /></div>
       <p className="muted">{t('docs_found_hint')}</p>
       {s && (
         <div className="card">

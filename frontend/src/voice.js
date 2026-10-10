@@ -41,21 +41,37 @@ export function useRecorder() {
 }
 
 let current = null
+let seq = 0 // every speak() call takes a number so a slow cloud-TTS reply never plays over a newer request
+let activeKey = null // which Listen button (if any) is playing right now
+const subs = new Set()
+const setActive = (k) => { activeKey = k; subs.forEach((f) => f()) }
+export const subscribeSpeaking = (f) => { subs.add(f); return () => subs.delete(f) }
+export const getSpeakingKey = () => activeKey
 
 export function stopSpeaking() {
+  seq++
   try { current?.pause() } catch { /* nothing playing */ }
   try { speechSynthesis.cancel() } catch { /* not supported */ }
+  setActive(null)
 }
 
 // Speak text in the app language: Cloud Text-to-Speech first, then the phone's own voice. Returns false if neither works.
-export async function speak(text, lang) {
+// `key` (optional) identifies the caller so its button can show a "playing" state until the audio ends.
+export async function speak(text, lang, key = null) {
   stopSpeaking()
+  const mine = seq
+  const done = () => { if (seq === mine) setActive(null) }
   try {
     const r = await api.tts(text, lang)
+    if (seq !== mine) return true // a newer request took over
     current = new Audio(`data:${r.mime};base64,${r.audio}`)
+    current.onended = done
+    current.onerror = done
     await current.play()
+    setActive(key)
     return true
   } catch {
+    if (seq !== mine) return true
     const locale = (LANGUAGES.find((l) => l.code === lang) || LANGUAGES[0]).locale
     const voices = window.speechSynthesis?.getVoices() || []
     const voice = voices.find((v) => v.lang.replace('_', '-').toLowerCase() === locale.toLowerCase())
@@ -65,7 +81,10 @@ export async function speak(text, lang) {
     u.voice = voice
     u.lang = voice.lang
     u.rate = 0.9
+    u.onend = done
+    u.onerror = done
     speechSynthesis.speak(u)
+    setActive(key)
     return true
   }
 }

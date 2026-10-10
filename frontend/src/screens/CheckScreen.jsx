@@ -3,17 +3,18 @@ import Listen from '../components/Listen'
 
 const MARK = { pass: '✓', info: 'i', warn: '!', fail: '✕' }
 
-function Check({ c }) {
+function Check({ c, toast }) {
   return (
     <div className={'check ' + c.status}>
       <span className="dot" aria-hidden="true">{MARK[c.status]}</span>
       <div><b>{c.title}</b><p>{c.message}</p></div>
+      <Listen text={`${c.title}. ${c.message}`} toast={toast} />
     </div>
   )
 }
 
 // Yes/no questions after upload: "yes, already done" removes that task from the checklist.
-function QuickQuestions({ questions, onAnswer, busy }) {
+function QuickQuestions({ questions, onAnswer, busy, toast }) {
   const { t } = useI18n()
   if (!questions?.length) return null
   return (
@@ -21,7 +22,7 @@ function QuickQuestions({ questions, onAnswer, busy }) {
       <h3>{t('quick_title')}</h3>
       {questions.map((q) => (
         <div key={q.id} className="qrow">
-          <b>{q.question}</b>
+          <div className="gh"><b>{q.question}</b><Listen text={q.question} toast={toast} /></div>
           <div className="row2 even">
             <button className={'btn sec' + (q.answer === true ? ' chosen' : '')} disabled={busy}
               aria-pressed={q.answer === true} onClick={() => onAnswer(q.id, true)}>✓ {t('yes_done')}</button>
@@ -60,10 +61,10 @@ export default function CheckScreen({ trip, onBack, onNext, onAnswer, onHelpIntr
       {groups.map((g) => (
         <section className="group" key={g.key}>
           <h3>{g.title}</h3>
-          {g.checks.map((c) => <Check key={c.id} c={c} />)}
+          {g.checks.map((c) => <Check key={c.id} c={c} toast={toast} />)}
         </section>
       ))}
-      <QuickQuestions questions={trip.quick_questions} onAnswer={onAnswer} busy={busy} />
+      <QuickQuestions questions={trip.quick_questions} onAnswer={onAnswer} busy={busy} toast={toast} />
       <div className="nav2">
         <button className="btn sec" onClick={onBack}>{t('back')}</button>
         <button className="btn pri" onClick={onNext}>{t('go_contacts')} →</button>
