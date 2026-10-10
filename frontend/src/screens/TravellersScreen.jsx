@@ -75,7 +75,7 @@ export function TripCard({ summary }) {
   )
 }
 
-function AddTravellerForm({ onCancel, onSubmit, busy, canCancel }) {
+function AddTravellerForm({ onCancel, onSubmit, busy, canCancel, toast }) {
   const { t } = useI18n()
   const [files, setFiles] = useState({ ticket: null, passport: null, visa: null })
   const [assistance, setAssistance] = useState('none')
@@ -88,6 +88,10 @@ function AddTravellerForm({ onCancel, onSubmit, busy, canCancel }) {
   }
   return (
     <div className="card form">
+      <div className="gh">
+        <small className="muted">{t('ticket')} · {t('passport')} · {t('visa')}</small>
+        <Listen text={`${t('ticket')}, ${t('passport')}, ${t('visa')}. ${t('tap_to_add')}. ${t('needs_assistance')} ${ASSIST.map((a) => t('assist_' + a)).join(', ')}`} toast={toast} />
+      </div>
       <div className="drop">
         {DOCS.map((d) => (
           <label key={d} className={files[d] ? 'has' : ''}>
@@ -217,7 +221,7 @@ export default function TravellersScreen({ trip, onAdd, onRemove, onReplaceDoc, 
       )}
       {error && <div className="err" role="alert">{error}</div>}
       {showForm
-        ? <AddTravellerForm busy={busy} onSubmit={submit} onCancel={() => setAdding(false)} canCancel={trip.travellers.length > 0} />
+        ? <AddTravellerForm busy={busy} onSubmit={submit} onCancel={() => setAdding(false)} canCancel={trip.travellers.length > 0} toast={toast} />
         : <button className="btn ghost" onClick={() => setAdding(true)} disabled={busy}>+ {t('add_another')}</button>}
       {trip.travellers.length > 0 && !showForm && (
         <button className="btn pri full" onClick={onNext}>{t('continue')} →</button>

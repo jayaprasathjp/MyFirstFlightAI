@@ -16,8 +16,11 @@ import FlightAlert from "./components/FlightAlert";
 import JourneyScreen from "./screens/JourneyScreen";
 import LostCard from "./components/LostCard";
 import HelpSheet from "./components/HelpSheet";
-import { speak } from "./voice";
+import Stage from "./components/Stage";
+import { StageCtx } from "./StageContext";
+import { speak, stopSpeaking } from "./voice";
 import "./App.css";
+import "./theme.css";
 
 const STEPS = [
   "language",
@@ -28,7 +31,7 @@ const STEPS = [
   "journey",
 ];
 
-function TopBar({ onLanguage, busy, currentUser, logout, onShowTrips }) {
+function TopBar({ onLanguage, busy, currentUser, logout, onShowTrips, auto, onAuto }) {
   const { lang, t } = useI18n();
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
@@ -56,6 +59,19 @@ function TopBar({ onLanguage, busy, currentUser, logout, onShowTrips }) {
         <span>MyFirstFlight</span>
       </div>
       <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+        <button
+          type="button"
+          className={"autoread" + (auto ? " on" : "")}
+          aria-pressed={auto}
+          aria-label={t("read_to_me")}
+          title={t("read_to_me")}
+          onClick={onAuto}
+        >
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M4 9v6h4l5 4V5L8 9z" />
+            {auto ? <path d="M16.5 8.5a5 5 0 010 7M19 6a8.5 8.5 0 010 12" /> : <path d="M17 9l5 6M22 9l-5 6" />}
+          </svg>
+        </button>
         <select
           className="lang"
           aria-label={t("language_label")}
@@ -197,6 +213,16 @@ function Flow({ setLang }) {
     store.get(`mff-done-${store.get("mff-trip", "")}`, {}),
   );
   const [busy, setBusy] = useState(false);
+  // "Read to me": each screen is read aloud when it opens. On by default; remembered on this phone.
+  const [auto, setAuto] = useState(() => store.get("mff-ui-auto", true));
+  const [jstep, setJstep] = useState(0); // current airport step, drawn on the floor plan
+  const mainRef = useRef(null);
+  const toggleAuto = () => {
+    const next = !auto;
+    setAuto(next);
+    store.set("mff-ui-auto", next);
+    if (!next) stopSpeaking();
+  };
   const [updating, setUpdating] = useState(false); // language switch: server re-translates checks + checklist
   const [error, setError] = useState("");
   const [lostOpen, setLostOpen] = useState(false);
@@ -340,9 +366,14 @@ function Flow({ setLang }) {
   };
   const [dup, setDup] = useState(null); // same traveller already in another trip of this user
   const [pulseHelp, setPulseHelp] = useState(false); // highlight Help / I'm Lost while the intro is spoken
+  const pulseRef = useRef(false); // same flag, readable from timers
   const announceHelp = () => {
     setPulseHelp(true);
-    setTimeout(() => setPulseHelp(false), 9000);
+    pulseRef.current = true;
+    setTimeout(() => {
+      setPulseHelp(false);
+      pulseRef.current = false;
+    }, 9000);
     speak(t("help_intro"), lang);
   };
   // On the Check screen (the page after uploading), say once per trip and session where Help and I'm Lost are.
@@ -356,6 +387,22 @@ function Flow({ setLang }) {
     announceHelp();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [step, trip?.id]);
+  // Read the screen's heading and its first lines aloud when it opens (the airport steps read themselves).
+  useEffect(() => {
+    if (!auto || !currentUser || viewMode !== "trip" || step === "journey") return;
+    const id = setTimeout(() => {
+      if (pulseRef.current) return; // the Help / I'm lost introduction is already speaking
+      const el = mainRef.current;
+      if (!el) return;
+      const parts = [el.querySelector("h2"), el.querySelector(".muted"), el.querySelector(".verdict")]
+        .filter(Boolean)
+        .map((n) => n.innerText.trim())
+        .filter(Boolean);
+      if (parts.length) speak(parts.join(". "), lang);
+    }, 1200);
+    return () => clearTimeout(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [auto, step, viewMode, trip?.id, lang, docsPrompt]);
   const addTraveller = (files, assistance) =>
     run(async () => {
       const r = await api.addTraveller(trip.id, files, assistance);
@@ -435,6 +482,7 @@ function Flow({ setLang }) {
     s === "language" || (trip && (s === "travellers" || hasTravellers));
 
   return (
+    <StageCtx.Provider value={{ jstep, setJstep }}>
     <div className="app">
       <TopBar
         onLanguage={changeLanguage}
@@ -442,6 +490,8 @@ function Flow({ setLang }) {
         currentUser={currentUser}
         logout={doLogout}
         onShowTrips={() => setViewMode("trips")}
+        auto={auto}
+        onAuto={toggleAuto}
       />
       {!currentUser ? (
         <AuthScreen />
@@ -453,17 +503,19 @@ function Flow({ setLang }) {
           error={error}
         />
       ) : docsPrompt && trip ? (
-        <main className="screen">
+        <main className="screen" ref={mainRef}>
           <DocsFoundScreen
             trip={trip}
             onContinue={() => answerDocsPrompt(false)}
             onReplace={() => answerDocsPrompt(true)}
+            toast={toast}
           />
         </main>
       ) : (
         <>
           <Stepper step={step} allowed={allowed} onGo={setStep} />
-          <main className="screen">
+          <main className="screen" ref={mainRef}>
+            <Stage step={step} trip={trip} />
             {updating && (
               <div className="reading" role="status">
                 <span className="spin" aria-hidden="true"></span>
@@ -505,7 +557,7 @@ function Flow({ setLang }) {
               </div>
             )}
             {step === "language" && (
-              <LanguageScreen onPick={pickLanguage} busy={busy} />
+              <LanguageScreen onPick={pickLanguage} busy={busy} toast={toast} />
             )}
             {step === "travellers" && trip && (
               <TravellersScreen
@@ -561,6 +613,7 @@ function Flow({ setLang }) {
                 busy={busy}
                 onSaveBoarding={saveBoarding}
                 toast={toast}
+                auto={auto}
               />
             )}
             {step !== "language" && !trip && (
@@ -625,6 +678,7 @@ function Flow({ setLang }) {
         </div>
       )}
     </div>
+    </StageCtx.Provider>
   );
 }
 

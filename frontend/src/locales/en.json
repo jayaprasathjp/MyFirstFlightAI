@@ -202,5 +202,8 @@
   "bag_not_on_ticket": "Not printed on your ticket: this is the usual limit. Please confirm with the airline.",
   "help_hint_short": "Need help? Use the blue Help button or the red I'm Lost button at the bottom of the screen. Tap here to hear this.",
   "estimated": "estimated",
-  "boarding_estimated": "Estimated: about 45 minutes before departure. Change it to the time on your boarding pass and tap Save."
+  "boarding_estimated": "Estimated: about 45 minutes before departure. Change it to the time on your boarding pass and tap Save.",
+  "read_to_me": "Read to me",
+  "flight_started": "Your first flight has begun.",
+  "skip": "Skip"
 }
