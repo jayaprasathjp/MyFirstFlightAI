@@ -27,7 +27,11 @@ steps:
       - '--platform=managed'
       - '--allow-unauthenticated'
       - '--port=8080'
-      - '--set-env-vars=USE_VERTEX_AI=true,GCP_PROJECT_ID=$PROJECT_ID,GCP_LOCATION=us-central1,GEMINI_MODEL=gemini-2.5-flash'
+      - '--set-env-vars=USE_VERTEX_AI=true,GCP_PROJECT_ID=$PROJECT_ID,GCP_LOCATION=us-central1,GEMINI_MODEL=gemini-2.5-flash,AVIATIONSTACK_KEY=$_AVIATIONSTACK_KEY,FLIGHT_STATUS_DEMO=$_FLIGHT_STATUS_DEMO'
+
+substitutions:
+  _AVIATIONSTACK_KEY: ''
+  _FLIGHT_STATUS_DEMO: ''
 
 images:
   - 'gcr.io/$PROJECT_ID/myfirstflightai-backend:$BUILD_ID'
@@ -35,3 +39,4 @@ images:
 
 options:
   logging: CLOUD_LOGGING_ONLY
+
