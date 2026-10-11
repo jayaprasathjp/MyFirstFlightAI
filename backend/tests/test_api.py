@@ -205,6 +205,38 @@ def test_assist_request_is_stored(client):
     assert client.post(f"/api/trips/{trip['id']}/assist", json={"traveller_id": "nope", "kind": "lost"}).status_code == 404
 
 
+def test_pick_language_by_voice(client, monkeypatch):
+    seen = {}
+    monkeypatch.setattr(gemini, "pick_language", lambda audio, mime: seen.update(audio=audio, mime=mime) or {"code": "ta", "heard": "தமிழ்"})
+    main.app.dependency_overrides.pop(main.get_current_user)  # works before login
+    r = client.post("/api/pick-language", files={"audio": ("l.webm", b"\x1a\x45", "audio/webm;codecs=opus")})
+    assert r.status_code == 200 and r.json() == {"code": "ta", "heard": "தமிழ்"} and seen["mime"] == "audio/webm"
+    assert client.post("/api/pick-language", files={"audio": ("l.txt", b"x", "text/plain")}).status_code == 415
+    big = b"\0" * (main.MAX_LANGUAGE_AUDIO + 1)
+    assert client.post("/api/pick-language", files={"audio": ("l.webm", big, "audio/webm")}).status_code == 413
+
+
+def test_feedback_is_stored_and_updated(client):
+    trip = _trip_with_traveller(client)
+    url = f"/api/trips/{trip['id']}/feedback"
+    r = client.put(url, json={"rating": 4, "helped": ["checklist", "lost", "lost"], "comment": " Very easy! "})
+    assert r.status_code == 200 and r.json()["feedback"]["rating"] == 4
+    saved = db.store().get("feedback", trip["id"])
+    assert saved["user_id"] == "test-user" and saved["route"] == "MAA-SIN" and saved["travellers"] == 1
+    assert saved["helped"] == ["checklist", "lost"] and saved["comment"] == "Very easy!"
+    first = saved["created_at"]
+
+    trip = client.put(url, json={"rating": 5}).json()             # sending again updates the same entry
+    saved = db.store().get("feedback", trip["id"])
+    assert saved["rating"] == 5 and saved["created_at"] == first and trip["feedback"]["helped"] == []
+    assert client.get(f"/api/trips/{trip['id']}").json()["feedback"]["rating"] == 5
+
+    assert client.put(url, json={"rating": 0}).status_code == 422
+    assert client.put(url, json={"rating": 3, "helped": ["something"]}).status_code == 422
+    main.app.dependency_overrides[main.get_current_user] = lambda: "someone-else"
+    assert client.put(url, json={"rating": 1}).status_code == 403
+
+
 def test_other_user_cannot_open_trip(client):
     trip = client.post("/api/trips", json={"language": "en"}).json()
     main.app.dependency_overrides[main.get_current_user] = lambda: "someone-else"

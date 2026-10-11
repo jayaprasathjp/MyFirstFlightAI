@@ -3,13 +3,14 @@ import { useAuth } from '../AuthContext';
 import { useI18n } from '../i18n';
 import { RecaptchaVerifier } from 'firebase/auth';
 import { auth } from '../firebase';
-
 import Listen from '../components/Listen';
+import { speak, stopSpeaking } from '../voice';
+import { EN } from '../strings';
+
 import Icon from '../components/Icon';
 import { store } from '../api';
-import { speak, stopSpeaking } from '../voice';
 
-export default function AuthScreen({ onLogged, onStory, onBack }) {
+export default function AuthScreen({ onLogged, onStory, onBack, onChangeLanguage }) {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [code, setCode] = useState('');
   const [confirmResult, setConfirmResult] = useState(null);
@@ -20,6 +21,19 @@ export default function AuthScreen({ onLogged, onStory, onBack }) {
   const { t, lang } = useI18n();
   // Generate a unique ID for this mount so Firebase doesn't trip over old detached DOM nodes
   const [recaptchaId] = useState(() => 'recaptcha-' + Math.random().toString(36).substring(2, 9));
+
+  // Spoken help in the chosen language: what to do on this page (read once when it opens, and on 🔊).
+  const voiceText = () => confirmResult
+    ? t('auth_voice_otp', { verify: t('auth_verify_otp') })
+    : t('auth_voice', { send: t('auth_send_otp'), google: t('auth_google') });
+  const said = voiceText();
+  // A newly chosen language's labels load a moment later: wait for them, so the voice is not English.
+  const inLanguage = lang === 'en' || t('auth_voice') !== EN.auth_voice;
+  useEffect(() => {
+    if (!inLanguage) return;
+    speak(said, lang);
+    return stopSpeaking;
+  }, [said, lang, inLanguage]);
 
   useEffect(() => {
     return () => {
@@ -119,7 +133,7 @@ export default function AuthScreen({ onLogged, onStory, onBack }) {
       <div id={recaptchaId}></div>
       {onBack && <button type="button" className="tripback" style={{ maxWidth: '420px', margin: '0 auto 4px', justifySelf: 'center' }} onClick={onBack}><span aria-hidden="true">←</span> {t('back')}</button>}
       <div className="card" style={{ padding: '24px', display: 'grid', gap: '20px', maxWidth: '420px', margin: '0 auto', width: '100%' }}>
-        <div className="gh" style={{ justifyContent: 'center' }}><h2 style={{ textAlign: 'center', marginBottom: '8px' }}>{t('auth_sign_in_up')}</h2><Listen text={readStep} /></div>
+        <div className="gh" style={{ justifyContent: 'center' }}><h2 style={{ textAlign: 'center', marginBottom: '8px' }}>{t('auth_sign_in_up')}</h2><Listen text={readStep} toast={setError} /></div>
         <p style={{ textAlign: 'center', fontSize: '14px', color: 'var(--muted)', marginTop: '-12px' }}>
           {t('auth_phone_desc')}
         </p>
@@ -187,8 +201,12 @@ export default function AuthScreen({ onLogged, onStory, onBack }) {
           </svg>
           {t('auth_google')}
         </button>
-
         {onStory && <button className="btn ghost full storybtn" type="button" onClick={onStory}><Icon name="speaker" /> {t('story_title')}</button>}
+        {onChangeLanguage && (
+          <button className="link" type="button" onClick={onChangeLanguage} style={{ justifySelf: 'center' }}>
+            🌐 {t('change_language')}
+          </button>
+        )}
       </div>
     </div>
   );

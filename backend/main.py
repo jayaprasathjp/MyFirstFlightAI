@@ -31,7 +31,8 @@ from db import StoreError, now_iso, store  # noqa: E402
 from flight_status import flight_status, status_alert  # noqa: E402
 from journey import build_journey, destination_contact  # noqa: E402
 from schemas import (AssistRequest, BoardingRequest, ChatRequest, ChecklistToggle, ContactsRequest,  # noqa: E402
-                     CreateTripRequest, QuickAnswers, TranslateRequest, TTSRequest, UpdateTripRequest)
+                     CreateTripRequest, FeedbackRequest, QuickAnswers, TranslateRequest, TTSRequest,
+                     UpdateTripRequest)
 from validation import check_trip, overall_status, passport_name, trip_summary  # noqa: E402
 
 log = logging.getLogger("myfirstflight")
@@ -266,6 +267,7 @@ def trip_view(trip):
         "boarding_pass": {**bp, "fields": [{**f, "meaning": tr[f"bp.{n}"]} for n, f in enumerate(bp.get("fields") or [])]}
                          if bp else None,
         "assist_requests": trip.get("assist_requests") or [],
+        "feedback": trip.get("feedback"),
     }
 
 
@@ -574,6 +576,24 @@ def set_boarding(trip_id: str, req: BoardingRequest, user_id: str = Depends(get_
     return trip_view(trip)
 
 
+@app.put("/api/trips/{trip_id}/feedback")
+def set_feedback(trip_id: str, req: FeedbackRequest, user_id: str = Depends(get_current_user)):
+    """Post-trip feedback. One entry per trip in `feedback` (sending again updates it), plus a copy on the trip."""
+    trip = load_trip(trip_id, user_id)
+    s = trip.get("summary") or {}
+    first = (trip.get("feedback") or {}).get("created_at") or now_iso()
+    entry = {
+        "trip_id": trip_id, "user_id": user_id, "rating": req.rating, "helped": list(dict.fromkeys(req.helped)),
+        "comment": req.comment.strip(), "language": trip.get("language", "en"),
+        "route": f"{s.get('origin_code') or '?'}-{s.get('destination_code') or '?'}",
+        "travellers": len(trip.get("travellers") or []), "created_at": first, "updated_at": now_iso(),
+    }
+    store().set("feedback", trip_id, entry)
+    trip["feedback"] = {k: entry[k] for k in ("rating", "helped", "comment", "created_at", "updated_at")}
+    save_trip(trip)
+    return trip_view(trip)
+
+
 # ---------- step 7: always-on helpers ----------
 
 AUDIO_MIME = {"audio/webm", "audio/ogg", "audio/mp4", "audio/mpeg", "audio/mp3", "audio/wav", "audio/x-wav", "audio/aac"}
@@ -685,6 +705,18 @@ def request_assist(trip_id: str, req: AssistRequest, user_id: str = Depends(get_
         {k: request[k] for k in ("id", "kind", "location", "traveller", "status", "created_at", "sent_to_desk")})
     save_trip(trip)
     return {"request": request, "trip": trip_view(trip)}
+
+
+MAX_LANGUAGE_AUDIO = 1024 * 1024  # a few seconds of speech is enough to name a language
+
+
+@app.post("/api/pick-language")
+async def pick_language(audio: UploadFile = File(...)):
+    """Language page (before login): the person says their language; returns its code, or null if unclear."""
+    content, mime = await read_audio(audio)
+    if len(content) > MAX_LANGUAGE_AUDIO:
+        raise HTTPException(status_code=413, detail="Recording is too long. Just say your language.")
+    return await asyncio.to_thread(gemini_call, gemini.pick_language, content, mime)
 
 
 @app.post("/api/tts")

@@ -69,6 +69,8 @@ export const api = {
     form.append('file', file)
     return request(`/api/trips/${id}/boarding-pass`, { method: 'POST', body: form })
   },
+  pickLanguage: (audio) => request('/api/pick-language', { method: 'POST', body: voiceForm('', audio) }, true),
+  saveFeedback: (id, feedback) => request(`/api/trips/${id}/feedback`, json('PUT', feedback)),
   assist: (id, body) => request(`/api/trips/${id}/assist`, json('POST', body)),
   tts: (text, language) => request('/api/tts', json('POST', { text, language }), true),
   translate: (language, texts) => request('/api/translate', json('POST', { language, texts })),

@@ -145,6 +145,11 @@ class AskResult(BaseModel):
     answer: str = Field(description="the answer, in the same language the traveller used")
 
 
+class LanguagePick(BaseModel):
+    heard: str = Field(description="the words actually heard, in the script they were spoken; empty if none")
+    code: str = Field(description="language code from the given list (e.g. ta, hi, en), or none")
+
+
 class StaffPhrase(BaseModel):
     heard_clearly: bool = Field(True, description="false if the audio is silent, noise, too short or the words cannot be made out; never guess words")
     original: str = Field(description="what the traveller said, in their language")
@@ -176,6 +181,16 @@ class AssistRequest(BaseModel):
     kind: Literal["wheelchair", "escort", "visual", "lost"]
     location: Literal["entrance", "checkin", "security", "gate", "arrival", "unknown"] = "entrance"
     note: str = Field("", max_length=300)
+
+
+FeedbackPart = Literal["documents", "checklist", "airport_steps", "help", "lost", "walkthrough", "voice"]
+
+
+class FeedbackRequest(BaseModel):
+    """After the trip: how it went (1 = very bad ... 5 = excellent), what helped, and anything else."""
+    rating: int = Field(ge=1, le=5)
+    helped: List[FeedbackPart] = Field([], max_length=7)
+    comment: str = Field("", max_length=1000)
 
 
 class TTSRequest(BaseModel):

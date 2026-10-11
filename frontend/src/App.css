@@ -59,7 +59,7 @@
 /* stepper */
 .stepper {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 2px;
   padding: 10px 8px;
   border-bottom: 1px solid var(--line);
@@ -1633,3 +1633,76 @@ ul.do li::before {
 .helphint { display: flex; gap: 10px; align-items: center; text-align: start; width: 100%; border: 1.5px solid var(--bad);
   background: var(--bad-soft); color: var(--ink); border-radius: 14px; padding: 12px 14px; font-weight: 600; font-size: 15px }
 .helphint-play { margin-inline-start: auto; font-size: 20px }
+
+/* language page: say your language */
+.voicepick { display: grid; grid-template-columns: auto 1fr; gap: 10px 14px; align-items: center;
+  border: 1.5px solid var(--brand); background: var(--brand-soft) }
+.voicepick .micbtn { width: 64px; height: 64px }
+.voicepick .micbtn svg { width: 28px; height: 28px }
+.voicepick [role="status"] { display: grid; gap: 2px }
+.voicepick [role="status"] b { font-size: 18px }
+.voicepick .vp-found, .voicepick .err { grid-column: 1 / -1 }
+.vp-found { display: grid; gap: 10px; background: var(--card); border-radius: 14px; padding: 12px }
+.vp-found > span b { font-size: 22px }
+.vp-found > span small { color: var(--muted); margin-inline-start: 6px }
+.vp-found .row2 { grid-template-columns: 1fr 1fr }
+
+/* post-trip feedback (inside the "You have arrived" pop-up) */
+.arrived-modal-content:has(.feedback) { max-width: 440px; padding: 28px 18px 20px; gap: 16px }
+.arrived-modal-content:has(.feedback) .arrived-msg { margin: 0 }
+.feedback { display: grid; gap: 10px; text-align: start; width: 100%; border-top: 1px solid var(--line); padding-top: 16px }
+.faces { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px }
+.faces button { border: 1.5px solid var(--line); background: var(--card); border-radius: 14px; padding: 8px 2px;
+  display: grid; justify-items: center; gap: 2px; color: var(--ink) }
+.faces button span { font-size: 30px; line-height: 1.1 }
+.faces button small { font-size: 11px; font-weight: 700; color: var(--muted); text-align: center }
+.faces button.on { border-color: var(--brand); background: var(--brand-soft) }
+.faces button.on small { color: var(--brand) }
+.feedback .chips { display: flex; flex-wrap: wrap; gap: 6px }
+.feedback .chips .btn { padding: 8px 12px; font-size: 14px }
+.feedback label { display: grid; gap: 6px; font-weight: 700 }
+.feedback textarea { border: 1px solid var(--line); background: var(--app); border-radius: 12px; padding: 12px; font: inherit;
+  font-weight: 400; color: var(--ink); width: 100%; resize: vertical }
+.fb-thanks { background: var(--ok-soft); color: var(--ok); border-radius: 12px; padding: 12px; font-weight: 700; text-align: center }
+
+/* app walkthrough: full-screen narrated player */
+.tripvideo { position: fixed; inset: 0; z-index: 26; background: var(--app); overflow: auto; display: grid; gap: 14px;
+  align-content: start; grid-auto-rows: max-content; max-width: 480px; margin: 0 auto;
+  padding: calc(16px + env(safe-area-inset-top, 0px)) 16px calc(24px + env(safe-area-inset-bottom, 0px)) }
+.tv-head { display: flex; justify-content: space-between; align-items: center; gap: 10px }
+.tv-x { padding: 10px 14px }
+.tv-bar { height: 4px; border-radius: 99px; background: var(--line); overflow: hidden; margin-top: -8px }
+.tv-bar i { display: block; height: 100%; background: var(--brand); transition: width .1s linear }
+.tv-scene { animation: tvin .45s ease-out both }
+.tv-body { font-size: 18px; line-height: 1.5 }
+.tv-ctrl { display: grid; grid-template-columns: 1fr 1.4fr 1fr 1fr; gap: 10px }
+.tv-ctrl .btn { font-size: 18px }
+.tv-end { display: grid; gap: 14px; text-align: center; padding-top: 24px }
+@keyframes tvin { from { opacity: 0; transform: translateY(14px) } }
+@media (prefers-reduced-motion: reduce) {
+  .tv-scene { animation: none }
+}
+
+/* app walkthrough: recorded video of the app */
+.walkthrough { display: grid; grid-template-columns: 110px 1fr; gap: 14px; align-items: center }
+.wt-text { display: grid; gap: 6px; justify-items: start }
+.wt-text .btn { padding: 10px 14px; font-size: 15px; text-decoration: none; color: inherit }
+.wt-actions { display: flex; gap: 8px; flex-wrap: wrap }
+.wt-dl { justify-self: center }
+.wt-tile { position: relative; border: 0; padding: 0; border-radius: 12px; overflow: hidden; background: #000; aspect-ratio: 9 / 16 }
+.wt-tile img { width: 100%; height: 100%; object-fit: cover; display: block }
+/* real app screens in a phone-width iframe (390px wide), scaled down to fit */
+.tv-phone, .wt-thumb { display: block; overflow: hidden; position: relative; background: var(--app) }
+.tv-phone iframe, .wt-thumb iframe { border: 0; width: 390px; transform-origin: 0 0; pointer-events: none; display: block }
+.tv-phone { justify-self: center; width: 282px; height: min(520px, 54vh); border: 6px solid var(--ink); border-radius: 28px;
+  box-shadow: var(--shadow) }
+.tv-phone iframe { height: calc(100% / .6923); transform: scale(.6923) } /* 270px / 390px */
+.wt-thumb { width: 100%; height: 100% }
+.wt-thumb iframe { height: calc(100% / .282); transform: scale(.282) } /* 110px / 390px */
+.tv-tour { display: grid; gap: 8px }
+.tv-tour .tv-body { font-size: 17px }
+.wt-play { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 40px; height: 40px; border-radius: 50%;
+  background: rgba(255, 255, 255, .9); color: var(--brand); display: grid; place-items: center; font-size: 16px }
+.wt-player { background: var(--app); border-radius: 18px; padding: 14px; width: min(420px, 100%); max-height: 100%; overflow: auto;
+  display: grid; gap: 10px; box-shadow: var(--shadow) }
+.wt-player video { display: block; justify-self: center; max-width: 100%; max-height: 52vh; border-radius: 12px; background: #000 }

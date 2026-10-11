@@ -5,6 +5,7 @@ import { stopSpeaking, speak } from '../voice'
 import Listen from '../components/Listen'
 import { FlightScene, MomentScene } from '../components/Stage'
 import { useStage } from '../StageContext'
+import FeedbackForm from '../components/FeedbackForm'
 
 function BoardingForm({ boarding, onSave, busy }) {
   const { t } = useI18n()
@@ -28,7 +29,7 @@ function BoardingForm({ boarding, onSave, busy }) {
   )
 }
 
-export default function JourneyScreen({ trip, onSaveBoarding, busy, toast, auto, onFinish }) {
+export default function JourneyScreen({ trip, onSaveBoarding, onFeedback, walkthrough, busy, toast, auto, onFinish }) {
   const { t, lang } = useI18n()
   const steps = trip.journey
   const key = `mff-jstep-${trip.id}`
@@ -145,6 +146,7 @@ export default function JourneyScreen({ trip, onSaveBoarding, busy, toast, auto,
           {last ? t('done_btn') + ' ✓' : t('next_step') + ' →'}
         </button>
       </div>
+      {walkthrough}
       {big && (
         <div className="bigtext" role="dialog" aria-label={t('show_staff')} onClick={() => setBig(false)}>
           <p lang="en">{s.staff_en}</p>
@@ -163,6 +165,7 @@ export default function JourneyScreen({ trip, onSaveBoarding, busy, toast, auto,
               </svg>
             </div>
             <h2 className="arrived-msg">{t('arrived')}</h2>
+            {onFeedback && <FeedbackForm feedback={trip.feedback} onSave={onFeedback} busy={busy} toast={toast} />}
             <p className="muted">{t('trip_finish_hint')}</p>
             <p className="arrived-sign">— MyFirstFlightAI</p>
             <button className="btn pri full" onClick={() => { setShowArrived(false); onFinish?.() }} disabled={busy}>{t('trip_finish')} ✓</button>
