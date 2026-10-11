@@ -574,7 +574,6 @@ function Flow({ setLang }) {
         />
       ) : docsPrompt && trip ? (
         <main className="screen" ref={mainRef}>
-          <button type="button" className="tripback" onClick={goToTrips}><span aria-hidden="true">←</span> {t("back_to_trips")}</button>
           <DocsFoundScreen
             trip={trip}
             onContinue={() => answerDocsPrompt(false)}
@@ -586,7 +585,6 @@ function Flow({ setLang }) {
         <>
           <Stepper step={step} allowed={allowed} onGo={setStep} />
           <main className="screen" ref={mainRef}>
-            <button type="button" className="tripback" onClick={goToTrips}><span aria-hidden="true">←</span> {t("back_to_trips")}</button>
             <Stage step={step} trip={trip} done={done} />
             {updating && (
               <div className="reading" role="status">
