@@ -3,6 +3,7 @@ import { store } from '../api'
 import { useI18n } from '../i18n'
 import { stopSpeaking, speak } from '../voice'
 import Listen from '../components/Listen'
+import FeedbackForm from '../components/FeedbackForm'
 
 function BoardingForm({ boarding, onSave, busy }) {
   const { t } = useI18n()
@@ -26,7 +27,7 @@ function BoardingForm({ boarding, onSave, busy }) {
   )
 }
 
-export default function JourneyScreen({ trip, onSaveBoarding, busy, toast }) {
+export default function JourneyScreen({ trip, onSaveBoarding, onFeedback, walkthrough, busy, toast }) {
   const { t, lang } = useI18n()
   const steps = trip.journey
   const key = `mff-jstep-${trip.id}`
@@ -101,6 +102,7 @@ export default function JourneyScreen({ trip, onSaveBoarding, busy, toast }) {
           {last ? t('done_btn') + ' ✓' : t('next_step') + ' →'}
         </button>
       </div>
+      {walkthrough}
       {big && (
         <div className="bigtext" role="dialog" aria-label={t('show_staff')} onClick={() => setBig(false)}>
           <p lang="en">{s.staff_en}</p>
@@ -116,7 +118,8 @@ export default function JourneyScreen({ trip, onSaveBoarding, busy, toast }) {
               </svg>
             </div>
             <h2 className="arrived-msg">{t('arrived')}</h2>
-            <button className="btn pri full" onClick={() => setShowArrived(false)}>{t('done_btn')}</button>
+            {onFeedback && <FeedbackForm feedback={trip.feedback} onSave={onFeedback} busy={busy} toast={toast} />}
+            <button className="btn sec full" onClick={() => setShowArrived(false)}>{t('close')}</button>
           </div>
         </div>
       )}

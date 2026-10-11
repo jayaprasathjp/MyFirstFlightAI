@@ -4,6 +4,7 @@ Firestore layout (extracted text; the original uploaded files go to Cloud Storag
   trips/{trip_id}          -> {language, travellers[], summary, checks[], status, checklist_done{}, created_at, updated_at}
   translations/{lang_hash} -> {text, lang, source}   cache for Gemini translations
   advice/{route_hash}      -> {advice, context, created_at}   cache for Gemini trip advice
+  feedback/{trip_id}       -> {user_id, rating 1-5, helped[], comment, language, route, travellers, created_at, updated_at}
 """
 import copy
 import logging
