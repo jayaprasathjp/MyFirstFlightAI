@@ -295,8 +295,10 @@ ul.do li > span { flex: 1; min-width: 0 }
 .land-globe { position: relative; height: 260px; border-radius: 22px; overflow: hidden }
 .land-band { display: grid; gap: 12px; padding: 26px 18px; max-width: 1040px; width: 100%; margin: 0 auto }
 .land-band h2 { margin: 0 }
-.land-langs { display: flex; flex-wrap: wrap; gap: 10px }
-.land-langs button { min-height: 48px; padding: 0 18px; border-radius: 999px; border: 2px solid var(--line); background: var(--card); color: var(--ink); font-size: 18px; font-weight: 700 }
+/* 20 languages in an even grid: 5 per row (4 rows); 2 per row on phones, so no name is split */
+.land-langs { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px }
+@media (max-width: 560px) { .land-langs { grid-template-columns: repeat(2, minmax(0, 1fr)) } }
+.land-langs button { min-height: 48px; padding: 0 10px; white-space: nowrap; border-radius: 999px; border: 2px solid var(--line); background: var(--card); color: var(--ink); font-size: 18px; font-weight: 700 }
 .land-langs button.on { border-color: var(--ok); background: var(--ok-soft) }
 .land-steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px }
 .land-steps li { display: flex; align-items: center; gap: 14px; background: var(--card); border: 1.5px solid var(--line); border-radius: 18px; padding: 14px 16px; animation: mffUp .4s both }

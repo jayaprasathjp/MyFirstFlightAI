@@ -462,11 +462,12 @@
     "fb_thanks": "Thank you! Your feedback is saved.",
     "fb_need_rating": "Please tap a face first.",
     "lang_voice": "Say your language",
-    "lang_voice_hint": "Tap the mic and say it, for example \"Tamil\" or \"हिंदी\".",
+    "lang_voice_hint": "Tap the mic and say your language.",
     "lang_voice_again": "Try again",
     "lang_voice_fail": "Sorry, I could not hear a language. Please try again, or tap your language below.",
     "lang_mic_denied": "Microphone not allowed. Please tap your language below.",
-    "lang_intro": "These languages are available: {list}. Tap your language below, or tap the mic and say it."
+    "lang_intro": "These languages are available: {list}. Tap your language below, or tap the mic and say it.",
+    "lang_choose_below": "Select your language from the languages below: {list}."
   },
   "video_replay": "Ver de nuevo",
   "video_pause": "Pausar",
@@ -522,7 +523,7 @@
   "fb_thanks": "¡Gracias! Sus comentarios han sido guardados.",
   "fb_need_rating": "Por favor, toque una carita primero.",
   "lang_voice": "Diga su idioma",
-  "lang_voice_hint": "Toque el micrófono y dígalo, por ejemplo \"Tamil\" o \"हिंदी\".",
+  "lang_voice_hint": "Toque el micrófono y diga su idioma.",
   "lang_voice_again": "Intente de nuevo",
   "lang_voice_fail": "Lo siento, no pude escuchar un idioma. Por favor, intente de nuevo, o toque su idioma abajo.",
   "lang_mic_denied": "Micrófono no permitido. Por favor, toque su idioma abajo.",
@@ -580,5 +581,6 @@
   "land_family_d": "Inicie sesión en su teléfono, agregue su viaje y la aplicación les guiará en el resto en su propio idioma.",
   "moment_board": "Suba a su vuelo {flight}. Muestre su pase de abordar en la puerta.",
   "moment_arrive": "{name} le está esperando.",
-  "moment_arrive_any": "Su familia le está esperando."
+  "moment_arrive_any": "Su familia le está esperando.",
+  "lang_choose_below": "Elija su idioma de los que están abajo: {list}."
 }

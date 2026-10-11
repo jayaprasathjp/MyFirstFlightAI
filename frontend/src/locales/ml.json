@@ -462,11 +462,12 @@
     "fb_thanks": "Thank you! Your feedback is saved.",
     "fb_need_rating": "Please tap a face first.",
     "lang_voice": "Say your language",
-    "lang_voice_hint": "Tap the mic and say it, for example \"Tamil\" or \"हिंदी\".",
+    "lang_voice_hint": "Tap the mic and say your language.",
     "lang_voice_again": "Try again",
     "lang_voice_fail": "Sorry, I could not hear a language. Please try again, or tap your language below.",
     "lang_mic_denied": "Microphone not allowed. Please tap your language below.",
-    "lang_intro": "These languages are available: {list}. Tap your language below, or tap the mic and say it."
+    "lang_intro": "These languages are available: {list}. Tap your language below, or tap the mic and say it.",
+    "lang_choose_below": "Select your language from the languages below: {list}."
   },
   "video_replay": "വീണ്ടും കാണുക",
   "video_pause": "നിർത്തുക",
@@ -522,7 +523,7 @@
   "fb_thanks": "നന്ദി! നിങ്ങളുടെ അഭിപ്രായം ഞങ്ങൾ സ്വീകരിച്ചിട്ടുണ്ട്.",
   "fb_need_rating": "ദയവായി ആദ്യം ഒരു മുഖത്ത് സ്പർശിക്കുക.",
   "lang_voice": "നിങ്ങളുടെ ഭാഷ പറയുക",
-  "lang_voice_hint": "മൈക്കിൽ തൊട്ട് പറയുക, ഉദാഹരണത്തിന് \"തമിഴ്\" അല്ലെങ്കിൽ \"ഹിന്ദി\".",
+  "lang_voice_hint": "മൈക്കിൽ തൊട്ട് നിങ്ങളുടെ ഭാഷ പറയുക.",
   "lang_voice_again": "ഒന്ന് കൂടി ശ്രമിക്കൂ",
   "lang_voice_fail": "ക്ഷമിക്കണം, എനിക്ക് ഭാഷ കേൾക്കാൻ കഴിഞ്ഞില്ല. ദയവായി വീണ്ടും ശ്രമിക്കുക, അല്ലെങ്കിൽ താഴെ നിങ്ങളുടെ ഭാഷ തിരഞ്ഞെടുക്കുക.",
   "lang_mic_denied": "മൈക്രോഫോണിന് അനുമതിയില്ല. ദയവായി താഴെ നിങ്ങളുടെ ഭാഷ തിരഞ്ഞെടുക്കുക.",
@@ -580,5 +581,6 @@
   "land_family_d": "അവരുടെ ഫോണിൽ സൈൻ ഇൻ ചെയ്യുക, അവരുടെ യാത്ര ചേർക്കുക, ബാക്കിയുള്ള കാര്യങ്ങൾ ആപ്പ് അവരോട് അവരുടെ ഭാഷയിൽ സംസാരിച്ച് മനസ്സിലാക്കിക്കൊടുക്കും.",
   "moment_board": "നിങ്ങളുടെ {flight} വിമാനത്തിൽ കയറാൻ സമയമായി. വാതിൽക്കൽ ബോർഡിംഗ് പാസ് കാണിക്കുക.",
   "moment_arrive": "നിങ്ങളെ കാത്ത് {name} നിൽക്കുന്നുണ്ട്.",
-  "moment_arrive_any": "നിങ്ങളുടെ കുടുംബം കാത്തിരിക്കുന്നുണ്ട്."
+  "moment_arrive_any": "നിങ്ങളുടെ കുടുംബം കാത്തിരിക്കുന്നുണ്ട്.",
+  "lang_choose_below": "താഴെക്കൊടുത്തിട്ടുള്ള ഭാഷകളിൽ നിന്ന് നിങ്ങളുടെ ഭാഷ തിരഞ്ഞെടുക്കുക: {list}."
 }

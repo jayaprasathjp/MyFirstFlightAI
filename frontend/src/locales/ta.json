@@ -462,11 +462,12 @@
     "fb_thanks": "Thank you! Your feedback is saved.",
     "fb_need_rating": "Please tap a face first.",
     "lang_voice": "Say your language",
-    "lang_voice_hint": "Tap the mic and say it, for example \"Tamil\" or \"हिंदी\".",
+    "lang_voice_hint": "Tap the mic and say your language.",
     "lang_voice_again": "Try again",
     "lang_voice_fail": "Sorry, I could not hear a language. Please try again, or tap your language below.",
     "lang_mic_denied": "Microphone not allowed. Please tap your language below.",
-    "lang_intro": "These languages are available: {list}. Tap your language below, or tap the mic and say it."
+    "lang_intro": "These languages are available: {list}. Tap your language below, or tap the mic and say it.",
+    "lang_choose_below": "Select your language from the languages below: {list}."
   },
   "video_replay": "மீண்டும் பார்",
   "video_pause": "நிறுத்து",
@@ -522,7 +523,7 @@
   "fb_thanks": "நன்றி! உங்கள் கருத்துக்கள் சேமிக்கப்பட்டுள்ளன.",
   "fb_need_rating": "முதலில் ஒரு முகத்தைத் தட்டவும்.",
   "lang_voice": "உங்கள் மொழியைச் சொல்லுங்கள்",
-  "lang_voice_hint": "மைக்ரோஃபோனைத் தட்டி, \"தமிழ்\" அல்லது \"இந்தி\" என்று சொல்லுங்கள்.",
+  "lang_voice_hint": "மைக்ரோஃபோனைத் தட்டி உங்கள் மொழியைச் சொல்லுங்கள்.",
   "lang_voice_again": "மீண்டும் முயற்சி செய்யுங்கள்",
   "lang_voice_fail": "மன்னிக்கவும், நீங்கள் எந்த மொழியையும் சொல்லவில்லை. மீண்டும் முயற்சி செய்யுங்கள், அல்லது கீழே உள்ள உங்கள் மொழியைத் தட்டுங்கள்.",
   "lang_mic_denied": "மைக்ரோஃபோனைப் பயன்படுத்த அனுமதி இல்லை. கீழே உள்ள உங்கள் மொழியைத் தட்டுங்கள்.",
@@ -580,5 +581,6 @@
   "land_family_d": "அவர்களின் தொலைபேசியில் உள்நுழைந்து, அவர்களின் பயணத்தைச் சேர்த்து, செயலி மீதமுள்ளவற்றை அவர்களின் சொந்த மொழியில் அவர்களுக்குச் சொல்லும்.",
   "moment_board": "உங்கள் விமானம் {flight} ஏற தயாராக உள்ளது. நுழைவாயிலில் உங்கள் போர்டிங் பாஸைக் காட்டுங்கள்.",
   "moment_arrive": "{name} உங்களுக்காகக் காத்திருக்கிறார்.",
-  "moment_arrive_any": "உங்கள் குடும்பத்தினர் உங்களுக்காகக் காத்திருக்கிறார்கள்."
+  "moment_arrive_any": "உங்கள் குடும்பத்தினர் உங்களுக்காகக் காத்திருக்கிறார்கள்.",
+  "lang_choose_below": "கீழே உள்ள மொழிகளில் இருந்து உங்கள் மொழியைத் தேர்ந்தெடுக்கவும்: {list}."
 }

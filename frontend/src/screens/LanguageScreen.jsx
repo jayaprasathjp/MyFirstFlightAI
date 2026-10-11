@@ -9,7 +9,7 @@ import Icon from '../components/Icon'
 const SAY_MS = 6000 // naming a language takes a few seconds; stop by itself after that
 
 // "Say your language": record, let Gemini name the language, then ask to confirm (a wrong guess is one tap away).
-function VoicePick({ onPick }) {
+export function VoicePick({ onPick }) {
   const { t } = useI18n()
   const { recording, start, stop } = useRecorder()
   const [busy, setBusy] = useState(false)
@@ -37,6 +37,7 @@ function VoicePick({ onPick }) {
     if (recording) return finish()
     setFound(null)
     setMsg('')
+    stopSpeaking() // the mic must not record the app's own voice
     try {
       await start()
       timer.current = setTimeout(finish, SAY_MS)
@@ -57,11 +58,12 @@ function VoicePick({ onPick }) {
           {busy ? <><span className="spin" aria-hidden="true"></span> {t('thinking')}</> : recording ? '' : t('lang_voice_hint')}
         </span>
       </div>
+      <Listen text={() => t('lang_choose_below', { list: LANGUAGES.map((l) => l.english).join(', ') })} toast={() => {}} />
       {found && (
         <div className="vp-found">
           <span><b lang={found.code}>{found.native}</b> <small>{found.english}</small></span>
           <div className="row2">
-            <button className="btn pri" onClick={() => onPick(found.code)}>✓ {t('continue')}</button>
+            <button className="btn pri" onClick={() => { onPick(found.code); setFound(null) }}>✓ {t('continue')}</button>
             <button className="btn sec" onClick={mic}>🎤 {t('lang_voice_again')}</button>
           </div>
         </div>

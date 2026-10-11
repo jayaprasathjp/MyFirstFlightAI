@@ -462,11 +462,12 @@
     "fb_thanks": "Thank you! Your feedback is saved.",
     "fb_need_rating": "Please tap a face first.",
     "lang_voice": "Say your language",
-    "lang_voice_hint": "Tap the mic and say it, for example \"Tamil\" or \"हिंदी\".",
+    "lang_voice_hint": "Tap the mic and say your language.",
     "lang_voice_again": "Try again",
     "lang_voice_fail": "Sorry, I could not hear a language. Please try again, or tap your language below.",
     "lang_mic_denied": "Microphone not allowed. Please tap your language below.",
-    "lang_intro": "These languages are available: {list}. Tap your language below, or tap the mic and say it."
+    "lang_intro": "These languages are available: {list}. Tap your language below, or tap the mic and say it.",
+    "lang_choose_below": "Select your language from the languages below: {list}."
   },
   "video_replay": "আবার দেখুন",
   "video_pause": "বিরতি দিন",
@@ -522,7 +523,7 @@
   "fb_thanks": "ধন্যবাদ! আপনার মতামত সংরক্ষণ করা হয়েছে।",
   "fb_need_rating": "দয়া করে প্রথমে একটি মুখের ছবিতে চাপ দিন।",
   "lang_voice": "আপনার ভাষা বলুন",
-  "lang_voice_hint": "মাইকে ট্যাপ করে বলুন, যেমন \"তামিল\" বা \"হিন্দি\"।",
+  "lang_voice_hint": "মাইক্রোফোনে ট্যাপ করে আপনার ভাষা বলুন।",
   "lang_voice_again": "আবার চেষ্টা করুন",
   "lang_voice_fail": "দুঃখিত, আমি কোনো ভাষা শুনতে পাইনি। অনুগ্রহ করে আবার চেষ্টা করুন, অথবা নিচে আপনার ভাষাটি নির্বাচন করুন।",
   "lang_mic_denied": "মাইক্রোফোন ব্যবহারের অনুমতি নেই। অনুগ্রহ করে নিচে আপনার ভাষাটি নির্বাচন করুন।",
@@ -580,5 +581,6 @@
   "land_family_d": "তাদের ফোনে সাইন ইন করুন, তাদের ভ্রমণ যোগ করুন এবং অ্যাপটি তাদের নিজেদের ভাষায় বাকি সব কিছু বুঝিয়ে দেবে।",
   "moment_board": "আপনার ফ্লাইট {flight} এ উঠুন। দরজার কাছে আপনার বোর্ডিং পাস দেখান।",
   "moment_arrive": "{name} আপনার জন্য অপেক্ষা করছেন।",
-  "moment_arrive_any": "আপনার পরিবার আপনার জন্য অপেক্ষা করছে।"
+  "moment_arrive_any": "আপনার পরিবার আপনার জন্য অপেক্ষা করছে।",
+  "lang_choose_below": "নীচের ভাষাগুলি থেকে আপনার ভাষা নির্বাচন করুন: {list}।"
 }

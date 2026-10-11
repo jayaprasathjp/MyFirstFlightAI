@@ -462,11 +462,12 @@
     "fb_thanks": "Thank you! Your feedback is saved.",
     "fb_need_rating": "Please tap a face first.",
     "lang_voice": "Say your language",
-    "lang_voice_hint": "Tap the mic and say it, for example \"Tamil\" or \"हिंदी\".",
+    "lang_voice_hint": "Tap the mic and say your language.",
     "lang_voice_again": "Try again",
     "lang_voice_fail": "Sorry, I could not hear a language. Please try again, or tap your language below.",
     "lang_mic_denied": "Microphone not allowed. Please tap your language below.",
-    "lang_intro": "These languages are available: {list}. Tap your language below, or tap the mic and say it."
+    "lang_intro": "These languages are available: {list}. Tap your language below, or tap the mic and say it.",
+    "lang_choose_below": "Select your language from the languages below: {list}."
   },
   "video_replay": "再看一遍",
   "video_pause": "暂停",
@@ -522,7 +523,7 @@
   "fb_thanks": "谢谢您！您的意见已保存。",
   "fb_need_rating": "请先点击一个笑脸。",
   "lang_voice": "说出您的语言",
-  "lang_voice_hint": "点麦克风，然后说出您的语言，比如“泰米尔语”或“印地语”。",
+  "lang_voice_hint": "点一下麦克风，然后说出您想用的语言。",
   "lang_voice_again": "请再试一次",
   "lang_voice_fail": "抱歉，我没听清您说的语言。请再试一次，或者在下面选择您的语言。",
   "lang_mic_denied": "麦克风未授权。请在下面选择您的语言。",
@@ -580,5 +581,6 @@
   "land_family_d": "在他们的手机上登录，添加他们的行程，应用程序会用他们自己的语言指导他们完成剩下的步骤。",
   "moment_board": "请您登上 {flight} 航班。请在登机口出示您的登机牌。",
   "moment_arrive": "{name} 正在等您。",
-  "moment_arrive_any": "您的家人正在等您。"
+  "moment_arrive_any": "您的家人正在等您。",
+  "lang_choose_below": "请从下面的语言中选择您的语言：{list}。"
 }

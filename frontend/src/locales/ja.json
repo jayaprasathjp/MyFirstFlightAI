@@ -462,11 +462,12 @@
     "fb_thanks": "Thank you! Your feedback is saved.",
     "fb_need_rating": "Please tap a face first.",
     "lang_voice": "Say your language",
-    "lang_voice_hint": "Tap the mic and say it, for example \"Tamil\" or \"हिंदी\".",
+    "lang_voice_hint": "Tap the mic and say your language.",
     "lang_voice_again": "Try again",
     "lang_voice_fail": "Sorry, I could not hear a language. Please try again, or tap your language below.",
     "lang_mic_denied": "Microphone not allowed. Please tap your language below.",
-    "lang_intro": "These languages are available: {list}. Tap your language below, or tap the mic and say it."
+    "lang_intro": "These languages are available: {list}. Tap your language below, or tap the mic and say it.",
+    "lang_choose_below": "Select your language from the languages below: {list}."
   },
   "video_replay": "もう一度見る",
   "video_pause": "一時停止",
@@ -522,7 +523,7 @@
   "fb_thanks": "ありがとうございます！ご意見は保存されました。",
   "fb_need_rating": "まず、顔のマークをタップしてくださいね。",
   "lang_voice": "話す言葉を選んでください",
-  "lang_voice_hint": "マイクをタップして、「日本語」のように話してください。",
+  "lang_voice_hint": "マイクをタップして、話してください。",
   "lang_voice_again": "もう一度お願いします",
   "lang_voice_fail": "すみません、言葉が聞き取れませんでした。もう一度お試しいただくか、下のリストからお選びください。",
   "lang_mic_denied": "マイクの使用が許可されていません。下のリストからお使いの言語をタップしてください。",
@@ -580,5 +581,6 @@
   "land_family_d": "ご両親の電話でサインインし、旅行を追加してください。あとはアプリがご両親の言葉で案内します。",
   "moment_board": "{flight}にご搭乗ください。搭乗券をドアのところで見せてくださいね。",
   "moment_arrive": "{name}さんがあなたを待っていますよ。",
-  "moment_arrive_any": "ご家族があなたを待っていますよ。"
+  "moment_arrive_any": "ご家族があなたを待っていますよ。",
+  "lang_choose_below": "下の言語からお選びください：{list}。"
 }

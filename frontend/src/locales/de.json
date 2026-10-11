@@ -462,11 +462,12 @@
     "fb_thanks": "Thank you! Your feedback is saved.",
     "fb_need_rating": "Please tap a face first.",
     "lang_voice": "Say your language",
-    "lang_voice_hint": "Tap the mic and say it, for example \"Tamil\" or \"हिंदी\".",
+    "lang_voice_hint": "Tap the mic and say your language.",
     "lang_voice_again": "Try again",
     "lang_voice_fail": "Sorry, I could not hear a language. Please try again, or tap your language below.",
     "lang_mic_denied": "Microphone not allowed. Please tap your language below.",
-    "lang_intro": "These languages are available: {list}. Tap your language below, or tap the mic and say it."
+    "lang_intro": "These languages are available: {list}. Tap your language below, or tap the mic and say it.",
+    "lang_choose_below": "Select your language from the languages below: {list}."
   },
   "video_replay": "Nochmal ansehen",
   "video_pause": "Pause",
@@ -522,7 +523,7 @@
   "fb_thanks": "Vielen Dank! Ihr Feedback ist gespeichert.",
   "fb_need_rating": "Bitte tippen Sie zuerst auf ein Gesicht.",
   "lang_voice": "Sagen Sie Ihre Sprache",
-  "lang_voice_hint": "Tippen Sie auf das Mikrofon und sagen Sie es, zum Beispiel „Deutsch“ oder „Englisch“.",
+  "lang_voice_hint": "Tippen Sie auf das Mikrofon und sagen Sie Ihre Sprache.",
   "lang_voice_again": "Versuchen Sie es noch einmal",
   "lang_voice_fail": "Entschuldigung, ich konnte keine Sprache hören. Bitte versuchen Sie es noch einmal oder tippen Sie unten auf Ihre Sprache.",
   "lang_mic_denied": "Mikrofon nicht erlaubt. Bitte tippen Sie unten auf Ihre Sprache.",
@@ -580,5 +581,6 @@
   "land_family_d": "Melden Sie sich auf ihrem Telefon an, fügen Sie ihre Reise hinzu, und die App führt sie in ihrer eigenen Sprache durch den Rest.",
   "moment_board": "Steigen Sie in Ihren Flug {flight}. Zeigen Sie Ihre Bordkarte an der Tür.",
   "moment_arrive": "{name} wartet auf Sie.",
-  "moment_arrive_any": "Ihre Familie wartet auf Sie."
+  "moment_arrive_any": "Ihre Familie wartet auf Sie.",
+  "lang_choose_below": "Wählen Sie Ihre Sprache aus den Sprachen unten aus: {list}."
 }

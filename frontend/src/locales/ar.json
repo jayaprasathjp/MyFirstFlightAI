@@ -462,11 +462,12 @@
     "fb_thanks": "Thank you! Your feedback is saved.",
     "fb_need_rating": "Please tap a face first.",
     "lang_voice": "Say your language",
-    "lang_voice_hint": "Tap the mic and say it, for example \"Tamil\" or \"हिंदी\".",
+    "lang_voice_hint": "Tap the mic and say your language.",
     "lang_voice_again": "Try again",
     "lang_voice_fail": "Sorry, I could not hear a language. Please try again, or tap your language below.",
     "lang_mic_denied": "Microphone not allowed. Please tap your language below.",
-    "lang_intro": "These languages are available: {list}. Tap your language below, or tap the mic and say it."
+    "lang_intro": "These languages are available: {list}. Tap your language below, or tap the mic and say it.",
+    "lang_choose_below": "Select your language from the languages below: {list}."
   },
   "video_replay": "شاهد مرة أخرى",
   "video_pause": "إيقاف مؤقت",
@@ -522,7 +523,7 @@
   "fb_thanks": "شكراً لك! تم حفظ ملاحظاتك.",
   "fb_need_rating": "الرجاء النقر على وجه أولاً.",
   "lang_voice": "قل لغتك",
-  "lang_voice_hint": "اضغط على الميكروفون وقلها، على سبيل المثال \"تاميل\" أو \"هندي\".",
+  "lang_voice_hint": "اضغط على الميكروفون وقل لغتك.",
   "lang_voice_again": "حاول مرة أخرى",
   "lang_voice_fail": "عذرًا، لم أتمكن من سماع أي لغة. يرجى المحاولة مرة أخرى، أو اضغط على لغتك أدناه.",
   "lang_mic_denied": "الميكروفون غير مسموح به. يرجى الضغط على لغتك أدناه.",
@@ -580,5 +581,6 @@
   "land_family_d": "سجل الدخول على هاتفهم، أضف رحلتهم، وسيتحدث التطبيق معهم خلال الباقي بلغتهم الخاصة.",
   "moment_board": "الصعود إلى الطائرة {flight}. أظهر بطاقة صعودك عند الباب.",
   "moment_arrive": "{name} في انتظارك.",
-  "moment_arrive_any": "عائلتك في انتظارك."
+  "moment_arrive_any": "عائلتك في انتظارك.",
+  "lang_choose_below": "اختر لغتك من اللغات أدناه: {list}."
 }

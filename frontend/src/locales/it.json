@@ -457,11 +457,12 @@
     "fb_thanks": "Thank you! Your feedback is saved.",
     "fb_need_rating": "Please tap a face first.",
     "lang_voice": "Say your language",
-    "lang_voice_hint": "Tap the mic and say it, for example \"Tamil\" or \"हिंदी\".",
+    "lang_voice_hint": "Tap the mic and say your language.",
     "lang_voice_again": "Try again",
     "lang_voice_fail": "Sorry, I could not hear a language. Please try again, or tap your language below.",
     "lang_mic_denied": "Microphone not allowed. Please tap your language below.",
-    "lang_intro": "These languages are available: {list}. Tap your language below, or tap the mic and say it."
+    "lang_intro": "These languages are available: {list}. Tap your language below, or tap the mic and say it.",
+    "lang_choose_below": "Select your language from the languages below: {list}."
   },
   "help_intro": "I suoi documenti sono pronti. Se ha bisogno di aiuto in qualsiasi momento, tocchi il pulsante blu \"Aiuto\" in fondo allo schermo. Se si sente perso, tocchi il pulsante rosso \"Mi sono perso\".",
   "bag_not_on_ticket": "Non stampato sul suo biglietto: questo e il limite solito. Per favore, confermi con la compagnia aerea.",
@@ -522,7 +523,7 @@
   "fb_thanks": "Grazie! Il suo feedback è stato salvato.",
   "fb_need_rating": "Per favore, tocca prima una faccina.",
   "lang_voice": "Dica la sua lingua",
-  "lang_voice_hint": "Tocchi il microfono e lo dica, per esempio \"Italiano\" o \"Francese\".",
+  "lang_voice_hint": "Tocca il microfono e di' la tua lingua.",
   "lang_voice_again": "Provi di nuovo",
   "lang_voice_fail": "Mi dispiace, non ho sentito nessuna lingua. Per favore, provi di nuovo, oppure tocchi la sua lingua qui sotto.",
   "lang_mic_denied": "Microfono non permesso. Per favore, tocchi la sua lingua qui sotto.",
@@ -580,5 +581,6 @@
   "land_family_d": "Accedi sul loro telefono, aggiungi il loro viaggio, e l'app li guiderà attraverso il resto nella loro lingua.",
   "moment_board": "Si imbarchi sul tuo volo {flight}. Mostra la tua carta d'imbarco alla porta.",
   "moment_arrive": "{name} ti sta aspettando.",
-  "moment_arrive_any": "La tua famiglia ti sta aspettando."
+  "moment_arrive_any": "La tua famiglia ti sta aspettando.",
+  "lang_choose_below": "Selezioni la sua lingua tra quelle elencate qui sotto: {list}."
 }

@@ -462,11 +462,12 @@
     "fb_thanks": "Thank you! Your feedback is saved.",
     "fb_need_rating": "Please tap a face first.",
     "lang_voice": "Say your language",
-    "lang_voice_hint": "Tap the mic and say it, for example \"Tamil\" or \"हिंदी\".",
+    "lang_voice_hint": "Tap the mic and say your language.",
     "lang_voice_again": "Try again",
     "lang_voice_fail": "Sorry, I could not hear a language. Please try again, or tap your language below.",
     "lang_mic_denied": "Microphone not allowed. Please tap your language below.",
-    "lang_intro": "These languages are available: {list}. Tap your language below, or tap the mic and say it."
+    "lang_intro": "These languages are available: {list}. Tap your language below, or tap the mic and say it.",
+    "lang_choose_below": "Select your language from the languages below: {list}."
   },
   "video_replay": "Посмотреть еще раз",
   "video_pause": "Пауза",
@@ -522,7 +523,7 @@
   "fb_thanks": "Спасибо! Ваш отзыв сохранен.",
   "fb_need_rating": "Пожалуйста, сначала нажмите на смайлик.",
   "lang_voice": "Назовите ваш язык",
-  "lang_voice_hint": "Нажмите на микрофон и произнесите, например, \"Тамильский\" или \"Хинди\".",
+  "lang_voice_hint": "Нажмите на микрофон и скажите, на каком языке вы говорите.",
   "lang_voice_again": "Попробуйте ещё раз",
   "lang_voice_fail": "Извините, я не расслышал язык. Пожалуйста, попробуйте ещё раз или выберите свой язык ниже.",
   "lang_mic_denied": "Микрофон не разрешён. Пожалуйста, выберите свой язык ниже.",
@@ -580,5 +581,6 @@
   "land_family_d": "Войдите на их телефон, добавьте их поездку, и приложение расскажет им все остальное на их родном языке.",
   "moment_board": "Посадка на ваш рейс {flight}. Покажите ваш посадочный талон у входа.",
   "moment_arrive": "{name} ждет вас.",
-  "moment_arrive_any": "Ваша семья ждет вас."
+  "moment_arrive_any": "Ваша семья ждет вас.",
+  "lang_choose_below": "Выберите ваш язык из списка ниже: {list}."
 }

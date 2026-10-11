@@ -462,11 +462,12 @@
     "fb_thanks": "Thank you! Your feedback is saved.",
     "fb_need_rating": "Please tap a face first.",
     "lang_voice": "Say your language",
-    "lang_voice_hint": "Tap the mic and say it, for example \"Tamil\" or \"हिंदी\".",
+    "lang_voice_hint": "Tap the mic and say your language.",
     "lang_voice_again": "Try again",
     "lang_voice_fail": "Sorry, I could not hear a language. Please try again, or tap your language below.",
     "lang_mic_denied": "Microphone not allowed. Please tap your language below.",
-    "lang_intro": "These languages are available: {list}. Tap your language below, or tap the mic and say it."
+    "lang_intro": "These languages are available: {list}. Tap your language below, or tap the mic and say it.",
+    "lang_choose_below": "Select your language from the languages below: {list}."
   },
   "video_replay": "Tonton semula",
   "video_pause": "Jeda",
@@ -522,7 +523,7 @@
   "fb_thanks": "Terima kasih! Maklum balas anda telah disimpan.",
   "fb_need_rating": "Sila sentuh muka dulu.",
   "lang_voice": "Sebutkan bahasa anda",
-  "lang_voice_hint": "Tekan mikrofon dan sebutkannya, contohnya \"Tamil\" atau \"हिंदी\".",
+  "lang_voice_hint": "Tekan mikrofon dan sebutkan bahasa anda.",
   "lang_voice_again": "Cuba lagi",
   "lang_voice_fail": "Maaf, saya tidak dapat mendengar bahasa. Sila cuba lagi, atau tekan bahasa anda di bawah.",
   "lang_mic_denied": "Mikrofon tidak dibenarkan. Sila tekan bahasa anda di bawah.",
@@ -580,5 +581,6 @@
   "land_family_d": "Log masuk di telefon mereka, tambah perjalanan mereka, dan aplikasi ini akan membimbing mereka melalui selebihnya dalam bahasa mereka sendiri.",
   "moment_board": "Naik kapal terbang {flight} anda. Tunjuk pas masuk anda di pintu.",
   "moment_arrive": "{name} sedang tunggu anda.",
-  "moment_arrive_any": "Keluarga anda sedang tunggu anda."
+  "moment_arrive_any": "Keluarga anda sedang tunggu anda.",
+  "lang_choose_below": "Pilih bahasa anda dari senarai bahasa di bawah: {list}."
 }

@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useI18n } from '../i18n'
 import { LANGUAGES } from '../strings'
-import { store } from '../api'
-import { speak, stopSpeaking } from '../voice'
+import { stopSpeaking } from '../voice'
 import Listen from '../components/Listen'
 import Icon from '../components/Icon'
 import { GlobeView } from '../components/Stage'
 import { sampleRoute, SAMPLE_COUNT } from '../sampleRoutes'
+import { VoicePick } from './LanguageScreen'
 
 const STEPS = [
   ['camera', 'land_s1_t', 'land_s1_d'],
@@ -20,6 +20,8 @@ const STEPS = [
 export default function LandingScreen({ onStart, onStory, onLanguage, toast }) {
   const { t, lang } = useI18n()
   const hero = `${t('land_title')} ${t('land_sub')}`
+  // the languages section reads out every language there is, and how to choose (tap one, or say it)
+  const langsText = `${t('land_langs')}. ${t('land_langs_d')} ${t('lang_intro', { list: LANGUAGES.map((l) => l.english).join(', ') })}`
   // the globe flies from a home airport for the chosen language, to a new destination every few seconds
   const [n, setN] = useState(0)
   useEffect(() => {
@@ -30,13 +32,9 @@ export default function LandingScreen({ onStart, onStory, onLanguage, toast }) {
   const pick = sampleRoute(lang, n)
   // the same object while the airports are the same, so a language change doesn't restart the globe
   const route = useMemo(() => pick, [pick.origin_code, pick.destination_code]) // eslint-disable-line react-hooks/exhaustive-deps
-  // "Read to me": the opening lines are read when the page opens (after the first tap anywhere, as browsers require)
-  useEffect(() => {
-    if (!store.get('mff-ui-auto', true)) return
-    const id = setTimeout(() => speak(hero, lang), 1200)
-    return () => { clearTimeout(id); stopSpeaking() }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [lang])
+  // Nothing is read out by itself on this page: the visitor may be about to use the mic to say their language.
+  // Every part has its own 🔊 button instead. Stop any reading when leaving the page.
+  useEffect(() => stopSpeaking, [])
 
   return (
     <main className="landing">
@@ -54,8 +52,9 @@ export default function LandingScreen({ onStart, onStory, onLanguage, toast }) {
       </section>
 
       <section className="land-band">
-        <div className="gh"><h2>{t('land_langs')}</h2><Listen text={`${t('land_langs')}. ${t('land_langs_d')}`} toast={toast} /></div>
+        <div className="gh"><h2>{t('land_langs')}</h2><Listen text={langsText} toast={toast} /></div>
         <p className="muted">{t('land_langs_d')}</p>
+        <VoicePick onPick={onLanguage} />
         <div className="land-langs">
           {LANGUAGES.map((l) => (
             <button key={l.code} className={l.code === lang ? 'on' : ''} lang={l.code} onClick={() => onLanguage(l.code)} aria-pressed={l.code === lang}>{l.native}</button>

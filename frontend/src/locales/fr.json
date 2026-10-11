@@ -462,11 +462,12 @@
     "fb_thanks": "Thank you! Your feedback is saved.",
     "fb_need_rating": "Please tap a face first.",
     "lang_voice": "Say your language",
-    "lang_voice_hint": "Tap the mic and say it, for example \"Tamil\" or \"हिंदी\".",
+    "lang_voice_hint": "Tap the mic and say your language.",
     "lang_voice_again": "Try again",
     "lang_voice_fail": "Sorry, I could not hear a language. Please try again, or tap your language below.",
     "lang_mic_denied": "Microphone not allowed. Please tap your language below.",
-    "lang_intro": "These languages are available: {list}. Tap your language below, or tap the mic and say it."
+    "lang_intro": "These languages are available: {list}. Tap your language below, or tap the mic and say it.",
+    "lang_choose_below": "Select your language from the languages below: {list}."
   },
   "video_replay": "Regarder à nouveau",
   "video_pause": "Pause",
@@ -522,7 +523,7 @@
   "fb_thanks": "Merci! Vos commentaires sont enregistrés.",
   "fb_need_rating": "Veuillez d'abord toucher un visage.",
   "lang_voice": "Dites votre langue",
-  "lang_voice_hint": "Appuyez sur le micro et dites-le, par exemple \"Tamoul\" ou \"Hindi\".",
+  "lang_voice_hint": "Appuyez sur le micro et dites votre langue.",
   "lang_voice_again": "Essayez encore",
   "lang_voice_fail": "Désolé, je n'ai pas pu entendre de langue. Veuillez réessayer, ou appuyez sur votre langue ci-dessous.",
   "lang_mic_denied": "Microphone non autorisé. Veuillez appuyer sur votre langue ci-dessous.",
@@ -580,5 +581,6 @@
   "land_family_d": "Connectez-vous sur leur téléphone, ajoutez leur voyage, et l'application les guide pour le reste dans leur propre langue.",
   "moment_board": "Montez à bord de votre vol {flight}. Montrez votre carte d'embarquement à la porte.",
   "moment_arrive": "{name} vous attend.",
-  "moment_arrive_any": "Votre famille vous attend."
+  "moment_arrive_any": "Votre famille vous attend.",
+  "lang_choose_below": "Choisissez votre langue parmi les langues ci-dessous : {list}."
 }

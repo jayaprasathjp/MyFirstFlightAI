@@ -1635,7 +1635,7 @@ ul.do li::before {
 .helphint-play { margin-inline-start: auto; font-size: 20px }
 
 /* language page: say your language */
-.voicepick { display: grid; grid-template-columns: auto 1fr; gap: 10px 14px; align-items: center;
+.voicepick { display: grid; grid-template-columns: auto 1fr auto; gap: 10px 14px; align-items: center;
   border: 1.5px solid var(--brand); background: var(--brand-soft) }
 .voicepick .micbtn { width: 64px; height: 64px }
 .voicepick .micbtn svg { width: 28px; height: 28px }

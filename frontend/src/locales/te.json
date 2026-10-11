@@ -462,11 +462,12 @@
     "fb_thanks": "Thank you! Your feedback is saved.",
     "fb_need_rating": "Please tap a face first.",
     "lang_voice": "Say your language",
-    "lang_voice_hint": "Tap the mic and say it, for example \"Tamil\" or \"हिंदी\".",
+    "lang_voice_hint": "Tap the mic and say your language.",
     "lang_voice_again": "Try again",
     "lang_voice_fail": "Sorry, I could not hear a language. Please try again, or tap your language below.",
     "lang_mic_denied": "Microphone not allowed. Please tap your language below.",
-    "lang_intro": "These languages are available: {list}. Tap your language below, or tap the mic and say it."
+    "lang_intro": "These languages are available: {list}. Tap your language below, or tap the mic and say it.",
+    "lang_choose_below": "Select your language from the languages below: {list}."
   },
   "video_replay": "మళ్ళీ చూడండి",
   "video_pause": "ఆపు",
@@ -522,7 +523,7 @@
   "fb_thanks": "ధన్యవాదాలు! మీ అభిప్రాయం సేవ్ చేయబడింది.",
   "fb_need_rating": "దయచేసి ముందుగా ఒక ముఖాన్ని నొక్కండి.",
   "lang_voice": "మీ భాషను చెప్పండి",
-  "lang_voice_hint": "మైక్‌ను నొక్కి చెప్పండి, ఉదాహరణకు \"తెలుగు\" లేదా \"హిందీ\".",
+  "lang_voice_hint": "మైక్ నొక్కి, మీ భాష చెప్పండి.",
   "lang_voice_again": "మళ్ళీ ప్రయత్నించండి",
   "lang_voice_fail": "క్షమించండి, నేను భాషను వినలేకపోయాను. దయచేసి మళ్ళీ ప్రయత్నించండి, లేదా కింద మీ భాషను నొక్కండి.",
   "lang_mic_denied": "మైక్రోఫోన్‌కు అనుమతి లేదు. దయచేసి కింద మీ భాషను నొక్కండి.",
@@ -580,5 +581,6 @@
   "land_family_d": "వారి ఫోన్‌లో సైన్ ఇన్ చేయండి, వారి ప్రయాణాన్ని జోడించండి, మరియు యాప్ మిగిలిన వాటిని వారి స్వంత భాషలో వారికి వివరిస్తుంది.",
   "moment_board": "{flight} విమానం ఎక్కండి. మీ బోర్డింగ్ పాస్‌ను ద్వారం వద్ద చూపించండి.",
   "moment_arrive": "{name} మీ కోసం ఎదురుచూస్తున్నారు.",
-  "moment_arrive_any": "మీ కుటుంబం మీ కోసం ఎదురుచూస్తోంది."
+  "moment_arrive_any": "మీ కుటుంబం మీ కోసం ఎదురుచూస్తోంది.",
+  "lang_choose_below": "కింద ఇచ్చిన భాషల నుండి మీ భాషను ఎంచుకోండి: {list}."
 }

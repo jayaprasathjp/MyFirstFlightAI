@@ -462,11 +462,12 @@
     "fb_thanks": "Thank you! Your feedback is saved.",
     "fb_need_rating": "Please tap a face first.",
     "lang_voice": "Say your language",
-    "lang_voice_hint": "Tap the mic and say it, for example \"Tamil\" or \"हिंदी\".",
+    "lang_voice_hint": "Tap the mic and say your language.",
     "lang_voice_again": "Try again",
     "lang_voice_fail": "Sorry, I could not hear a language. Please try again, or tap your language below.",
     "lang_mic_denied": "Microphone not allowed. Please tap your language below.",
-    "lang_intro": "These languages are available: {list}. Tap your language below, or tap the mic and say it."
+    "lang_intro": "These languages are available: {list}. Tap your language below, or tap the mic and say it.",
+    "lang_choose_below": "Select your language from the languages below: {list}."
   },
   "video_replay": "पुन्हा पहा",
   "video_pause": "थांबवा",
@@ -522,7 +523,7 @@
   "fb_thanks": "धन्यवाद! तुमचा अभिप्राय जतन केला आहे.",
   "fb_need_rating": "कृपया आधी एका चेहऱ्यावर टॅप करा.",
   "lang_voice": "तुमची भाषा सांगा",
-  "lang_voice_hint": "माईकवर टॅप करा आणि बोला, उदाहरणार्थ \"तमिळ\" किंवा \"हिंदी\".",
+  "lang_voice_hint": "माईकवर टॅप करा आणि तुमची भाषा सांगा.",
   "lang_voice_again": "पुन्हा प्रयत्न करा",
   "lang_voice_fail": "माफ करा, मला कोणतीही भाषा ऐकू आली नाही. कृपया पुन्हा प्रयत्न करा, किंवा खाली तुमची भाषा निवडा.",
   "lang_mic_denied": "माईकला परवानगी नाही. कृपया खाली तुमची भाषा निवडा.",
@@ -580,5 +581,6 @@
   "land_family_d": "त्यांच्या फोनवर साइन इन करा, त्यांचा प्रवास जोडा आणि ॲप त्यांना त्यांच्या भाषेत बाकीचे सर्व काही समजावून सांगेल.",
   "moment_board": "तुमच्या {flight} विमानात चढण्याची वेळ झाली आहे. दारापाशी तुमचे बोर्डिंग पास दाखवा.",
   "moment_arrive": "{name} तुमची वाट पाहत आहेत.",
-  "moment_arrive_any": "तुमचे कुटुंब तुमची वाट पाहत आहे."
+  "moment_arrive_any": "तुमचे कुटुंब तुमची वाट पाहत आहे.",
+  "lang_choose_below": "तुमची भाषा खालील भाषांमधून निवडा: {list}."
 }

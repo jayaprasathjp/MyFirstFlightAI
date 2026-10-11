@@ -462,11 +462,12 @@
     "fb_thanks": "Thank you! Your feedback is saved.",
     "fb_need_rating": "Please tap a face first.",
     "lang_voice": "Say your language",
-    "lang_voice_hint": "Tap the mic and say it, for example \"Tamil\" or \"हिंदी\".",
+    "lang_voice_hint": "Tap the mic and say your language.",
     "lang_voice_again": "Try again",
     "lang_voice_fail": "Sorry, I could not hear a language. Please try again, or tap your language below.",
     "lang_mic_denied": "Microphone not allowed. Please tap your language below.",
-    "lang_intro": "These languages are available: {list}. Tap your language below, or tap the mic and say it."
+    "lang_intro": "These languages are available: {list}. Tap your language below, or tap the mic and say it.",
+    "lang_choose_below": "Select your language from the languages below: {list}."
   },
   "video_replay": "ફરીથી જુઓ",
   "video_pause": "રોકો",
@@ -522,7 +523,7 @@
   "fb_thanks": "આભાર! તમારો પ્રતિભાવ સાચવી લેવામાં આવ્યો છે.",
   "fb_need_rating": "કૃપા કરીને પહેલા ચહેરા પર ટેપ કરો.",
   "lang_voice": "તમારી ભાષા બોલો",
-  "lang_voice_hint": "માઇક પર ટેપ કરો અને બોલો, ઉદાહરણ તરીકે \"તમિલ\" અથવા \"હિન્દી\".",
+  "lang_voice_hint": "માઇક પર ટેપ કરો અને તમારી ભાષા બોલો.",
   "lang_voice_again": "ફરી પ્રયાસ કરો",
   "lang_voice_fail": "માફ કરશો, હું કોઈ ભાષા સાંભળી શક્યો નથી. કૃપા કરીને ફરી પ્રયાસ કરો, અથવા નીચે તમારી ભાષા પર ટેપ કરો.",
   "lang_mic_denied": "માઇક્રોફોનની પરવાનગી નથી. કૃપા કરીને નીચે તમારી ભાષા પર ટેપ કરો.",
@@ -580,5 +581,6 @@
   "land_family_d": "તેમના ફોનમાં સાઇન ઇન કરો, તેમની ટ્રિપ ઉમેરો અને એપ તેમને બાકીની બધી માહિતી તેમની પોતાની ભાષામાં જણાવશે.",
   "moment_board": "તમારી ફ્લાઇટ {flight} માં બોર્ડિંગ કરો. દરવાજા પર તમારો બોર્ડિંગ પાસ બતાવો.",
   "moment_arrive": "{name} તમારી રાહ જોઈ રહ્યા છે.",
-  "moment_arrive_any": "તમારો પરિવાર તમારી રાહ જોઈ રહ્યો છે."
+  "moment_arrive_any": "તમારો પરિવાર તમારી રાહ જોઈ રહ્યો છે.",
+  "lang_choose_below": "નીચે આપેલી ભાષાઓમાંથી તમારી ભાષા પસંદ કરો: {list}."
 }

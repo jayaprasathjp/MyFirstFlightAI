@@ -257,7 +257,7 @@
   "fb_thanks": "Thank you! Your feedback is saved.",
   "fb_need_rating": "Please tap a face first.",
   "lang_voice": "Say your language",
-  "lang_voice_hint": "Tap the mic and say it, for example \"Tamil\" or \"हिंदी\".",
+  "lang_voice_hint": "Tap the mic and say your language.",
   "lang_voice_again": "Try again",
   "lang_voice_fail": "Sorry, I could not hear a language. Please try again, or tap your language below.",
   "lang_mic_denied": "Microphone not allowed. Please tap your language below.",
@@ -315,5 +315,6 @@
   "land_family_d": "Sign in on their phone, add their trip, and the app talks them through the rest in their own language.",
   "moment_board": "Boarding your flight {flight}. Show your boarding pass at the door.",
   "moment_arrive": "{name} is waiting for you.",
-  "moment_arrive_any": "Your family is waiting for you."
+  "moment_arrive_any": "Your family is waiting for you.",
+  "lang_choose_below": "Select your language from the languages below: {list}."
 }

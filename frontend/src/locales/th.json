@@ -457,11 +457,12 @@
     "fb_thanks": "Thank you! Your feedback is saved.",
     "fb_need_rating": "Please tap a face first.",
     "lang_voice": "Say your language",
-    "lang_voice_hint": "Tap the mic and say it, for example \"Tamil\" or \"हिंदी\".",
+    "lang_voice_hint": "Tap the mic and say your language.",
     "lang_voice_again": "Try again",
     "lang_voice_fail": "Sorry, I could not hear a language. Please try again, or tap your language below.",
     "lang_mic_denied": "Microphone not allowed. Please tap your language below.",
-    "lang_intro": "These languages are available: {list}. Tap your language below, or tap the mic and say it."
+    "lang_intro": "These languages are available: {list}. Tap your language below, or tap the mic and say it.",
+    "lang_choose_below": "Select your language from the languages below: {list}."
   },
   "help_intro": "เอกสารของท่านพร้อมแล้ว หากท่านต้องการความช่วยเหลือเมื่อใดก็ตาม ให้กดปุ่มช่วยเหลือสีน้ำเงินที่อยู่ด้านล่างของหน้าจอ หากท่านหลงทาง ให้กดปุ่มฉันหลงทางสีแดง",
   "bag_not_on_ticket": "ไม่ได้พิมพ์อยู่บนตั๋วของท่าน: นี่คือขีดจำกัดปกติ โปรดยืนยันกับสายการบินอีกครั้ง",
@@ -522,7 +523,7 @@
   "fb_thanks": "ขอบคุณค่ะ! เราบันทึกความคิดเห็นของคุณแล้ว",
   "fb_need_rating": "กรุณาแตะที่รูปหน้าก่อนค่ะ",
   "lang_voice": "พูดภาษาของคุณ",
-  "lang_voice_hint": "แตะไมโครโฟนแล้วพูด เช่น \"ทมิฬ\" หรือ \"ฮินดี\"",
+  "lang_voice_hint": "แตะไมโครโฟนแล้วพูดภาษาของคุณได้เลยค่ะ",
   "lang_voice_again": "ลองอีกครั้ง",
   "lang_voice_fail": "ขออภัยค่ะ ไม่ได้ยินภาษาที่คุณพูด กรุณาลองอีกครั้ง หรือแตะภาษาของคุณด้านล่างนี้ค่ะ",
   "lang_mic_denied": "ไม่อนุญาตให้ใช้ไมโครโฟน กรุณาแตะภาษาของคุณด้านล่างนี้ค่ะ",
@@ -580,5 +581,6 @@
   "land_family_d": "ลงชื่อเข้าใช้ในโทรศัพท์ของท่าน เพิ่มการเดินทางของท่าน แล้วแอปจะแนะนำขั้นตอนที่เหลือให้ท่านในภาษาของท่านเอง",
   "moment_board": "ขึ้นเครื่องบินเที่ยวบินที่ {flight} ได้เลยค่ะ/ครับ ยื่นตั๋วเครื่องบินที่ประตูทางเข้าได้เลยนะคะ/นะครับ",
   "moment_arrive": "{name} กำลังรอคุณอยู่นะคะ/นะครับ",
-  "moment_arrive_any": "ครอบครัวของคุณกำลังรอคุณอยู่นะคะ/นะครับ"
+  "moment_arrive_any": "ครอบครัวของคุณกำลังรอคุณอยู่นะคะ/นะครับ",
+  "lang_choose_below": "เลือกภาษาของท่านจากรายการด้านล่างนี้: {list}"
 }

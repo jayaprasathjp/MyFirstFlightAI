@@ -462,11 +462,12 @@
     "fb_thanks": "Thank you! Your feedback is saved.",
     "fb_need_rating": "Please tap a face first.",
     "lang_voice": "Say your language",
-    "lang_voice_hint": "Tap the mic and say it, for example \"Tamil\" or \"हिंदी\".",
+    "lang_voice_hint": "Tap the mic and say your language.",
     "lang_voice_again": "Try again",
     "lang_voice_fail": "Sorry, I could not hear a language. Please try again, or tap your language below.",
     "lang_mic_denied": "Microphone not allowed. Please tap your language below.",
-    "lang_intro": "These languages are available: {list}. Tap your language below, or tap the mic and say it."
+    "lang_intro": "These languages are available: {list}. Tap your language below, or tap the mic and say it.",
+    "lang_choose_below": "Select your language from the languages below: {list}."
   },
   "video_replay": "ಮತ್ತೆ ನೋಡಿ",
   "video_pause": "ವಿರಾಮ",
@@ -522,7 +523,7 @@
   "fb_thanks": "ಧನ್ಯವಾದಗಳು! ನಿಮ್ಮ ಪ್ರತಿಕ್ರಿಯೆಯನ್ನು ಉಳಿಸಲಾಗಿದೆ.",
   "fb_need_rating": "ದಯವಿಟ್ಟು ಮೊದಲು ಒಂದು ಮುಖವನ್ನು ಸ್ಪರ್ಶಿಸಿ.",
   "lang_voice": "ನಿಮ್ಮ ಭಾಷೆಯನ್ನು ಹೇಳಿ",
-  "lang_voice_hint": "ಮೈಕ್ ಒತ್ತಿ ಹೇಳಿ, ಉದಾಹರಣೆಗೆ \"ಕನ್ನಡ\" ಅಥವಾ \"ಹಿಂದಿ\".",
+  "lang_voice_hint": "ಮೈಕ್ ಒತ್ತಿ ನಿಮ್ಮ ಭಾಷೆ ಹೇಳಿ.",
   "lang_voice_again": "ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ",
   "lang_voice_fail": "ಕ್ಷಮಿಸಿ, ನನಗೆ ಭಾಷೆ ಕೇಳಿಸಲಿಲ್ಲ. ದಯವಿಟ್ಟು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ, ಅಥವಾ ಕೆಳಗೆ ನಿಮ್ಮ ಭಾಷೆಯನ್ನು ಆಯ್ಕೆಮಾಡಿ.",
   "lang_mic_denied": "ಮೈಕ್ರೊಫೋನ್ ಅನುಮತಿಸಲಾಗಿಲ್ಲ. ದಯವಿಟ್ಟು ಕೆಳಗೆ ನಿಮ್ಮ ಭಾಷೆಯನ್ನು ಆಯ್ಕೆಮಾಡಿ.",
@@ -580,5 +581,6 @@
   "land_family_d": "ಅವರ ಫೋನ್‌ನಲ್ಲಿ ಸೈನ್ ಇನ್ ಮಾಡಿ, ಅವರ ಪ್ರಯಾಣವನ್ನು ಸೇರಿಸಿ, ಮತ್ತು ಆ್ಯಪ್ ಅವರಿಗೆ ಉಳಿದದ್ದನ್ನು ಅವರದೇ ಭಾಷೆಯಲ್ಲಿ ತಿಳಿಸುತ್ತದೆ.",
   "moment_board": "ನಿಮ್ಮ ವಿಮಾನ {flight} ಹತ್ತಲು ಸಿದ್ಧರಾಗಿ. ದ್ವಾರದಲ್ಲಿ ನಿಮ್ಮ ಬೋರ್ಡಿಂಗ್ ಪಾಸ್ ತೋರಿಸಿ.",
   "moment_arrive": "{name} ನಿಮಗಾಗಿ ಕಾಯುತ್ತಿದ್ದಾರೆ.",
-  "moment_arrive_any": "ನಿಮ್ಮ ಕುಟುಂಬದವರು ನಿಮಗಾಗಿ ಕಾಯುತ್ತಿದ್ದಾರೆ."
+  "moment_arrive_any": "ನಿಮ್ಮ ಕುಟುಂಬದವರು ನಿಮಗಾಗಿ ಕಾಯುತ್ತಿದ್ದಾರೆ.",
+  "lang_choose_below": "ಕೆಳಗಿನ ಭಾಷೆಗಳಿಂದ ನಿಮ್ಮ ಭಾಷೆಯನ್ನು ಆಯ್ಕೆಮಾಡಿ: {list}."
 }
