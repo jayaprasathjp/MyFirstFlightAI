@@ -5,7 +5,7 @@ export default function Chatbot({ apiBaseUrl }) {
   const [messages, setMessages] = useState([
     {
       role: 'model',
-      content: 'Hello! I am MyFirstFlight AI. How can I help you today?'
+      content: 'Hello! I am MyFirstFlightAI. How can I help you today?'
     }
   ])
   const [input, setInput] = useState('')
@@ -80,7 +80,7 @@ export default function Chatbot({ apiBaseUrl }) {
       <header className="chat-card-header">
         <div className="header-title">
           <span className="logo-icon">✈️</span>
-          <h1>MyFirstFlight AI</h1>
+          <h1>MyFirstFlightAI</h1>
         </div>
         <div className="online-indicator">
           <span className={`dot ${online ? 'online' : 'offline'}`}></span>

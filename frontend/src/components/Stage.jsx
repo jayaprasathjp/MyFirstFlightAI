@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useI18n } from '../i18n'
 import { useStage } from '../StageContext'
+import { usePlaces } from '../places'
+import { speak } from '../voice'
 import { W as MW, H as MH, TY as MTY, LAND } from '../assets/worldmap'
 
 // Illustrated "stage" above each screen. Everything is drawn from the traveller's own trip data:
@@ -8,6 +10,9 @@ import { W as MW, H as MH, TY as MTY, LAND } from '../assets/worldmap'
 // Decorative only (aria-hidden); every fact on it is also in the text of the screen below.
 
 const R = MW / (2 * Math.PI)
+// top-down airliner, nose along +x (same shape as the flight scene)
+const AIRLINER = 'M30 0 L10 -4 L4 -24 L-3 -24 L0 -4 L-18 -3 L-23 -10 L-27 -10 L-25 0 L-27 10 L-23 10 L-18 3 L0 4 L-3 24 L4 24 L10 4 Z'
+const still = () => typeof window !== 'undefined' && !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
 const project = (lat, lon) => {
   const x = ((lon + 180) / 360) * MW
   const phi = (Math.max(-80, Math.min(84, lat)) * Math.PI) / 180
@@ -48,7 +53,16 @@ export function useRoute(summary) {
     // lift the line into a gentle arc, always bending away from the equator-side so it reads as a flight path
     const mx = (a[0] + b[0]) / 2 - (dy / (dist || 1)) * dist * 0.12
     const my = (a[1] + b[1]) / 2 + (dx / (dist || 1)) * dist * 0.12 - dist * 0.04
-    return { a, b, c: [mx, my], dist, d: `M${a[0].toFixed(1)} ${a[1].toFixed(1)}Q${mx.toFixed(1)} ${my.toFixed(1)} ${b[0].toFixed(1)} ${b[1].toFixed(1)}` }
+    // drawn length of the arc (for the reveal) and the real great-circle distance (for how long the flight takes)
+    let len = 0, prev = a
+    for (let i = 1; i <= 24; i++) {
+      const u = i / 24, v = 1 - u
+      const p = [v * v * a[0] + 2 * v * u * mx + u * u * b[0], v * v * a[1] + 2 * v * u * my + u * u * b[1]]
+      len += Math.hypot(p[0] - prev[0], p[1] - prev[1]); prev = p
+    }
+    const rad = Math.PI / 180, h = Math.sin(((d[0] - o[0]) * rad) / 2) ** 2 + Math.cos(o[0] * rad) * Math.cos(d[0] * rad) * Math.sin(((d[1] - o[1]) * rad) / 2) ** 2
+    const km = 12742 * Math.asin(Math.sqrt(h))
+    return { a, b, c: [mx, my], dist, len, km, from: o, to: d, d: `M${a[0].toFixed(1)} ${a[1].toFixed(1)}Q${mx.toFixed(1)} ${my.toFixed(1)} ${b[0].toFixed(1)} ${b[1].toFixed(1)}` }
   }, [table, summary])
 }
 
@@ -66,6 +80,43 @@ function useSize(ref, fallback) {
     return () => ro.disconnect()
   }, [ref])
   return size
+}
+
+let webgl
+export const hasWebGL = () => (webgl ??= (() => { try { const c = document.createElement('canvas'); return !!(c.getContext('webgl2') || c.getContext('webgl')) } catch { return false } })())
+
+// Mounts a Three.js scene (its code loads only when a scene needs it) over its flat version.
+// The flat version shows while 3D loads, and stays if the phone can't run 3D.
+function Scene3D({ load, deps, fallback, apiRef }) {
+  const host = useRef(null)
+  const [state, setState] = useState(() => (hasWebGL() ? 'loading' : 'off'))
+  useEffect(() => {
+    if (state === 'off') return
+    let api, dead = false
+    load().then((make) => {
+      if (dead) return
+      api = make(host.current); if (apiRef) apiRef.current = api; setState('on')
+      host.current?.querySelector('canvas')?.addEventListener('webglcontextlost', (e) => { e.preventDefault(); if (!dead) setState('off') }) // flat drawing, never white
+    }).catch(() => { if (!dead) setState('off') })
+    return () => { dead = true; api?.dispose(); if (apiRef) apiRef.current = null }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, deps)
+  return <div className="scene3d">{state !== 'on' && fallback}<div ref={host} className="scene3d-host" /></div>
+}
+
+// 3D Earth with the trip's route rising off it and a plane flying it.
+export function GlobeView({ summary, trip }) {
+  const route = useRoute(summary)
+  const place = usePlaces([summary?.origin_city, summary?.destination_city])
+  const api = useRef(null)
+  const flat = <MapView summary={summary} trip={trip} />
+  const name = (c, code) => place(summary?.[c]) || summary?.[code]
+  const from = name('origin_city', 'origin_code'), to = name('destination_city', 'destination_code')
+  useEffect(() => { api.current?.setNames?.(from, to) }, [from, to]) // translated names arrive without restarting the globe
+  if (!route) return flat
+  return <Scene3D deps={[route]} apiRef={api} fallback={flat} load={() => import('../three/globe').then((m) => (el) => m.createGlobe(el, {
+    from: route.from, to: route.to, fromName: from, toName: to, km: route.km, still: still(),
+  }))} />
 }
 
 function MapView({ summary, trip }) {
@@ -93,7 +144,8 @@ function MapView({ summary, trip }) {
   const k = vb[2] / pw // map units per screen px
   const aUp = route && route.a[1] <= route.b[1] // the higher airport gets its name above the pin, the lower one below
   const o = summary?.origin_code, d = summary?.destination_code
-  const oc = summary?.origin_city || o, dc = summary?.destination_city || d
+  const place = usePlaces([summary?.origin_city, summary?.destination_city])
+  const oc = place(summary?.origin_city) || o, dc = place(summary?.destination_city) || d
   const label = (p, text, anchor, dyp) => (
     <text x={p[0]} y={p[1] + dyp * k} textAnchor={anchor} fontSize={15 * k} fontWeight="700" fill="#fff"
       stroke="#0A1F3C" strokeWidth={5 * k} paintOrder="stroke" strokeLinejoin="round">{text}</text>
@@ -102,14 +154,27 @@ function MapView({ summary, trip }) {
     <svg ref={ref} className="stage-svg" viewBox={vb.join(' ')} preserveAspectRatio="xMidYMid slice" role="img" aria-label={trip ? `${oc} → ${dc}` : t('step_language')}>
       <defs>
         <linearGradient id="seaG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#1B4A63" /><stop offset="1" stopColor="#0E2F47" /></linearGradient>
+        {route && (
+          <mask id="routeReveal" maskUnits="userSpaceOnUse" x="0" y="0" width={MW} height={MH}>
+            <path className="draw" d={route.d} fill="none" stroke="#fff" strokeWidth={16 * k} strokeDasharray={`${route.len} ${route.len}`} strokeLinecap="round" style={{ '--len': route.len }} />
+          </mask>
+        )}
       </defs>
       <rect x="0" y="0" width={MW} height={MH} fill="url(#seaG)" />
       <path d={LAND} fill="#BDB79A" stroke="#8F8A6E" strokeWidth={0.8 * k} strokeLinejoin="round" />
       <rect x="0" y="0" width={MW} height={MH} filter="url(#seaNoise)" opacity=".13" style={{ mixBlendMode: 'overlay' }} />
       {route && (
         <>
-          <path d={route.d} fill="none" stroke="#FFC83D" strokeWidth={3.2 * k} strokeDasharray={`${9 * k} ${7 * k}`} strokeLinecap="round" />
-          {[route.a, route.b].map((p, i) => <circle key={i} cx={p[0]} cy={p[1]} r={7 * k} fill="#FFC83D" stroke="#0A1F3C" strokeWidth={2.4 * k} />)}
+          <path d={route.d} mask="url(#routeReveal)" fill="none" stroke="#FFC83D" strokeWidth={3.2 * k} strokeDasharray={`${9 * k} ${7 * k}`} strokeLinecap="round" />
+          {[route.a, route.b].map((p, i) => <circle key={i} className={'pin pin' + i} cx={p[0]} cy={p[1]} r={7 * k} fill="#FFC83D" stroke="#0A1F3C" strokeWidth={2.4 * k} />)}
+          {!still() && (
+            // after the route has drawn, a plane keeps flying it, origin to destination
+            <g opacity="0">
+              <set attributeName="opacity" to="1" begin="1.5s" />
+              <path d={AIRLINER} transform={`scale(${0.42 * k})`} fill="#fff" stroke="#0A1F3C" strokeWidth="2.6" strokeLinejoin="round" />
+              <animateMotion dur={`${Math.min(14, 4 + route.km / 900).toFixed(1)}s`} begin="1.5s" repeatCount="indefinite" rotate="auto" path={route.d} />
+            </g>
+          )}
           {label(route.a, oc, 'middle', aUp ? -14 : 24)}
           {label(route.b, dc, 'middle', aUp ? 24 : -14)}
         </>
@@ -154,8 +219,16 @@ function DeskView({ trip, check }) {
   )
 }
 
-function CalendarView({ summary }) {
-  const { lang, fmtDate } = useI18n()
+// clothes colours for the suitcase that fills as the checklist is ticked
+const CLOTHES = ['#7a2e3a', '#e8e2d6', '#b8913a', '#2f4f6f', '#5c6b4a', '#9a4f2f', '#6b4c7a', '#c9d4d6', '#8a6d3b', '#3f3f46', '#b85c5c', '#4a7a6e']
+
+function CalendarView({ summary, checklist, done = {} }) {
+  const { lang, fmtDate, t } = useI18n()
+  // progress through the checklist: each ticked item puts something in the case; at 100% it shuts
+  const required = (checklist?.items || []).filter((i) => !i.optional)
+  const count = required.filter((i) => done[i.id]).length, total = required.length
+  const pct = total ? count / total : 0
+  const filled = count ? Math.max(1, Math.round(pct * CLOTHES.length)) : 0, full = total > 0 && count === total
   const iso = summary?.departure_date
   let day = '', month = '', weekday = ''
   if (iso) {
@@ -175,7 +248,12 @@ function CalendarView({ summary }) {
         <div className="cal-w">{weekday}</div>
         <div className="cal-f">{(summary?.flights || [])[0] || ''}</div>
       </div>
-      <div className="pouch"><i /><b>{summary?.origin_code || ''} → {summary?.destination_code || ''}</b></div>
+      <div className={'case' + (full ? ' shut' : '')}>
+        <div className="case-body">{CLOTHES.slice(0, filled).map((c, i) => <i key={i} style={{ background: c }} />)}</div>
+        <div className="case-lid"><b>{summary?.origin_code || ''} → {summary?.destination_code || ''}</b></div>
+        {full && <span className="case-tag">{t('ready_title')} ✓</span>}
+      </div>
+      {total > 0 && <div className="stage-prog"><span>{count} / {total} {t('done')}</span><i><b style={{ width: `${pct * 100}%` }} /></i></div>}
     </div>
   )
 }
@@ -188,13 +266,15 @@ const at = (n, i) => {
   const a = Math.floor(f), b = Math.min(PLAN.length - 1, a + 1), u = f - a
   return [PLAN[a][0] + (PLAN[b][0] - PLAN[a][0]) * u, PLAN[a][1] + (PLAN[b][1] - PLAN[a][1]) * u]
 }
-function PlanView({ trip }) {
+function PlanView({ trip, label = true }) {
   const { jstep } = useStage()
   const steps = trip?.journey || []
   const n = Math.max(steps.length, 1)
   const pts = Array.from({ length: n }, (_, i) => at(n, i))
   const cur = Math.min(jstep, n - 1)
   const line = (arr) => arr.map((p) => p.join(',')).join(' ')
+  const legs = pts.slice(1).map((p, i) => Math.hypot(p[0] - pts[i][0], p[1] - pts[i][1]))
+  const walked = legs.slice(0, cur).reduce((a, b) => a + b, 0) / (legs.reduce((a, b) => a + b, 0) || 1)
   return (
     <div className="plan" aria-hidden="true">
       <svg viewBox="0 0 390 186" preserveAspectRatio="xMidYMid meet">
@@ -209,7 +289,8 @@ function PlanView({ trip }) {
         <g transform="translate(366,150) rotate(-90) scale(1.3)" fill="rgba(255,255,255,.75)"><path d="M18 0 L6-3 L2-14 L-1-14 L0-3 L-11-2 L-13-6 L-16-6 L-15 0 L-16 6 L-13 6 L-11 2 L0 3 L-1 14 L2 14 L6 3Z" /></g>
         <g transform="translate(0,-34)">
           <polyline points={line(pts)} fill="none" stroke="rgba(255,200,61,.35)" strokeWidth="4" strokeDasharray="3 6" strokeLinecap="round" strokeLinejoin="round" />
-          <polyline points={line(pts.slice(0, cur + 1))} fill="none" stroke="#FFC83D" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
+          <polyline points={line(pts)} pathLength="1" strokeDasharray="1 1" strokeDashoffset={1 - walked} fill="none" stroke="#FFC83D" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"
+            style={{ transition: 'stroke-dashoffset 1.1s cubic-bezier(.4,0,.2,1)' }} />
           {pts.map((p, i) => (
             <g key={i}>
               <circle cx={p[0]} cy={p[1]} r="11" fill={i === cur ? '#FFC83D' : i < cur ? '#6FB38F' : '#3E5E8A'} stroke="#0C2748" strokeWidth="3" />
@@ -222,17 +303,39 @@ function PlanView({ trip }) {
           </g>
         </g>
       </svg>
-      {steps[cur] && <div className="plan-label">{cur + 1}. {steps[cur].title}</div>}
+      {label && steps[cur] && <div className="plan-label">{cur + 1}. {steps[cur].title}</div>}
     </div>
   )
 }
 
-export default function Stage({ step, trip }) {
+// 3D walk through the terminal: she moves to the next stop each time the step changes.
+function TerminalView({ trip }) {
+  const { jstep } = useStage()
+  const steps = trip?.journey || []
+  const api = useRef(null)
+  const cur = Math.min(jstep, Math.max(0, steps.length - 1))
+  useEffect(() => { api.current?.setStep(cur) }, [cur])
+  return (
+    <>
+      <Scene3D deps={[trip?.id, steps.length]} apiRef={api} fallback={<PlanView trip={trip} label={false} />}
+        load={() => import('../three/terminal').then((m) => (el) => m.createTerminal(el, {
+          steps, start: cur, still: still(),
+          info: { // what the departures board, check-in backdrop and gate sign show: her own flight
+            flight: trip?.summary?.flights?.[0], dest: trip?.summary?.destination_city, time: trip?.summary?.departure_time,
+            airline: steps.find((x) => x.id === 'checkin')?.where?.[0], gate: trip?.boarding?.gate,
+          },
+        }))} />
+      {steps[cur] && <div className="plan-label">{cur + 1}. {steps[cur].title}</div>}
+    </>
+  )
+}
+
+export default function Stage({ step, trip, done }) {
   let body = null
-  if (step === 'language' || step === 'contacts') body = <MapView summary={trip?.summary} trip={trip} />
+  if (step === 'language' || step === 'contacts') body = <GlobeView summary={trip?.summary} trip={trip} />
   else if (step === 'travellers' || step === 'check') body = <DeskView trip={trip} check={step === 'check'} />
-  else if (step === 'checklist') body = <CalendarView summary={trip?.summary} />
-  else if (step === 'journey') body = <PlanView trip={trip} />
+  else if (step === 'checklist') body = <CalendarView summary={trip?.summary} checklist={trip?.checklist} done={done} />
+  else if (step === 'journey') body = <TerminalView trip={trip} />
   if (!body) return null
   return (
     <div className={'stage stage-' + step} aria-hidden="true">
@@ -245,11 +348,39 @@ export default function Stage({ step, trip }) {
   )
 }
 
+// Boarding at the gate / walking out to family at arrivals: a short full-screen 3D moment with a spoken caption.
+export function MomentScene({ kind, opts, caption, onDone }) {
+  const { t, lang } = useI18n()
+  const host = useRef(null)
+  const done = useRef(onDone)
+  useEffect(() => { done.current = onDone })
+  useEffect(() => {
+    let api, dead = false, timer = 0
+    speak(caption, lang)
+    if (!hasWebGL()) { timer = setTimeout(() => done.current(), 2500); return () => clearTimeout(timer) }
+    import('../three/moments').then((m) => {
+      if (dead) return
+      api = m.createMoment(host.current, { ...opts, kind, still: still(), onDone: () => done.current() })
+      host.current?.querySelector('canvas')?.addEventListener('webglcontextlost', (e) => { e.preventDefault(); done.current() })
+    }).catch(() => done.current())
+    return () => { dead = true; api?.dispose() }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+  return (
+    <div className="flightscene moment" role="dialog" aria-label={caption}>
+      <div className="moment-scene" ref={host} />
+      <p className="fs-t moment-cap">{caption}</p>
+      <button className="btn sec fs-skip" onClick={() => done.current()}>{t('skip')}</button>
+    </div>
+  )
+}
+
 // Cabin-window view of the flight, panning from origin to destination along the real route.
 export function FlightScene({ trip, onDone }) {
   const { t } = useI18n()
   const route = useRoute(trip?.summary)
-  const [DUR] = useState(() => (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ? 1.5 : 9))
+  // a longer trip is a longer flight: ~7s for Chennai to Singapore, up to 12s for the longest routes
+  const DUR = still() ? 1.5 : route ? +Math.min(12, 5 + route.km / 1200).toFixed(1) : 9
   const done = useRef(onDone)
   useEffect(() => { done.current = onDone })
   useEffect(() => {
@@ -266,10 +397,8 @@ export function FlightScene({ trip, onDone }) {
   } else { vw = MW * 0.6; const vh = (vw * WH) / WW; from = to = [(MW - vw) / 2, (MH - vh) / 2] } // route unknown: still view of the world, no made-up path
   const vh = (vw * WH) / WW
   const k = vw / WW
-  return (
-    <div className="flightscene" role="dialog" aria-label={t('flight_started')}>
-      <div className="fs-window"><div className="fs-glass">
-        <svg viewBox={`${from[0]} ${from[1]} ${vw} ${vh}`} preserveAspectRatio="xMidYMid slice">
+  const flat = (
+        <svg key={route ? 'route' : 'world'} viewBox={`${from[0]} ${from[1]} ${vw} ${vh}`} preserveAspectRatio="xMidYMid slice">
           <animate attributeName="viewBox" dur={`${DUR}s`} fill="freeze" from={`${from[0]} ${from[1]} ${vw} ${vh}`} to={`${to[0]} ${to[1]} ${vw} ${vh}`} />
           <defs><linearGradient id="seaF" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#1B4A63" /><stop offset="1" stopColor="#0E2F47" /></linearGradient></defs>
           <rect x="0" y="0" width={MW} height={MH} fill="url(#seaF)" />
@@ -284,6 +413,16 @@ export function FlightScene({ trip, onDone }) {
             </g>
           )}
         </svg>
+  )
+  return (
+    <div className="flightscene" role="dialog" aria-label={t('flight_started')}>
+      <div className="fs-window"><div className="fs-glass">
+        {route ? (
+          // the 3D globe seen from just behind the plane; the flat drawing is the fallback
+          <Scene3D deps={[route]} fallback={flat} load={() => import('../three/globe').then((m) => (el) => m.createGlobe(el, {
+            from: route.from, to: route.to, km: route.km, mode: 'flight', duration: DUR, still: still(),
+          }))} />
+        ) : flat}
         <div className="fs-shine" />
       </div></div>
       <p className="fs-t">{t('flight_started')}</p>

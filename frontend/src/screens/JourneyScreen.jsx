@@ -3,7 +3,7 @@ import { store } from '../api'
 import { useI18n } from '../i18n'
 import { stopSpeaking, speak } from '../voice'
 import Listen from '../components/Listen'
-import { FlightScene } from '../components/Stage'
+import { FlightScene, MomentScene } from '../components/Stage'
 import { useStage } from '../StageContext'
 
 function BoardingForm({ boarding, onSave, busy }) {
@@ -28,16 +28,25 @@ function BoardingForm({ boarding, onSave, busy }) {
   )
 }
 
-export default function JourneyScreen({ trip, onSaveBoarding, busy, toast, auto }) {
+export default function JourneyScreen({ trip, onSaveBoarding, busy, toast, auto, onFinish }) {
   const { t, lang } = useI18n()
   const steps = trip.journey
   const key = `mff-jstep-${trip.id}`
   const [n, setN] = useState(() => Math.min(store.get(key, 0), steps.length - 1))
   const [big, setBig] = useState(false)
   const [showArrived, setShowArrived] = useState(false)
-  const [flying, setFlying] = useState(false)
+  const [phase, setPhase] = useState(null) // 'board' → 'fly' at the gate, 'arrive' after the last step
   const { setJstep } = useStage()
-  const landed = useCallback(() => { setFlying(false); setShowArrived(true); speak(t('arrived'), lang) }, [t, lang])
+  // the trip, in the order it really happens: board at the gate, fly, then the destination steps; walk out to family at the end
+  const gateIdx = steps.findIndex((x) => x.id === 'gate')
+  const s0 = trip.summary || {}
+  const meet = (trip.contacts || []).find((c) => c.at_destination)
+  const momentOpts = {
+    airline: steps.find((x) => x.id === 'checkin')?.where?.[0], flight: s0.flights?.[0], gate: trip.boarding?.gate,
+    dest: s0.destination_city, placard: (trip.travellers?.[0]?.name || '').split(' ')[0].toUpperCase(),
+  }
+  const landed = useCallback(() => { setPhase(null); go(n + 1) }, [n]) // eslint-disable-line react-hooks/exhaustive-deps
+  const arrived = () => { setPhase(null); setShowArrived(true); speak(t('arrived'), lang) }
   const go = (i) => { stopSpeaking(); setN(i); store.set(key, i); window.scrollTo({ top: 0 }) }
   useEffect(() => stopSpeaking, []) // stop reading if the traveller leaves this screen mid-playback
   useEffect(() => { setJstep(n); return () => setJstep(0) }, [n, setJstep]) // moves the dot on the floor plan
@@ -48,7 +57,7 @@ export default function JourneyScreen({ trip, onSaveBoarding, busy, toast, auto 
       ...(x.alts || []).map((alt) => `${t('or_say')}: ${alt.tr}`)].join('. '))].join('. ')
   // "Read to me": each airport step is read aloud when it opens.
   useEffect(() => {
-    if (!auto || !s || flying || showArrived) return
+    if (!auto || !s || phase || showArrived) return
     const id = setTimeout(() => speak(stepText(), lang), 1000)
     return () => clearTimeout(id)
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -64,7 +73,7 @@ export default function JourneyScreen({ trip, onSaveBoarding, busy, toast, auto 
             className={i === n ? 'on' : i < n ? 'past' : ''} onClick={() => go(i)} />
         ))}
       </div>
-      <article className="stepcard">
+      <article className="stepcard" key={'step-' + s.id}>
         <div className="gh">
           <div className="stepno">{t('step_of', { n: n + 1, t: steps.length })}</div>
           <Listen text={stepText} toast={toast} />
@@ -128,12 +137,10 @@ export default function JourneyScreen({ trip, onSaveBoarding, busy, toast, auto 
       <div className="nav2">
         <button className="btn sec" disabled={n === 0} onClick={() => go(n - 1)}>{t('back')}</button>
         <button className="btn pri" onClick={() => {
-          if (last) {
-            stopSpeaking()
-            setFlying(true)
-          } else {
-            go(n + 1)
-          }
+          stopSpeaking()
+          if (last) setPhase('arrive')
+          else if (n === gateIdx) setPhase('board')
+          else go(n + 1)
         }}>
           {last ? t('done_btn') + ' ✓' : t('next_step') + ' →'}
         </button>
@@ -144,7 +151,9 @@ export default function JourneyScreen({ trip, onSaveBoarding, busy, toast, auto 
           <button className="btn sec">{t('close')}</button>
         </div>
       )}
-      {flying && <FlightScene trip={trip} onDone={landed} />}
+      {phase === 'board' && <MomentScene kind="board" opts={momentOpts} caption={t('moment_board', { flight: momentOpts.flight || '' })} onDone={() => setPhase('fly')} />}
+      {phase === 'fly' && <FlightScene trip={trip} onDone={landed} />}
+      {phase === 'arrive' && <MomentScene kind="arrive" opts={momentOpts} caption={meet ? t('moment_arrive', { name: meet.name }) : t('moment_arrive_any')} onDone={arrived} />}
       {showArrived && (
         <div className="modal-overlay" onClick={() => setShowArrived(false)}>
           <div className="modal-content arrived-modal-content" onClick={(e) => e.stopPropagation()}>
@@ -154,7 +163,10 @@ export default function JourneyScreen({ trip, onSaveBoarding, busy, toast, auto 
               </svg>
             </div>
             <h2 className="arrived-msg">{t('arrived')}</h2>
-            <button className="btn pri full" onClick={() => setShowArrived(false)}>{t('done_btn')}</button>
+            <p className="muted">{t('trip_finish_hint')}</p>
+            <p className="arrived-sign">— MyFirstFlightAI</p>
+            <button className="btn pri full" onClick={() => { setShowArrived(false); onFinish?.() }} disabled={busy}>{t('trip_finish')} ✓</button>
+            <button className="btn sec full" onClick={() => setShowArrived(false)}>{t('trip_not_yet')}</button>
           </div>
         </div>
       )}

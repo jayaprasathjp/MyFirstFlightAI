@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { api, store } from '../api'
 import { useI18n } from '../i18n'
 import Listen from './Listen'
+import Icon from './Icon'
 
 const CHECK_EVERY_MS = 10 * 60 * 1000
 
@@ -39,7 +40,7 @@ export default function FlightAlert({ tripId, toast }) {
   return (
     <div className="modalbg" role="alertdialog" aria-modal="true" aria-label={alert.title}>
       <div className={'flightalert ' + alert.level}>
-        <div className="gh"><strong>{alert.level === 'bad' ? '⛔' : '⚠️'} {alert.title}</strong><Listen text={`${alert.title}. ${alert.message}`} toast={toast} /></div>
+        <div className="gh"><strong><Icon name={alert.level === 'bad' ? 'stop' : 'warn'} /> {alert.title}</strong><Listen text={`${alert.title}. ${alert.message}`} toast={toast} /></div>
         <p>{alert.message}</p>
         {lang !== 'en' && <p className="muted small" lang="en">{alert.title_en}. {alert.message_en}</p>}
         <button className="btn pri full" onClick={close} autoFocus>{t('ok_got_it')}</button>

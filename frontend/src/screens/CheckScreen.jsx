@@ -1,5 +1,6 @@
 import { useI18n } from '../i18n'
 import Listen from '../components/Listen'
+import Icon from '../components/Icon'
 
 const MARK = { pass: '✓', info: 'i', warn: '!', fail: '✕' }
 
@@ -50,9 +51,9 @@ export default function CheckScreen({ trip, onBack, onNext, onAnswer, onHelpIntr
     <>
       <div className="gh"><h2>{t('check_title')}</h2><Listen text={readAll} toast={toast} /></div>
       <button className="helphint" onClick={onHelpIntro} aria-label={t('help_intro')}>
-        <span aria-hidden="true">👇</span>
+        <span aria-hidden="true"><Icon name="down" /></span>
         <span>{t('help_hint_short')}</span>
-        <span className="helphint-play" aria-hidden="true">🔊</span>
+        <span className="helphint-play" aria-hidden="true"><Icon name="speaker" /></span>
       </button>
       <div className={'verdict ' + (ready ? 'ok' : 'warn')} role="status">
         <strong>{ready ? t('ready_title') + ' ✓' : t('fix_title')}</strong>

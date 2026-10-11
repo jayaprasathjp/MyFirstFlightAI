@@ -9,6 +9,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 from fastapi import BackgroundTasks, FastAPI, File, Form, HTTPException, Request, UploadFile, Depends, Query
 from typing import Optional
+from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from firebase_admin import auth as fb_auth
@@ -246,6 +247,7 @@ def trip_view(trip):
         "id": trip["id"],
         "language": lang,
         "status": trip.get("status", "empty"),
+        "completed_at": trip.get("completed_at"),  # set when the traveller finishes the trip after arriving
         "summary": with_baggage(trip.get("summary"), advice),  # luggage never blank
         "travellers": [{k: t.get(k) for k in ("id", "name", "assistance", "documents")} for t in trip["travellers"]],
         "checks": [{**c, "title": tr[f"c.{c['id']}.t"], "message": tr[f"c.{c['id']}.m"]} for c in checks],
@@ -435,6 +437,19 @@ def find_duplicate_trip(user_id, trip_id, ticket, passport):
                         "route": f"{s.get('origin_city') or s.get('origin_code')} → {s.get('destination_city') or s.get('destination_code')}",
                         "departure_date": s.get("departure_date")}
     return None
+
+
+class CompleteRequest(BaseModel):
+    done: bool = True
+
+
+@app.post("/api/trips/{trip_id}/complete")
+def complete_trip(trip_id: str, req: CompleteRequest, user_id: str = Depends(get_current_user)):
+    """Finish the trip after arriving (it moves to Past trips), or undo that if it was pressed by mistake."""
+    trip = load_trip(trip_id, user_id)
+    trip["completed_at"] = now_iso() if req.done else None
+    save_trip(trip)
+    return {"id": trip_id, "completed_at": trip["completed_at"]}
 
 
 @app.delete("/api/trips/{trip_id}")
@@ -674,9 +689,23 @@ def request_assist(trip_id: str, req: AssistRequest, user_id: str = Depends(get_
 
 @app.post("/api/tts")
 def tts(req: TTSRequest):
-    """Spoken answer (MP3, base64) via Cloud Text-to-Speech; 503 lets the app fall back to the phone's voice."""
+    """Spoken answer (MP3, base64) via Cloud Text-to-Speech; 503 lets the app fall back to the phone's voice.
+    Cached per language and exact text in Firestore (`tts`), so a line is synthesised once, not on every play."""
+    key = _tkey(req.language, req.text)
     try:
-        return {"audio": gcp.synthesize(req.text, req.language), "mime": "audio/mpeg"}
+        hit = store().get("tts", key)
+        if hit:
+            return {"audio": hit["audio"], "mime": "audio/mpeg"}
+    except StoreError:
+        pass  # cache unavailable: still speak
+    try:
+        audio = gcp.synthesize(req.text, req.language)
+        if len(audio) < 900_000:  # Firestore documents max out at 1 MB
+            try:
+                store().set("tts", key, {"audio": audio, "lang": req.language, "created_at": now_iso()})
+            except StoreError:
+                log.warning("TTS cache write failed")
+        return {"audio": audio, "mime": "audio/mpeg"}
     except gcp.ServiceUnavailable as exc:
         raise HTTPException(status_code=503, detail=str(exc))
     except Exception:

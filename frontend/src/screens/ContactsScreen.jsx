@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useI18n } from '../i18n'
+import { usePlaces } from '../places'
 import Listen from '../components/Listen'
 
 const PHONE = /^\+?[0-9][0-9 ()-]{5,19}$/
@@ -14,6 +15,7 @@ function initialRows(trip) {
 
 export default function ContactsScreen({ trip, onSave, busy, error, toast }) {
   const { t } = useI18n()
+  const place = usePlaces([trip.summary?.origin_city, trip.summary?.destination_city])
   const [rows, setRows] = useState(() => initialRows(trip))
   const [err, setErr] = useState('')
 
@@ -45,11 +47,11 @@ export default function ContactsScreen({ trip, onSave, busy, error, toast }) {
             <legend>{t('contact_where')}</legend>
             <label>
               <input type="radio" name={`where${i}`} checked={!r.at_destination} onChange={() => edit(i, 'at_destination', false)} />
-              {t('at_home')}{trip.summary?.origin_city && <small> · {trip.summary.origin_city}</small>}
+              {t('at_home')}{trip.summary?.origin_city && <small> · {place(trip.summary.origin_city)}</small>}
             </label>
             <label>
               <input type="radio" name={`where${i}`} checked={r.at_destination} onChange={() => edit(i, 'at_destination', true)} />
-              {t('at_destination')}{trip.summary?.destination_city && <small> · {trip.summary.destination_city}</small>}
+              {t('at_destination')}{trip.summary?.destination_city && <small> · {place(trip.summary.destination_city)}</small>}
             </label>
           </fieldset>
         </div>

@@ -299,3 +299,20 @@ def test_flight_status_demo_popup(client, monkeypatch):
     monkeypatch.setenv("FLIGHT_STATUS_DEMO", "")
     monkeypatch.delenv("AVIATIONSTACK_KEY", raising=False)
     assert client.get(f"/api/trips/{trip['id']}/flight-status").json() == {"status": None, "alert": None}
+
+
+def test_tts_is_cached_per_language_and_text(client, monkeypatch):
+    calls = []
+    monkeypatch.setattr(main.gcp, "synthesize", lambda text, lang: (calls.append((text, lang)), "QUJD")[1])
+    for lang in ("ta", "ta", "hi"):
+        assert client.post("/api/tts", json={"text": "Cache me", "language": lang}).json() == {"audio": "QUJD", "mime": "audio/mpeg"}
+    assert calls == [("Cache me", "ta"), ("Cache me", "hi")]  # the repeat came from the cache
+
+
+def test_trip_can_be_finished_and_reopened(client):
+    trip = client.post("/api/trips", json={"language": "en"}).json()
+    r = client.post(f"/api/trips/{trip['id']}/complete", json={"done": True}).json()
+    assert r["completed_at"]
+    assert client.get(f"/api/trips/{trip['id']}").json()["completed_at"] == r["completed_at"]
+    assert client.post(f"/api/trips/{trip['id']}/complete", json={"done": False}).json()["completed_at"] is None
+    assert client.get(f"/api/trips/{trip['id']}").json()["completed_at"] is None

@@ -157,3 +157,169 @@ ul.do li > span { flex: 1; min-width: 0 }
 .fs-shine { position: absolute; inset: 0; background: linear-gradient(120deg, rgba(255, 255, 255, .18), transparent 35%, transparent 70%, rgba(255, 255, 255, .06)); pointer-events: none }
 .fs-t { margin: 0; font-size: 24px; font-weight: 700; text-align: center; line-height: 1.35 }
 .flightscene .btn.fs-skip, .flightscene .btn.sec.fs-skip { background: transparent !important; color: #fff !important; border: 2px solid rgba(255, 255, 255, .7) !important; min-height: 48px; padding: 0 28px }
+
+/* ---------- motion (from the Claude Design prototype) ----------
+   `translate` / `scale` compose with the transforms that centre sheets and toasts;
+   index.css turns all of this off under prefers-reduced-motion. */
+@keyframes mffUp { from { opacity: 0; translate: 0 16px } to { opacity: 1; translate: none } }
+@keyframes mffFade { from { opacity: 0 } to { opacity: 1 } }
+@keyframes mffPop { 0% { opacity: 0; scale: .6 } 70% { scale: 1.08 } 100% { opacity: 1; scale: 1 } }
+@keyframes mffPulse { 0% { box-shadow: 0 0 0 0 rgba(255, 200, 61, .8) } 100% { box-shadow: 0 0 0 14px rgba(255, 200, 61, 0) } }
+@keyframes mffScan { 0% { top: 6% } 50% { top: 84% } 100% { top: 6% } }
+
+/* each screen's blocks rise in as the screen opens (fixed overlays animate on their own below) */
+.screen > :not(.modal-overlay, .flightscene, .modalbg) { animation: mffUp .35s both }
+.screen > :nth-child(2):not(.modal-overlay, .flightscene, .modalbg) { animation-delay: .04s }
+.screen > :nth-child(3):not(.modal-overlay, .flightscene, .modalbg) { animation-delay: .08s }
+.screen > :nth-child(n+4):not(.modal-overlay, .flightscene, .modalbg) { animation-delay: .12s }
+.modal-overlay, .modalbg, .lost { animation: mffFade .2s }
+.modal-content, .flightalert { animation: mffPop .4s }
+.sheet, .toast { animation: mffUp .3s }
+.arrived-tick-box { animation: mffPop .6s .15s both }
+/* where she is now: the current step in the stepper pulses */
+.stepper .on i { animation: mffPulse 1.8s ease-out infinite }
+/* papers being read: a scan line sweeps each added document */
+.form:has(.reading) .drop label.has { position: relative; overflow: hidden }
+.form:has(.reading) .drop label.has::after {
+  content: ""; position: absolute; left: 0; right: 0; height: 4px; background: var(--sig); box-shadow: 0 0 16px var(--sig);
+  animation: mffScan 1.6s ease-in-out infinite;
+}
+/* line icons sit on the text baseline, like a letter */
+.ico { vertical-align: -.2em; flex: none }
+
+/* checklist progress stays in view while the list scrolls under it (desktop: below the 70px sticky top bar) */
+.prog { position: sticky; top: 0; z-index: 6; background: var(--card); border: 1.5px solid var(--line); border-radius: 18px; padding: 12px 16px; box-shadow: 0 6px 16px rgba(10, 31, 60, .08) }
+@media (min-width: 768px) { .prog { top: 70px; border-top-left-radius: 0; border-top-right-radius: 0 } }
+
+/* ---------- living scenes: real objects moving the way real objects do ----------
+   Each keyframe animates FROM the start, so with reduced motion everything simply shows finished. */
+@keyframes draw { from { stroke-dashoffset: var(--len) } }
+@keyframes pinDrop { from { opacity: 0; translate: 0 -14px } 60% { opacity: 1 } }
+@keyframes drift { from { scale: 1 } to { scale: 1.05 } }
+@keyframes land { from { opacity: 0; translate: 0 70px } 70% { opacity: 1 } }
+@keyframes stamp { from { opacity: 0; scale: 1.9 } 70% { opacity: 1; scale: .94 } to { scale: 1 } }
+@keyframes mark { from { background-size: 0 100% } }
+@keyframes flip { from { opacity: 0; transform: rotateX(85deg) } }
+
+/* map: the camera drifts slowly, the route draws itself from origin to destination, then the pins land */
+.stage-svg { transform-origin: 50% 50%; animation: drift 22s ease-in-out infinite alternate }
+.stage-svg .draw { animation: draw 1.4s .2s cubic-bezier(.45, 0, .2, 1) both }
+.stage-svg .pin { transform-box: fill-box; transform-origin: center; animation: pinDrop .45s ease-out both }
+.stage-svg .pin0 { animation-delay: .1s } .stage-svg .pin1 { animation-delay: 1.45s }
+
+/* desk: papers are laid on the table one by one, the entry stamp is pressed onto the visa */
+.desk .doc, .desk .calendar, .desk .pouch { animation: land .6s cubic-bezier(.2, .8, .2, 1) both }
+.desk .passport, .desk .calendar { animation-delay: .05s }
+.desk .visa, .desk .pouch { animation-delay: .2s }
+.desk .ticket { animation-delay: .35s }
+.desk .stamp { animation: stamp .4s .95s ease-out both }
+/* after the check, the name on the ticket is marked like a highlighter pen */
+.tk-name.ok, .tk-name.bad { background: linear-gradient(currentColor, currentColor) no-repeat 0 0 / 100% 100%; background-image: linear-gradient(var(--hl), var(--hl)); animation: mark .55s 1.2s ease-out both }
+.tk-name.ok { --hl: #CDEBDB } .tk-name.bad { --hl: #F7C9C4 }
+/* calendar: the day's page turns into place */
+.calendar { perspective: 400px } .cal-d { transform-origin: 50% 0; animation: flip .5s .55s ease-out both }
+
+/* ---------- 3D scenes (globe, terminal walk) ---------- */
+.scene3d, .scene3d-host { position: absolute; inset: 0 }
+.scene3d-host canvas { display: block; width: 100%; height: 100% }
+.g-label { position: absolute; left: 0; top: 0; color: #fff; font-weight: 700; font-size: 15px; white-space: nowrap; pointer-events: none;
+  text-shadow: 0 0 3px #0A1F3C, 0 0 6px #0A1F3C, 0 1px 2px #0A1F3C; transition: opacity .3s }
+.stage-language .scene3d, .stage-contacts .scene3d { background: radial-gradient(ellipse at 50% 40%, #12385A, #0A1F3C 70%) }
+.fs-glass .scene3d { background: #0A1F3C }
+.stage .plan-label { z-index: 2 }
+
+/* ---------- "See how it works" story ---------- */
+.story { position: fixed; inset: 0; z-index: 200; background: radial-gradient(ellipse at 50% 35%, #12385A, #0A1F3C 70%); display: grid; place-items: center; animation: mffFade .3s }
+.story-scene { position: absolute; inset: 0 }
+.story-scene canvas { display: block; width: 100% !important; height: 100% !important }
+.story-globe { background: #0A1F3C; transition: none; pointer-events: none }
+.story-card { position: relative; width: min(440px, calc(100% - 32px)); background: var(--card); color: var(--ink); border-radius: 24px; padding: 28px 22px; display: grid; gap: 14px; text-align: center; box-shadow: 0 30px 80px rgba(0, 0, 0, .45); animation: mffPop .45s }
+.story-card h2 { margin: 0; font-size: 30px } .story-card p { margin: 0; font-size: 18px; color: var(--muted) }
+.story-mark { width: 72px; height: 72px; margin: 0 auto; border-radius: 22px; background: var(--sig); color: #0A1F3C; display: grid; place-items: center; font-size: 34px }
+.story-lang { display: flex; align-items: center; justify-content: center; gap: 10px; font-weight: 700 }
+.story-lang .lang { background: var(--app); color: var(--ink); border: 2px solid var(--line); min-height: 48px; font-size: 17px; border-radius: 14px; padding: 0 12px }
+.story-caption { position: absolute; left: 50%; bottom: max(28px, env(safe-area-inset-bottom)); translate: -50% 0; width: min(900px, calc(100% - 32px)); margin: 0; padding: 16px 22px; border-radius: 18px;
+  background: rgba(10, 31, 60, .86); color: #fff; font-size: clamp(20px, 3.2vw, 30px); line-height: 1.35; text-align: center; animation: mffUp .35s; backdrop-filter: blur(6px) }
+.story-skip { position: absolute; top: max(16px, env(safe-area-inset-top)); right: 16px; min-height: 48px; background: rgba(10, 31, 60, .7) !important; color: #fff !important; border-color: rgba(255, 255, 255, .6) !important }
+.story-bar { position: absolute; left: 0; right: 0; top: 0; height: 5px; background: rgba(255, 255, 255, .15) } .story-bar i { display: block; height: 100%; width: 0; background: var(--sig) }
+.storybtn { display: inline-flex; align-items: center; justify-content: center; gap: 10px }
+
+/* ---------- checklist scene: stays in view, and the suitcase fills as items are ticked ---------- */
+.stage-checklist { position: sticky; top: 0; z-index: 8; height: 190px }
+@media (min-width: 768px) { .stage-checklist { top: 70px; height: 230px } }
+.screen:has(.stage-checklist) .prog { position: static; box-shadow: none } /* its count and bar are in the pinned scene */
+.case { position: absolute; right: 9%; top: 34px; width: 170px; height: 104px; animation: land .6s .2s cubic-bezier(.2, .8, .2, 1) both; perspective: 500px }
+.case-body { position: absolute; inset: 0; border-radius: 10px; background: #24494e; box-shadow: inset 0 0 0 5px #2e5d62, 0 10px 18px rgba(0, 0, 0, .45);
+  display: grid; grid-template-columns: repeat(6, 1fr); grid-template-rows: repeat(2, 1fr); gap: 4px; padding: 9px }
+.case-body i { border-radius: 4px; box-shadow: inset 0 -3px 0 rgba(0, 0, 0, .18); animation: packIn .45s cubic-bezier(.3, .7, .3, 1.2) both } /* a folded piece of clothing dropped in */
+@keyframes packIn { from { opacity: 0; translate: 0 -46px; rotate: -12deg } }
+.case-lid { position: absolute; left: 0; right: 0; bottom: 100%; height: 100%; border-radius: 10px; background: linear-gradient(#2e5d62, #24494e); transform-origin: 50% 100%;
+  transform: rotateX(62deg); transition: transform .7s cubic-bezier(.4, 0, .2, 1); display: grid; place-items: center; box-shadow: 0 -4px 12px rgba(0, 0, 0, .25) }
+.case-lid b { font-size: 12px; letter-spacing: .1em; color: #E5C26A; opacity: 0; transition: opacity .3s .5s }
+.case.shut .case-lid { transform: rotateX(180deg) } .case.shut .case-lid b { opacity: 1; transform: rotateX(180deg) }
+.case-tag { position: absolute; left: 50%; top: 100%; translate: -50% 10px; white-space: nowrap; background: #DCEFE5; color: #1F7A4D; border: 2px solid #1F7A4D; border-radius: 10px; padding: 3px 10px; font-size: 13px; font-weight: 700; animation: mffPop .5s .5s both }
+.stage-prog { position: absolute; left: 14px; right: 14px; bottom: 10px; display: flex; align-items: center; gap: 12px; color: #fff; font-weight: 700; font-size: 14px; text-shadow: 0 1px 3px rgba(0, 0, 0, .6) }
+.stage-prog i { flex: 1; height: 8px; border-radius: 99px; background: rgba(255, 255, 255, .25); overflow: hidden } .stage-prog b { display: block; height: 100%; background: var(--sig); border-radius: 99px; transition: width .5s }
+@media (max-width: 480px) { .desk .calendar { scale: .8 } .case { width: 150px; height: 92px; right: 6% } .stage-checklist .calendar { top: 18px } }
+
+/* ---------- my trips: upcoming and past, each openable, each deletable ---------- */
+.tripgroup { display: grid; gap: 12px } .tripgroup h3 { margin: 6px 0 0 }
+.tripsgrid { display: grid; gap: 12px }
+@media (min-width: 768px) { .tripsgrid { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)) } }
+.tripcard { display: flex; align-items: center; gap: 10px; padding: 14px 14px 14px 18px }
+.tripcard.past { opacity: .85; background: var(--app) }
+.tripopen { flex: 1; min-width: 0; text-align: start; background: none; border: 0; padding: 4px 0; display: grid; gap: 4px; color: var(--ink); min-height: 48px }
+.tripopen b { font-size: 18px; line-height: 1.3 } .tripopen small { color: var(--muted); font-size: 15px }
+.tripacts { display: flex; gap: 8px; flex: none }
+.tripdel { width: 48px; height: 48px; border-radius: 50%; border: 2px solid var(--line); background: var(--card); color: var(--bad); display: grid; place-items: center; padding: 0 }
+.tripdel-yes { background: var(--bad); color: #fff; border: 0 }
+.modal-content[role="alertdialog"] { padding: 22px; display: grid; gap: 14px } .modal-content[role="alertdialog"] p { margin: 0 }
+
+/* way back to My Trips, at the top of every trip screen */
+.tripback { display: inline-flex; align-items: center; gap: 8px; min-height: 48px; padding: 0 18px; border-radius: 999px; border: 2px solid var(--line); background: var(--card); color: var(--ink); font-weight: 700; font-size: 16px; justify-self: start; width: fit-content }
+.tripback span { font-size: 20px; line-height: 1 }
+.screen > .tripback + .stage { margin-top: 0 } /* the scene sits below the button instead of bleeding to the top */
+
+.tripcard { flex-wrap: wrap } .tripreopen { order: 3; flex-basis: 100%; text-align: start; font-size: 15px; padding: 6px 0 0; min-height: 40px }
+.arrived-modal-content { display: grid; gap: 12px } .arrived-modal-content p { margin: 0; text-align: center }
+
+/* ---------- landing page ---------- */
+.landing { display: grid; gap: 0; padding-bottom: 40px }
+.land-hero { display: grid; gap: 18px; padding: 28px 18px 24px; background: radial-gradient(ellipse at 70% 40%, #12385A, #0A1F3C 70%); color: #fff }
+.land-copy { display: grid; gap: 14px; align-content: center }
+.land-hero h1 { margin: 0; font-size: clamp(34px, 6vw, 56px); line-height: 1.08; letter-spacing: -.01em }
+.land-hero p { margin: 0; font-size: 19px; line-height: 1.5; color: #d6deea; max-width: 34em }
+.land-ctas { display: flex; flex-wrap: wrap; gap: 12px; align-items: center }
+.land-ctas .btn.pri { background: var(--sig); color: #0A1F3C; padding: 0 28px }
+.land-ctas .btn.sec { background: transparent; color: #fff; border-color: rgba(255, 255, 255, .7); padding: 0 22px }
+.land-globe { position: relative; height: 260px; border-radius: 22px; overflow: hidden }
+.land-band { display: grid; gap: 12px; padding: 26px 18px; max-width: 1040px; width: 100%; margin: 0 auto }
+.land-band h2 { margin: 0 }
+.land-langs { display: flex; flex-wrap: wrap; gap: 10px }
+.land-langs button { min-height: 48px; padding: 0 18px; border-radius: 999px; border: 2px solid var(--line); background: var(--card); color: var(--ink); font-size: 18px; font-weight: 700 }
+.land-langs button.on { border-color: var(--ok); background: var(--ok-soft) }
+.land-steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px }
+.land-steps li { display: flex; align-items: center; gap: 14px; background: var(--card); border: 1.5px solid var(--line); border-radius: 18px; padding: 14px 16px; animation: mffUp .4s both }
+.land-steps li:nth-child(2) { animation-delay: .06s } .land-steps li:nth-child(3) { animation-delay: .12s } .land-steps li:nth-child(4) { animation-delay: .18s } .land-steps li:nth-child(5) { animation-delay: .24s }
+.land-steps li > div { flex: 1 } .land-steps b { font-size: 19px } .land-steps p { margin: 4px 0 0; color: var(--muted); font-size: 17px; line-height: 1.45 }
+.land-n { flex: none; width: 52px; height: 52px; border-radius: 16px; background: #0A1F3C; color: var(--sig); display: grid; place-items: center }
+.land-family { grid-template-columns: auto 1fr; align-items: start; background: var(--card); border: 1.5px solid var(--line); border-radius: 22px; width: calc(100% - 36px) }
+.land-family p { margin: 6px 0 0; font-size: 17px; line-height: 1.5 }
+.land-end { display: grid; place-items: center; padding: 10px 18px 30px } .land-end .btn { min-width: 240px; background: var(--sig); color: #0A1F3C }
+@media (min-width: 900px) {
+  .land-hero { grid-template-columns: 1.05fr 1fr; padding: 56px max(48px, calc((100% - 1040px) / 2)); align-items: center }
+  .land-globe { height: 380px }
+  .land-steps { grid-template-columns: repeat(2, 1fr) } .land-steps li:last-child { grid-column: 1 / -1 }
+}
+.app > .landing { grid-column: 1 / -1; grid-row: 2 / -1 }
+@media (max-width: 600px) { .land-family { grid-template-columns: 1fr } }
+
+/* boarding / arrival moments: the 3D scene fills the screen, caption over it */
+.flightscene.moment { padding: 0; display: block; background: #0A1F3C }
+.moment-scene { position: absolute; inset: 0 } .moment-scene canvas { display: block; width: 100%; height: 100% }
+.moment-cap { position: absolute; left: 50%; bottom: max(90px, calc(env(safe-area-inset-bottom) + 80px)); translate: -50% 0; width: min(820px, calc(100% - 32px)); padding: 14px 20px; border-radius: 18px; background: rgba(10, 31, 60, .86); color: #fff }
+.flightscene.moment .fs-skip { position: absolute; left: 50%; bottom: max(24px, env(safe-area-inset-bottom)); translate: -50% 0 }
+.arrived-sign { margin: 0; text-align: center; font-weight: 700; color: var(--muted); font-size: 14px }
+
+/* the story covers the whole app; what is behind it is hidden so its 3D scenes stop drawing */
+.app.story-on > :not(.story) { display: none }

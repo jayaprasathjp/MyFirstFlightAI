@@ -1,6 +1,6 @@
 {
-  "name": "MyFirstFlight",
-  "short_name": "MyFirstFlight",
+  "name": "MyFirstFlightAI",
+  "short_name": "MyFirstFlightAI",
   "description": "A first-time traveller's companion: document checks, checklists, and airport help.",
   "start_url": "/",
   "scope": "/",

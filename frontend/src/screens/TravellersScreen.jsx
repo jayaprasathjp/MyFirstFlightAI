@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { api, errorText } from '../api'
 import { useI18n } from '../i18n'
+import { usePlaces } from '../places'
 import Listen from '../components/Listen'
 
 const DOCS = ['ticket', 'passport', 'visa']
@@ -54,13 +55,14 @@ const bagMark = (source) => (source && source !== 'ticket' ? '*' : '')
 
 export function TripCard({ summary }) {
   const { t, fmtDate } = useI18n()
+  const place = usePlaces([summary?.origin_city, summary?.destination_city])
   if (!summary) return null
   return (
     <div className="boarding">
       <div className="row">
-        <div><div className="iata">{summary.origin_code}</div><div className="city">{summary.origin_city} · {summary.departure_time}</div></div>
+        <div><div className="iata">{summary.origin_code}</div><div className="city">{place(summary.origin_city)} · {summary.departure_time}</div></div>
         <div className="plane" aria-hidden="true"><i></i>✈<i></i></div>
-        <div className="end"><div className="iata">{summary.destination_code}</div><div className="city">{summary.destination_city} · {summary.arrival_time}</div></div>
+        <div className="end"><div className="iata">{summary.destination_code}</div><div className="city">{place(summary.destination_city)} · {summary.arrival_time}</div></div>
       </div>
       <div className="meta">
         <div><span>{t('flight')}</span><b>{summary.flights.join(' + ')}</b></div>

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { api, errorText } from '../api'
 import { EN } from '../strings'
 import { useI18n } from '../i18n'
+import Icon from './Icon'
 
 // Field label: English for staff, with the user's language underneath.
 function Label({ k }) {
@@ -80,12 +81,12 @@ export default function LostCard({ trip, onTrip, onClose, toast }) {
         {trip.contacts.map((c) => (
           <a key={c.phone} className="callrow" href={`tel:${c.phone.replace(/[^+0-9]/g, '')}`}>
             <span><span><b>{c.name}</b>{c.relation && <small> ({c.relation})</small>}</span><span className="m">{c.phone}</span></span>
-            <span className="callbtn">📞 {t('call')}</span>
+            <span className="callbtn"><Icon name="phone" /> {t('call')}</span>
           </a>
         ))}
       </section>
-      <button className="btn pri full" onClick={readAloud}>🔊 {t('read_aloud')}</button>
-      <button className="btn sec full alertbtn" onClick={alertDesk} disabled={alerting}>🚨 {t('alert_desk')}</button>
+      <button className="btn pri full" onClick={readAloud}><Icon name="speaker" /> {t('read_aloud')}</button>
+      <button className="btn sec full alertbtn" onClick={alertDesk} disabled={alerting}><Icon name="bell" /> {t('alert_desk')}</button>
       <button ref={closeRef} className="btn sec full" onClick={onClose}>{t('close')}</button>
     </div>
   )
