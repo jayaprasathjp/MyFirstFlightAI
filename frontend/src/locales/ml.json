@@ -261,6 +261,7 @@
   "lang_voice_again": "ഒന്ന് കൂടി ശ്രമിക്കൂ",
   "lang_voice_fail": "ക്ഷമിക്കണം, എനിക്ക് ഭാഷ കേൾക്കാൻ കഴിഞ്ഞില്ല. ദയവായി വീണ്ടും ശ്രമിക്കുക, അല്ലെങ്കിൽ താഴെ നിങ്ങളുടെ ഭാഷ തിരഞ്ഞെടുക്കുക.",
   "lang_mic_denied": "മൈക്രോഫോണിന് അനുമതിയില്ല. ദയവായി താഴെ നിങ്ങളുടെ ഭാഷ തിരഞ്ഞെടുക്കുക.",
+  "lang_intro": "ഈ ഭാഷകൾ ലഭ്യമാണ്: {list}. താഴെ നിങ്ങളുടെ ഭാഷയിൽ തൊടുക, അല്ലെങ്കിൽ മൈക്കിൽ തൊട്ട് പറയുക.",
   "__source": {
     "step_language": "Language",
     "step_travellers": "Travellers",
@@ -523,6 +524,7 @@
     "lang_voice_hint": "Tap the mic and say it, for example \"Tamil\" or \"हिंदी\".",
     "lang_voice_again": "Try again",
     "lang_voice_fail": "Sorry, I could not hear a language. Please try again, or tap your language below.",
-    "lang_mic_denied": "Microphone not allowed. Please tap your language below."
+    "lang_mic_denied": "Microphone not allowed. Please tap your language below.",
+    "lang_intro": "These languages are available: {list}. Tap your language below, or tap the mic and say it."
   }
 }

@@ -261,6 +261,7 @@
   "lang_voice_again": "మళ్ళీ ప్రయత్నించండి",
   "lang_voice_fail": "క్షమించండి, నేను భాషను వినలేకపోయాను. దయచేసి మళ్ళీ ప్రయత్నించండి, లేదా కింద మీ భాషను నొక్కండి.",
   "lang_mic_denied": "మైక్రోఫోన్‌కు అనుమతి లేదు. దయచేసి కింద మీ భాషను నొక్కండి.",
+  "lang_intro": "ఈ భాషలు అందుబాటులో ఉన్నాయి: {list}. దయచేసి మీ భాషను కింద నొక్కండి, లేదా మైక్ నొక్కి చెప్పండి.",
   "__source": {
     "step_language": "Language",
     "step_travellers": "Travellers",
@@ -523,6 +524,7 @@
     "lang_voice_hint": "Tap the mic and say it, for example \"Tamil\" or \"हिंदी\".",
     "lang_voice_again": "Try again",
     "lang_voice_fail": "Sorry, I could not hear a language. Please try again, or tap your language below.",
-    "lang_mic_denied": "Microphone not allowed. Please tap your language below."
+    "lang_mic_denied": "Microphone not allowed. Please tap your language below.",
+    "lang_intro": "These languages are available: {list}. Tap your language below, or tap the mic and say it."
   }
 }

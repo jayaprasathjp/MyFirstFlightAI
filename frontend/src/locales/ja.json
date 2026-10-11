@@ -261,6 +261,7 @@
   "lang_voice_again": "もう一度お願いします",
   "lang_voice_fail": "すみません、言葉が聞き取れませんでした。もう一度お試しいただくか、下のリストからお選びください。",
   "lang_mic_denied": "マイクの使用が許可されていません。下のリストからお使いの言語をタップしてください。",
+  "lang_intro": "選べる言葉はこちらです：{list}。下にあるあなたの言葉を指で押すか、マイクの絵を押して話してくださいね。",
   "__source": {
     "step_language": "Language",
     "step_travellers": "Travellers",
@@ -523,6 +524,7 @@
     "lang_voice_hint": "Tap the mic and say it, for example \"Tamil\" or \"हिंदी\".",
     "lang_voice_again": "Try again",
     "lang_voice_fail": "Sorry, I could not hear a language. Please try again, or tap your language below.",
-    "lang_mic_denied": "Microphone not allowed. Please tap your language below."
+    "lang_mic_denied": "Microphone not allowed. Please tap your language below.",
+    "lang_intro": "These languages are available: {list}. Tap your language below, or tap the mic and say it."
   }
 }

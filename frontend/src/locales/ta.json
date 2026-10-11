@@ -261,6 +261,7 @@
   "lang_voice_again": "மீண்டும் முயற்சி செய்யுங்கள்",
   "lang_voice_fail": "மன்னிக்கவும், நீங்கள் எந்த மொழியையும் சொல்லவில்லை. மீண்டும் முயற்சி செய்யுங்கள், அல்லது கீழே உள்ள உங்கள் மொழியைத் தட்டுங்கள்.",
   "lang_mic_denied": "மைக்ரோஃபோனைப் பயன்படுத்த அனுமதி இல்லை. கீழே உள்ள உங்கள் மொழியைத் தட்டுங்கள்.",
+  "lang_intro": "இந்த மொழிகள் உள்ளன: {list}. கீழே உள்ள உங்கள் மொழியைத் தட்டவும், அல்லது மைக்ரோஃபோனைத் தட்டிச் சொல்லவும்.",
   "__source": {
     "step_language": "Language",
     "step_travellers": "Travellers",
@@ -523,6 +524,7 @@
     "lang_voice_hint": "Tap the mic and say it, for example \"Tamil\" or \"हिंदी\".",
     "lang_voice_again": "Try again",
     "lang_voice_fail": "Sorry, I could not hear a language. Please try again, or tap your language below.",
-    "lang_mic_denied": "Microphone not allowed. Please tap your language below."
+    "lang_mic_denied": "Microphone not allowed. Please tap your language below.",
+    "lang_intro": "These languages are available: {list}. Tap your language below, or tap the mic and say it."
   }
 }

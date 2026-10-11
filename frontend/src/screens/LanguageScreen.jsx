@@ -1,8 +1,9 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { api, errorText } from '../api'
 import { useI18n } from '../i18n'
-import { LANGUAGES } from '../strings'
-import { useRecorder } from '../voice'
+import { EN, LANGUAGES } from '../strings'
+import { speak, stopSpeaking, useRecorder } from '../voice'
+import Listen from '../components/Listen'
 
 const SAY_MS = 6000 // naming a language takes a few seconds; stop by itself after that
 
@@ -69,11 +70,26 @@ function VoicePick({ onPick }) {
   )
 }
 
+// First page only: read out which languages there are and how to choose one.
+function LanguagesIntro() {
+  const { lang, t } = useI18n()
+  const text = `${t('choose_language')}. ${t('lang_intro', { list: LANGUAGES.map((l) => l.english).join(', ') })}`
+  const inLanguage = lang === 'en' || t('lang_intro') !== EN.lang_intro // a new language's labels load a moment later
+  // Browsers may block sound until the first tap; then the 🔊 button plays it.
+  useEffect(() => {
+    if (!inLanguage) return
+    speak(text, lang)
+    return stopSpeaking
+  }, [text, lang, inLanguage])
+  return <Listen text={text} toast={noop} />
+}
+const noop = () => {}
+
 export default function LanguageScreen({ onPick, busy, voice }) {
   const { lang, t } = useI18n()
   return (
     <>
-      <h2>{t('choose_language')}</h2>
+      <div className="gh"><h2>{t('choose_language')}</h2>{voice && <LanguagesIntro />}</div>
       <p className="muted">{t('choose_language_hint')}</p>
       {voice && <VoicePick onPick={onPick} />}
       <div className="langs">

@@ -261,6 +261,7 @@
   "lang_voice_again": "फिर से कोशिश करें",
   "lang_voice_fail": "क्षमा करें, मुझे कोई भाषा सुनाई नहीं दी। कृपया फिर से कोशिश करें, या नीचे अपनी भाषा पर टैप करें।",
   "lang_mic_denied": "माइक्रोफ़ोन की अनुमति नहीं है। कृपया नीचे अपनी भाषा पर टैप करें।",
+  "lang_intro": "ये भाषाएँ उपलब्ध हैं: {list}। अपनी भाषा चुनने के लिए नीचे टैप करें, या माइक पर टैप करके बोलें।",
   "__source": {
     "step_language": "Language",
     "step_travellers": "Travellers",
@@ -523,6 +524,7 @@
     "lang_voice_hint": "Tap the mic and say it, for example \"Tamil\" or \"हिंदी\".",
     "lang_voice_again": "Try again",
     "lang_voice_fail": "Sorry, I could not hear a language. Please try again, or tap your language below.",
-    "lang_mic_denied": "Microphone not allowed. Please tap your language below."
+    "lang_mic_denied": "Microphone not allowed. Please tap your language below.",
+    "lang_intro": "These languages are available: {list}. Tap your language below, or tap the mic and say it."
   }
 }

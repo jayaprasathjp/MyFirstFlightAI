@@ -261,6 +261,7 @@
   "lang_voice_again": "Cuba lagi",
   "lang_voice_fail": "Maaf, saya tidak dapat mendengar bahasa. Sila cuba lagi, atau tekan bahasa anda di bawah.",
   "lang_mic_denied": "Mikrofon tidak dibenarkan. Sila tekan bahasa anda di bawah.",
+  "lang_intro": "Bahasa-bahasa ini ada: {list}. Tekan bahasa anda di bawah, atau tekan mikrofon dan cakap.",
   "__source": {
     "step_language": "Language",
     "step_travellers": "Travellers",
@@ -523,6 +524,7 @@
     "lang_voice_hint": "Tap the mic and say it, for example \"Tamil\" or \"हिंदी\".",
     "lang_voice_again": "Try again",
     "lang_voice_fail": "Sorry, I could not hear a language. Please try again, or tap your language below.",
-    "lang_mic_denied": "Microphone not allowed. Please tap your language below."
+    "lang_mic_denied": "Microphone not allowed. Please tap your language below.",
+    "lang_intro": "These languages are available: {list}. Tap your language below, or tap the mic and say it."
   }
 }

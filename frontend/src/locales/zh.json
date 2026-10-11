@@ -261,6 +261,7 @@
   "lang_voice_again": "请再试一次",
   "lang_voice_fail": "抱歉，我没听清您说的语言。请再试一次，或者在下面选择您的语言。",
   "lang_mic_denied": "麦克风未授权。请在下面选择您的语言。",
+  "lang_intro": "这些语言都可以选：{list}。请点一下您想用的语言，或者点麦克风说出来。",
   "__source": {
     "step_language": "Language",
     "step_travellers": "Travellers",
@@ -523,6 +524,7 @@
     "lang_voice_hint": "Tap the mic and say it, for example \"Tamil\" or \"हिंदी\".",
     "lang_voice_again": "Try again",
     "lang_voice_fail": "Sorry, I could not hear a language. Please try again, or tap your language below.",
-    "lang_mic_denied": "Microphone not allowed. Please tap your language below."
+    "lang_mic_denied": "Microphone not allowed. Please tap your language below.",
+    "lang_intro": "These languages are available: {list}. Tap your language below, or tap the mic and say it."
   }
 }

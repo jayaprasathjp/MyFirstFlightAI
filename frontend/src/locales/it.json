@@ -261,6 +261,7 @@
   "lang_voice_again": "Provi di nuovo",
   "lang_voice_fail": "Mi dispiace, non ho sentito nessuna lingua. Per favore, provi di nuovo, oppure tocchi la sua lingua qui sotto.",
   "lang_mic_denied": "Microfono non permesso. Per favore, tocchi la sua lingua qui sotto.",
+  "lang_intro": "Queste lingue sono disponibili: {list}. Tocchi la sua lingua qui sotto, o tocchi il microfono e la dica.",
   "__source": {
     "step_language": "Language",
     "step_travellers": "Travellers",
@@ -523,6 +524,7 @@
     "lang_voice_hint": "Tap the mic and say it, for example \"Tamil\" or \"हिंदी\".",
     "lang_voice_again": "Try again",
     "lang_voice_fail": "Sorry, I could not hear a language. Please try again, or tap your language below.",
-    "lang_mic_denied": "Microphone not allowed. Please tap your language below."
+    "lang_mic_denied": "Microphone not allowed. Please tap your language below.",
+    "lang_intro": "These languages are available: {list}. Tap your language below, or tap the mic and say it."
   }
 }
