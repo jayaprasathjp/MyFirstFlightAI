@@ -87,7 +87,7 @@
   "from_visa": "Dari visa anda",
   "add_contact": "Tambah kenalan lain",
   "save_continue": "Simpan dan teruskan",
-  "err_contacts": "Sila tambah sekurang-kurangnya satu kenalan dengan nama dan nombor telefon seperti +91 98400 12345.",
+  "err_contacts": "Sila tambah sekurang-kurangnya satu kenalan dengan nama dan nombor telefon. Nombor telefon bimbit India ada 10 digit, contohnya 98400 12345; untuk negara lain, mulakan dengan + dan kod negara.",
   "ai_badge": "Cadangan AI · sahkan di laman web rasmi",
   "go_airport": "Langkah-langkah di lapangan terbang",
   "journey_title": "Lapangan terbang, langkah demi langkah",
@@ -292,7 +292,7 @@
     "from_visa": "From your visa",
     "add_contact": "Add another contact",
     "save_continue": "Save and continue",
-    "err_contacts": "Add at least one contact with a name and a phone number like +91 98400 12345.",
+    "err_contacts": "Add at least one contact with a name and a phone number. Indian mobile numbers have 10 digits, like 98400 12345; for other countries start with + and the country code.",
     "ai_badge": "AI suggestion · confirm on the official website",
     "go_airport": "Airport steps",
     "journey_title": "Airport, step by step",
@@ -467,7 +467,10 @@
     "lang_voice_fail": "Sorry, I could not hear a language. Please try again, or tap your language below.",
     "lang_mic_denied": "Microphone not allowed. Please tap your language below.",
     "lang_intro": "These languages are available: {list}. Tap your language below, or tap the mic and say it.",
-    "lang_choose_below": "Select your language from the languages below: {list}."
+    "lang_choose_below": "Select your language from the languages below: {list}.",
+    "err_phone_digits": "Please check the number. Indian mobile numbers have 10 digits, like 98765 43210. For other countries, start with + and the country code.",
+    "fb_speak": "Speak your comment",
+    "fb_speak_hint": "Or tap the mic and say it. Your words appear in the box."
   },
   "video_replay": "Tonton semula",
   "video_pause": "Jeda",
@@ -582,5 +585,8 @@
   "moment_board": "Naik kapal terbang {flight} anda. Tunjuk pas masuk anda di pintu.",
   "moment_arrive": "{name} sedang tunggu anda.",
   "moment_arrive_any": "Keluarga anda sedang tunggu anda.",
-  "lang_choose_below": "Pilih bahasa anda dari senarai bahasa di bawah: {list}."
+  "lang_choose_below": "Pilih bahasa anda dari senarai bahasa di bawah: {list}.",
+  "err_phone_digits": "Tolong semak nombornya. Nombor telefon bimbit India ada 10 digit, contohnya 98765 43210. Untuk negara lain, mulakan dengan + dan kod negara.",
+  "fb_speak": "Cakap komen pakcik/makcik",
+  "fb_speak_hint": "Atau tekan mikrofon dan cakap. Kata-kata pakcik/makcik akan terpapar di sini."
 }

@@ -87,7 +87,7 @@
   "from_visa": "તમારા વિઝામાંથી",
   "add_contact": "બીજો સંપર્ક ઉમેરો",
   "save_continue": "સાચવો અને આગળ વધો",
-  "err_contacts": "ઓછામાં ઓછો એક સંપર્ક ઉમેરો, જેમાં નામ અને ફોન નંબર હોય, જેમ કે +91 98400 12345.",
+  "err_contacts": "ઓછામાં ઓછો એક સંપર્ક નામ અને ફોન નંબર સાથે ઉમેરો. ભારતીય મોબાઈલ નંબર ૧૦ અંકના હોય છે, જેમ કે ૯૮૪૦૦ ૧૨૩૪૫; બીજા દેશો માટે + અને દેશનો કોડ લખો.",
   "ai_badge": "AI સૂચન · કૃપા કરીને સત્તાવાર વેબસાઇટ પર ખાતરી કરો",
   "go_airport": "એરપોર્ટના પગલાં",
   "journey_title": "એરપોર્ટ, એક પછી એક પગલું",
@@ -292,7 +292,7 @@
     "from_visa": "From your visa",
     "add_contact": "Add another contact",
     "save_continue": "Save and continue",
-    "err_contacts": "Add at least one contact with a name and a phone number like +91 98400 12345.",
+    "err_contacts": "Add at least one contact with a name and a phone number. Indian mobile numbers have 10 digits, like 98400 12345; for other countries start with + and the country code.",
     "ai_badge": "AI suggestion · confirm on the official website",
     "go_airport": "Airport steps",
     "journey_title": "Airport, step by step",
@@ -467,7 +467,10 @@
     "lang_voice_fail": "Sorry, I could not hear a language. Please try again, or tap your language below.",
     "lang_mic_denied": "Microphone not allowed. Please tap your language below.",
     "lang_intro": "These languages are available: {list}. Tap your language below, or tap the mic and say it.",
-    "lang_choose_below": "Select your language from the languages below: {list}."
+    "lang_choose_below": "Select your language from the languages below: {list}.",
+    "err_phone_digits": "Please check the number. Indian mobile numbers have 10 digits, like 98765 43210. For other countries, start with + and the country code.",
+    "fb_speak": "Speak your comment",
+    "fb_speak_hint": "Or tap the mic and say it. Your words appear in the box."
   },
   "video_replay": "ફરીથી જુઓ",
   "video_pause": "રોકો",
@@ -582,5 +585,8 @@
   "moment_board": "તમારી ફ્લાઇટ {flight} માં બોર્ડિંગ કરો. દરવાજા પર તમારો બોર્ડિંગ પાસ બતાવો.",
   "moment_arrive": "{name} તમારી રાહ જોઈ રહ્યા છે.",
   "moment_arrive_any": "તમારો પરિવાર તમારી રાહ જોઈ રહ્યો છે.",
-  "lang_choose_below": "નીચે આપેલી ભાષાઓમાંથી તમારી ભાષા પસંદ કરો: {list}."
+  "lang_choose_below": "નીચે આપેલી ભાષાઓમાંથી તમારી ભાષા પસંદ કરો: {list}.",
+  "err_phone_digits": "કૃપા કરીને નંબર તપાસો. ભારતીય મોબાઈલ નંબર ૧૦ અંકના હોય છે, જેમ કે ૯૮૭૬૫ ૪૩૨૧૦. બીજા દેશો માટે, + અને દેશનો કોડ લખો.",
+  "fb_speak": "તમારી વાત કહો",
+  "fb_speak_hint": "અથવા માઇક પર દબાવીને બોલો. તમે બોલેલા શબ્દો અહીં દેખાશે."
 }

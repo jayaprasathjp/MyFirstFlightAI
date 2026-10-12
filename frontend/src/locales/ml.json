@@ -87,7 +87,7 @@
   "from_visa": "നിങ്ങളുടെ വിസയിൽ നിന്ന്",
   "add_contact": "മറ്റൊരു കോൺടാക്റ്റ് ചേർക്കുക",
   "save_continue": "സേവ് ചെയ്ത് തുടരുക",
-  "err_contacts": "പേരും ഫോൺ നമ്പറും (+91 98400 12345 പോലുള്ളവ) ഉള്ള ഒരു കോൺടാക്റ്റെങ്കിലും ചേർക്കുക.",
+  "err_contacts": "കുറഞ്ഞത് ഒരു പേരും ഫോൺ നമ്പറും ചേർക്കുക. ഇന്ത്യയിലെ മൊബൈൽ നമ്പറുകൾക്ക് 10 അക്കങ്ങളുണ്ട്, ഉദാഹരണത്തിന് 98400 12345; മറ്റ് രാജ്യങ്ങളിൽ നിന്നുള്ള നമ്പറുകൾക്ക് + ചിഹ്നവും രാജ്യ കോഡും ചേർക്കുക.",
   "ai_badge": "AI നിർദ്ദേശം · ഔദ്യോഗിക വെബ്സൈറ്റിൽ ഉറപ്പിക്കുക",
   "go_airport": "എയർപോർട്ട് കാര്യങ്ങൾ",
   "journey_title": "എയർപോർട്ടിൽ, ഓരോ പടിയായി",
@@ -292,7 +292,7 @@
     "from_visa": "From your visa",
     "add_contact": "Add another contact",
     "save_continue": "Save and continue",
-    "err_contacts": "Add at least one contact with a name and a phone number like +91 98400 12345.",
+    "err_contacts": "Add at least one contact with a name and a phone number. Indian mobile numbers have 10 digits, like 98400 12345; for other countries start with + and the country code.",
     "ai_badge": "AI suggestion · confirm on the official website",
     "go_airport": "Airport steps",
     "journey_title": "Airport, step by step",
@@ -467,7 +467,10 @@
     "lang_voice_fail": "Sorry, I could not hear a language. Please try again, or tap your language below.",
     "lang_mic_denied": "Microphone not allowed. Please tap your language below.",
     "lang_intro": "These languages are available: {list}. Tap your language below, or tap the mic and say it.",
-    "lang_choose_below": "Select your language from the languages below: {list}."
+    "lang_choose_below": "Select your language from the languages below: {list}.",
+    "err_phone_digits": "Please check the number. Indian mobile numbers have 10 digits, like 98765 43210. For other countries, start with + and the country code.",
+    "fb_speak": "Speak your comment",
+    "fb_speak_hint": "Or tap the mic and say it. Your words appear in the box."
   },
   "video_replay": "വീണ്ടും കാണുക",
   "video_pause": "നിർത്തുക",
@@ -582,5 +585,8 @@
   "moment_board": "നിങ്ങളുടെ {flight} വിമാനത്തിൽ കയറാൻ സമയമായി. വാതിൽക്കൽ ബോർഡിംഗ് പാസ് കാണിക്കുക.",
   "moment_arrive": "നിങ്ങളെ കാത്ത് {name} നിൽക്കുന്നുണ്ട്.",
   "moment_arrive_any": "നിങ്ങളുടെ കുടുംബം കാത്തിരിക്കുന്നുണ്ട്.",
-  "lang_choose_below": "താഴെക്കൊടുത്തിട്ടുള്ള ഭാഷകളിൽ നിന്ന് നിങ്ങളുടെ ഭാഷ തിരഞ്ഞെടുക്കുക: {list}."
+  "lang_choose_below": "താഴെക്കൊടുത്തിട്ടുള്ള ഭാഷകളിൽ നിന്ന് നിങ്ങളുടെ ഭാഷ തിരഞ്ഞെടുക്കുക: {list}.",
+  "err_phone_digits": "ദയവായി നമ്പർ പരിശോധിക്കുക. ഇന്ത്യയിലെ മൊബൈൽ നമ്പറുകൾക്ക് 10 അക്കങ്ങളുണ്ട്, ഉദാഹരണത്തിന് 98765 43210. മറ്റ് രാജ്യങ്ങളിൽ നിന്നുള്ള നമ്പറുകൾക്ക്, + ചിഹ്നവും രാജ്യ കോഡും ചേർക്കുക.",
+  "fb_speak": "നിങ്ങളുടെ അഭിപ്രായം പറയുക",
+  "fb_speak_hint": "അല്ലെങ്കിൽ മൈക്കിൽ തൊട്ട് പറയുക. നിങ്ങൾ പറയുന്നത് ഇവിടെ കാണാം."
 }

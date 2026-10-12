@@ -219,13 +219,15 @@ function Flow({ setLang }) {
   );
   const [busy, setBusy] = useState(false);
   // "Read to me": each screen is read aloud when it opens. On by default; remembered on this phone.
-  const [auto, setAuto] = useState(() => store.get("mff-ui-auto", true));
+  // "Read to me" is off unless the traveller turns it on: pages never start speaking by themselves.
+  // New key: the old "mff-ui-auto" was on for everyone by default, so that saved value is ignored.
+  const [auto, setAuto] = useState(() => store.get("mff-ui-readtome", false));
   const [jstep, setJstep] = useState(0); // current airport step, drawn on the floor plan
   const mainRef = useRef(null);
   const toggleAuto = () => {
     const next = !auto;
     setAuto(next);
-    store.set("mff-ui-auto", next);
+    store.set("mff-ui-readtome", next);
     if (!next) stopSpeaking();
   };
   const [updating, setUpdating] = useState(false); // language switch: server re-translates checks + checklist
@@ -436,18 +438,8 @@ function Flow({ setLang }) {
     }, 9000);
     speak(t("help_intro"), lang);
   };
-  // On the Check screen (the page after uploading), say once per trip and session where Help and I'm Lost are.
-  useEffect(() => {
-    if (step !== "check" || !trip?.travellers?.length) return;
-    const key = `mff-helpintro-${trip.id}`;
-    try {
-      if (sessionStorage.getItem(key)) return;
-      sessionStorage.setItem(key, "1");
-    } catch { /* storage unavailable: announce anyway */ }
-    announceHelp();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [step, trip?.id]);
-  // Read the screen's heading and its first lines aloud when it opens (the airport steps read themselves).
+  // With "Read to me" on: read the screen's heading and first lines when it opens (the airport steps read
+  // themselves). Not again on a language change.
   useEffect(() => {
     if (!auto || !currentUser || viewMode !== "trip" || step === "journey") return;
     const id = setTimeout(() => {
@@ -462,7 +454,7 @@ function Flow({ setLang }) {
     }, 1200);
     return () => clearTimeout(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [auto, step, viewMode, trip?.id, lang, docsPrompt]);
+  }, [auto, step, viewMode, trip?.id, docsPrompt]);
   const addTraveller = (files, assistance) =>
     run(async () => {
       const r = await api.addTraveller(trip.id, files, assistance);

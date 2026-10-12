@@ -1632,7 +1632,9 @@ ul.do li::before {
 /* Check screen: where to find help */
 .helphint { display: flex; gap: 10px; align-items: center; text-align: start; width: 100%; border: 1.5px solid var(--bad);
   background: var(--bad-soft); color: var(--ink); border-radius: 14px; padding: 12px 14px; font-weight: 600; font-size: 15px }
-.helphint-play { margin-inline-start: auto; font-size: 20px }
+/* the same round yellow speaker as every other read-aloud button */
+.helphint-play { margin-inline-start: auto; flex: none; width: 48px; height: 48px; border-radius: 999px; display: grid;
+  place-items: center; background: var(--sig); color: #0A1F3C; box-shadow: 0 2px 0 rgba(10, 31, 60, .3) }
 
 /* language page: say your language */
 .voicepick { display: grid; grid-template-columns: auto 1fr auto; gap: 10px 14px; align-items: center;
@@ -1663,6 +1665,9 @@ ul.do li::before {
 .feedback label { display: grid; gap: 6px; font-weight: 700 }
 .feedback textarea { border: 1px solid var(--line); background: var(--app); border-radius: 12px; padding: 12px; font: inherit;
   font-weight: 400; color: var(--ink); width: 100%; resize: vertical }
+.fb-comment { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: start }
+.fb-comment .micbtn { width: 56px; height: 56px }
+.fb-comment .micbtn svg { width: 24px; height: 24px }
 .fb-thanks { background: var(--ok-soft); color: var(--ok); border-radius: 12px; padding: 12px; font-weight: 700; text-align: center }
 
 /* app walkthrough: full-screen narrated player */

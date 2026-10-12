@@ -87,7 +87,7 @@
   "from_visa": "ನಿಮ್ಮ ವೀಸಾದಿಂದ",
   "add_contact": "ಇನ್ನೊಬ್ಬರ ಸಂಪರ್ಕ ಸೇರಿಸಿ",
   "save_continue": "ಉಳಿಸಿ ಮತ್ತು ಮುಂದುವರಿಸಿ",
-  "err_contacts": "ಕನಿಷ್ಠ ಒಬ್ಬರ ಸಂಪರ್ಕವನ್ನು ಹೆಸರು ಮತ್ತು ಫೋನ್ ನಂಬರ್ (+91 98400 12345) ನೊಂದಿಗೆ ಸೇರಿಸಿ.",
+  "err_contacts": "ಹೆಸರು ಮತ್ತು ಫೋನ್ ಸಂಖ್ಯೆಯೊಂದಿಗೆ ಕನಿಷ್ಠ ಒಂದು ಸಂಪರ್ಕವನ್ನು ಸೇರಿಸಿ. ಭಾರತೀಯ ಮೊಬೈಲ್ ಸಂಖ್ಯೆಗಳು 10 ಅಂಕೆಗಳನ್ನು ಹೊಂದಿರುತ್ತವೆ, ಉದಾಹರಣೆಗೆ 98400 12345; ಇತರ ದೇಶಗಳಿಗೆ + ಮತ್ತು ದೇಶದ ಕೋಡ್‌ನೊಂದಿಗೆ ಪ್ರಾರಂಭಿಸಿ.",
   "ai_badge": "AI ಸಲಹೆ · ಅಧಿಕೃತ ವೆಬ್‌ಸೈಟ್‌ನಲ್ಲಿ ದೃಢೀಕರಿಸಿ",
   "go_airport": "ವಿಮಾನ ನಿಲ್ದಾಣದ ಹಂತಗಳು",
   "journey_title": "ವಿಮಾನ ನಿಲ್ದಾಣ, ಹಂತ ಹಂತವಾಗಿ",
@@ -292,7 +292,7 @@
     "from_visa": "From your visa",
     "add_contact": "Add another contact",
     "save_continue": "Save and continue",
-    "err_contacts": "Add at least one contact with a name and a phone number like +91 98400 12345.",
+    "err_contacts": "Add at least one contact with a name and a phone number. Indian mobile numbers have 10 digits, like 98400 12345; for other countries start with + and the country code.",
     "ai_badge": "AI suggestion · confirm on the official website",
     "go_airport": "Airport steps",
     "journey_title": "Airport, step by step",
@@ -467,7 +467,10 @@
     "lang_voice_fail": "Sorry, I could not hear a language. Please try again, or tap your language below.",
     "lang_mic_denied": "Microphone not allowed. Please tap your language below.",
     "lang_intro": "These languages are available: {list}. Tap your language below, or tap the mic and say it.",
-    "lang_choose_below": "Select your language from the languages below: {list}."
+    "lang_choose_below": "Select your language from the languages below: {list}.",
+    "err_phone_digits": "Please check the number. Indian mobile numbers have 10 digits, like 98765 43210. For other countries, start with + and the country code.",
+    "fb_speak": "Speak your comment",
+    "fb_speak_hint": "Or tap the mic and say it. Your words appear in the box."
   },
   "video_replay": "ಮತ್ತೆ ನೋಡಿ",
   "video_pause": "ವಿರಾಮ",
@@ -582,5 +585,8 @@
   "moment_board": "ನಿಮ್ಮ ವಿಮಾನ {flight} ಹತ್ತಲು ಸಿದ್ಧರಾಗಿ. ದ್ವಾರದಲ್ಲಿ ನಿಮ್ಮ ಬೋರ್ಡಿಂಗ್ ಪಾಸ್ ತೋರಿಸಿ.",
   "moment_arrive": "{name} ನಿಮಗಾಗಿ ಕಾಯುತ್ತಿದ್ದಾರೆ.",
   "moment_arrive_any": "ನಿಮ್ಮ ಕುಟುಂಬದವರು ನಿಮಗಾಗಿ ಕಾಯುತ್ತಿದ್ದಾರೆ.",
-  "lang_choose_below": "ಕೆಳಗಿನ ಭಾಷೆಗಳಿಂದ ನಿಮ್ಮ ಭಾಷೆಯನ್ನು ಆಯ್ಕೆಮಾಡಿ: {list}."
+  "lang_choose_below": "ಕೆಳಗಿನ ಭಾಷೆಗಳಿಂದ ನಿಮ್ಮ ಭಾಷೆಯನ್ನು ಆಯ್ಕೆಮಾಡಿ: {list}.",
+  "err_phone_digits": "ದಯವಿಟ್ಟು ಸಂಖ್ಯೆಯನ್ನು ಪರಿಶೀಲಿಸಿ. ಭಾರತೀಯ ಮೊಬೈಲ್ ಸಂಖ್ಯೆಗಳು 10 ಅಂಕೆಗಳನ್ನು ಹೊಂದಿರುತ್ತವೆ, ಉದಾಹರಣೆಗೆ 98765 43210. ಇತರ ದೇಶಗಳಿಗೆ, + ಮತ್ತು ದೇಶದ ಕೋಡ್‌ನೊಂದಿಗೆ ಪ್ರಾರಂಭಿಸಿ.",
+  "fb_speak": "ನಿಮ್ಮ ಅನಿಸಿಕೆ ಹೇಳಿ",
+  "fb_speak_hint": "ಅಥವಾ ಮೈಕ್ ಒತ್ತಿ ಹೇಳಿ. ನೀವು ಹೇಳಿದ ಮಾತು ಇಲ್ಲಿ ಕಾಣಿಸುತ್ತದೆ."
 }

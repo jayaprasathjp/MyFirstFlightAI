@@ -229,6 +229,24 @@ def ask(trip_facts: dict, lang: str, text: str = "", audio: bytes | None = None,
     return out
 
 
+def transcribe(audio: bytes, mime: str, lang: str) -> str:
+    """Speech to text for typed fields (e.g. the feedback comment): the exact words, in the language spoken."""
+    from schemas import Transcript
+    prompt = ("Write down exactly what the person says, word for word, in the language and script they speak "
+              f"(they usually speak {LANGUAGES.get(lang, 'English')}, but may use any language). Do not translate, "
+              "summarise or add anything; keep numbers as digits. If there is no clear speech, set heard_clearly=false "
+              "and text to an empty string; never guess words.")
+    response = get_genai_client().models.generate_content(
+        model=model_name(), contents=[*_media_part(audio, mime), prompt],
+        config=types.GenerateContentConfig(response_mime_type="application/json", response_schema=Transcript,
+                                           temperature=0, thinking_config=types.ThinkingConfig(thinking_budget=256)),
+    )
+    out = Transcript.model_validate_json(response.text)
+    if not out.heard_clearly or not out.text.strip():
+        raise UnclearAudio("Sorry, I could not hear that clearly. Please tap the mic and speak again.")
+    return out.text.strip()
+
+
 def pick_language(audio: bytes, mime: str) -> dict:
     """Language page: which of the app's languages the person asks for (or speaks). code is None if unclear."""
     from schemas import LanguagePick

@@ -56,13 +56,15 @@ export default function JourneyScreen({ trip, onSaveBoarding, onFeedback, walkth
   const stepText = () => s && [s.title, ...s.where, ...s.do,
     ...s.qa.map((x) => [`${t('they_ask')}: ${x.q}. ${t('you_say')}: ${x.a}`,
       ...(x.alts || []).map((alt) => `${t('or_say')}: ${alt.tr}`)].join('. '))].join('. ')
-  // "Read to me": each airport step is read aloud when it opens.
+  // The step's own 🔊 reads what has no 🔊 of its own (the title and where); each line below has its own.
+  const headText = () => s && [s.title, ...s.where].join('. ')
+  // "Read to me" (only if turned on): the whole step is read when it opens; not again on a language change.
   useEffect(() => {
     if (!auto || !s || phase || showArrived) return
     const id = setTimeout(() => speak(stepText(), lang), 1000)
     return () => clearTimeout(id)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [auto, n, lang])
+  }, [auto, n])
   if (!s) return null
 
   return (
@@ -77,7 +79,7 @@ export default function JourneyScreen({ trip, onSaveBoarding, onFeedback, walkth
       <article className="stepcard" key={'step-' + s.id}>
         <div className="gh">
           <div className="stepno">{t('step_of', { n: n + 1, t: steps.length })}</div>
-          <Listen text={stepText} toast={toast} />
+          <Listen text={headText} toast={toast} />
         </div>
         <h2>{s.title}</h2>
         {s.where.length > 0 && <div className="where">{s.where.map((w) => <span key={w}>{w}</span>)}</div>}
@@ -165,7 +167,7 @@ export default function JourneyScreen({ trip, onSaveBoarding, onFeedback, walkth
               </svg>
             </div>
             <h2 className="arrived-msg">{t('arrived')}</h2>
-            {onFeedback && <FeedbackForm feedback={trip.feedback} onSave={onFeedback} busy={busy} toast={toast} />}
+            {onFeedback && <FeedbackForm tripId={trip.id} feedback={trip.feedback} onSave={onFeedback} busy={busy} toast={toast} />}
             <p className="muted">{t('trip_finish_hint')}</p>
             <p className="arrived-sign">— MyFirstFlightAI</p>
             <button className="btn pri full" onClick={() => { setShowArrived(false); onFinish?.() }} disabled={busy}>{t('trip_finish')} ✓</button>

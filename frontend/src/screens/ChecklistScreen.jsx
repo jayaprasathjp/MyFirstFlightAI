@@ -17,7 +17,7 @@ export default function ChecklistScreen({ checklist, done, onToggle, toast }) {
 
   return (
     <>
-      <div className="gh"><h2>{t('checklist_title')}</h2><Listen text={t('checklist_title')} toast={toast} /></div>
+      <div className="gh"><h2>{t('checklist_title')}</h2><Listen text={`${t('checklist_title')}. ${count} / ${required.length} ${t('done')}. ${t('checklist_saved')}`} toast={toast} /></div>
       <div className="prog">
         <div className="gh"><span><b>{count} / {required.length}</b> {t('done')}</span><span>{pct}%</span></div>
         <div className="bar" role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100}><i style={{ width: pct + '%' }}></i></div>

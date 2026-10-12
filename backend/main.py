@@ -707,6 +707,17 @@ def request_assist(trip_id: str, req: AssistRequest, user_id: str = Depends(get_
     return {"request": request, "trip": trip_view(trip)}
 
 
+@app.post("/api/trips/{trip_id}/transcribe")
+async def transcribe(trip_id: str, audio: UploadFile = File(...), user_id: str = Depends(get_current_user)):
+    """Speech to text for the traveller's own typed fields (feedback comment), in the language they speak."""
+    trip = load_trip(trip_id, user_id)
+    content, mime = await read_audio(audio)
+    if not content:
+        raise HTTPException(status_code=400, detail="Recording is empty.")
+    text = await asyncio.to_thread(gemini_call, gemini.transcribe, content, mime, trip.get("language", "en"))
+    return {"text": text}
+
+
 MAX_LANGUAGE_AUDIO = 1024 * 1024  # a few seconds of speech is enough to name a language
 
 
