@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { api, errorText } from '../api'
 import { useI18n } from '../i18n'
 import { speak, stopSpeaking, useRecorder } from '../voice'
+import Icon from './Icon'
 
 const TABS = ['ask', 'staff', 'pass', 'assist']
 
@@ -53,8 +54,8 @@ function AskTab({ trip, toast }) {
       <div className="chat">
         {chat.map((m, i) => (
           <div key={i} className="qa-pair">
-            <div className="bub me">{m.question || "🎤 …"}</div>
-            <div className="bub ai" lang={m.language}>{m.answer}<button className="link" onClick={() => play(m.answer, m.language)}>🔊 {t('play')}</button></div>
+            <div className="bub me">{m.question || <><Icon name="mic" /> …</>}</div>
+            <div className="bub ai" lang={m.language}>{m.answer}<button className="link" onClick={() => play(m.answer, m.language)}><Icon name="speaker" /> {t('play')}</button></div>
           </div>
         ))}
       </div>
@@ -103,7 +104,7 @@ function PassTab({ trip, onTrip, toast }) {
     <>
       <p className="muted">{t('pass_hint')}</p>
       <label className="btn pri full filebtn">
-        📷 {t('pass_photo')}
+        <Icon name="camera" /> {t('pass_photo')}
         <input type="file" accept="image/*,application/pdf" capture="environment" disabled={busy} onChange={(e) => upload(e.target.files[0])} />
       </label>
       {busy && <div className="reading" role="status"><span className="spin" aria-hidden="true"></span>{t('reading_pass')}</div>}

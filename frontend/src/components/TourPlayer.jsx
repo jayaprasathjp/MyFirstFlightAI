@@ -137,9 +137,15 @@ export default function TourPlayer({ heading, scenes, endTitle, onClose, onDone,
 
   useEffect(() => {
     closeRef.current?.focus()
+    const prev = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
     const onKey = (e) => e.key === 'Escape' && onClose()
     document.addEventListener('keydown', onKey)
-    return () => { document.removeEventListener('keydown', onKey); stopSpeaking() }
+    return () => {
+      document.body.style.overflow = prev
+      document.removeEventListener('keydown', onKey)
+      stopSpeaking()
+    }
   }, [onClose])
 
   const togglePlay = () => {
@@ -164,54 +170,65 @@ export default function TourPlayer({ heading, scenes, endTitle, onClose, onDone,
   }
 
   const sc = scenes[i]
-  return (
-    <div className="tripvideo" role="dialog" aria-modal="true" aria-label={heading}>
-      <div className="tv-head">
-        <h2>📱 {heading}</h2>
-        <button ref={closeRef} className="btn sec tv-x" onClick={onClose} aria-label={t('close')}>✕</button>
-      </div>
-      <div className="dots">
-        {scenes.map((x, n) => (
-          <button key={x.id} aria-label={t('step_of', { n: n + 1, t: count }) + ': ' + x.title}
-            className={n === i ? 'on' : n < i || ended ? 'past' : ''} onClick={() => go(n)} />
-        ))}
-      </div>
-      <div className="tv-bar" aria-hidden="true"><i style={{ width: `${(ended ? 1 : progress) * 100}%` }} /></div>
+  return createPortal(
+    <div
+      className="tripvideo-overlay"
+      role="dialog"
+      aria-modal="true"
+      aria-label={heading}
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose()
+      }}
+    >
+      <div className="tripvideo">
+        <div className="tv-head">
+          <h2>📱 {heading}</h2>
+          <button ref={closeRef} className="btn sec tv-x" onClick={onClose} aria-label={t('close')}>✕</button>
+        </div>
+        <div className="dots">
+          {scenes.map((x, n) => (
+            <button key={x.id} aria-label={t('step_of', { n: n + 1, t: count }) + ': ' + x.title}
+              className={n === i ? 'on' : n < i || ended ? 'past' : ''} onClick={() => go(n)} />
+          ))}
+        </div>
+        <div className="tv-bar" aria-hidden="true"><i style={{ width: `${(ended ? 1 : progress) * 100}%` }} /></div>
 
-      {ended ? (
-        <div className="tv-scene tv-end" key="end">
-          <div className="arrived-tick-box">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="arrived-tick">
-              <polyline points="20 6 9 17 4 12"></polyline>
-            </svg>
+        {ended ? (
+          <div className="tv-scene tv-end" key="end">
+            <div className="arrived-tick-box">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="arrived-tick">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </div>
+            <h2>{endTitle}</h2>
+            <div className="nav2">
+              <button className="btn sec" onClick={() => go(0)}>↺ {t('video_replay')}</button>
+              <button className="btn pri" onClick={onDone}>{doneLabel}</button>
+            </div>
           </div>
-          <h2>{endTitle}</h2>
-          <div className="nav2">
-            <button className="btn sec" onClick={() => go(0)}>↺ {t('video_replay')}</button>
-            <button className="btn pri" onClick={onDone}>{doneLabel}</button>
+        ) : (
+          <div className="tv-scene tv-tour" key={`${i}-${sc.id}`} aria-live="polite">
+            <Phone step={sc.step} progress={progress}>{sc.screen}</Phone>
+            <div className="stepno">{t('step_of', { n: i + 1, t: count })}</div>
+            <h2>{sc.title}</h2>
+            <p className="tv-body">{sc.body}</p>
           </div>
-        </div>
-      ) : (
-        <div className="tv-scene tv-tour" key={`${i}-${sc.id}`} aria-live="polite">
-          <Phone step={sc.step} progress={progress}>{sc.screen}</Phone>
-          <div className="stepno">{t('step_of', { n: i + 1, t: count })}</div>
-          <h2>{sc.title}</h2>
-          <p className="tv-body">{sc.body}</p>
-        </div>
-      )}
+        )}
 
-      {!ended && (
-        <div className="tv-ctrl">
-          <button className="btn sec" onClick={() => go(i - 1)} disabled={i === 0} aria-label={t('video_prev')}>⏮</button>
-          <button className="btn pri" onClick={togglePlay} aria-label={playing ? t('video_pause') : t('video_play')}>
-            {playing ? '❚❚' : '▶'}
-          </button>
-          <button className="btn sec" onClick={() => go(i + 1)} aria-label={t('video_next')}>⏭</button>
-          <button className="btn sec" onClick={toggleSound} aria-label={muted ? t('video_sound_on') : t('video_sound_off')}>
-            {muted ? '🔇' : '🔊'}
-          </button>
-        </div>
-      )}
-    </div>
+        {!ended && (
+          <div className="tv-ctrl">
+            <button className="btn sec" onClick={() => go(i - 1)} disabled={i === 0} aria-label={t('video_prev')}>⏮</button>
+            <button className="btn pri" onClick={togglePlay} aria-label={playing ? t('video_pause') : t('video_play')}>
+              {playing ? '❚❚' : '▶'}
+            </button>
+            <button className="btn sec" onClick={() => go(i + 1)} aria-label={t('video_next')}>⏭</button>
+            <button className="btn sec" onClick={toggleSound} aria-label={muted ? t('video_sound_on') : t('video_sound_off')}>
+              {muted ? '🔇' : '🔊'}
+            </button>
+          </div>
+        )}
+      </div>
+    </div>,
+    document.body
   )
 }

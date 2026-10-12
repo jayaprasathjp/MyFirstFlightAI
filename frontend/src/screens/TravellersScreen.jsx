@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { api, errorText } from '../api'
 import { useI18n } from '../i18n'
+import { usePlaces } from '../places'
 import Listen from '../components/Listen'
 
 const DOCS = ['ticket', 'passport', 'visa']
@@ -54,13 +55,14 @@ const bagMark = (source) => (source && source !== 'ticket' ? '*' : '')
 
 export function TripCard({ summary }) {
   const { t, fmtDate } = useI18n()
+  const place = usePlaces([summary?.origin_city, summary?.destination_city])
   if (!summary) return null
   return (
     <div className="boarding">
       <div className="row">
-        <div><div className="iata">{summary.origin_code}</div><div className="city">{summary.origin_city} · {summary.departure_time}</div></div>
+        <div><div className="iata">{summary.origin_code}</div><div className="city">{place(summary.origin_city)} · {summary.departure_time}</div></div>
         <div className="plane" aria-hidden="true"><i></i>✈<i></i></div>
-        <div className="end"><div className="iata">{summary.destination_code}</div><div className="city">{summary.destination_city} · {summary.arrival_time}</div></div>
+        <div className="end"><div className="iata">{summary.destination_code}</div><div className="city">{place(summary.destination_city)} · {summary.arrival_time}</div></div>
       </div>
       <div className="meta">
         <div><span>{t('flight')}</span><b>{summary.flights.join(' + ')}</b></div>
@@ -75,7 +77,7 @@ export function TripCard({ summary }) {
   )
 }
 
-function AddTravellerForm({ onCancel, onSubmit, busy, canCancel }) {
+function AddTravellerForm({ onCancel, onSubmit, busy, canCancel, toast }) {
   const { t } = useI18n()
   const [files, setFiles] = useState({ ticket: null, passport: null, visa: null })
   const [assistance, setAssistance] = useState('none')
@@ -88,6 +90,10 @@ function AddTravellerForm({ onCancel, onSubmit, busy, canCancel }) {
   }
   return (
     <div className="card form">
+      <div className="gh">
+        <small className="muted">{t('ticket')} · {t('passport')} · {t('visa')}</small>
+        <Listen text={`${t('ticket')}, ${t('passport')}, ${t('visa')}. ${t('tap_to_add')}. ${t('needs_assistance')} ${ASSIST.map((a) => t('assist_' + a)).join(', ')}`} toast={toast} />
+      </div>
       <div className="drop">
         {DOCS.map((d) => (
           <label key={d} className={files[d] ? 'has' : ''}>
@@ -217,7 +223,7 @@ export default function TravellersScreen({ trip, onAdd, onRemove, onReplaceDoc, 
       )}
       {error && <div className="err" role="alert">{error}</div>}
       {showForm
-        ? <AddTravellerForm busy={busy} onSubmit={submit} onCancel={() => setAdding(false)} canCancel={trip.travellers.length > 0} />
+        ? <AddTravellerForm busy={busy} onSubmit={submit} onCancel={() => setAdding(false)} canCancel={trip.travellers.length > 0} toast={toast} />
         : <button className="btn ghost" onClick={() => setAdding(true)} disabled={busy}>+ {t('add_another')}</button>}
       {trip.travellers.length > 0 && !showForm && (
         <button className="btn pri full" onClick={onNext}>{t('continue')} →</button>

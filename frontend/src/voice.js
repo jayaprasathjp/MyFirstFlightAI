@@ -42,12 +42,18 @@ export function useRecorder() {
 
 let current = null
 let generation = 0 // bumped by stopSpeaking, so audio that arrives after a stop is never played
+let activeKey = null // which Listen button (if any) is playing right now
+const subs = new Set()
+const setActive = (k) => { activeKey = k; subs.forEach((f) => f()) }
+export const subscribeSpeaking = (f) => { subs.add(f); return () => subs.delete(f) }
+export const getSpeakingKey = () => activeKey
 
 export function stopSpeaking() {
   generation++
   try { current?.pause() } catch { /* nothing playing */ }
   current = null
   try { speechSynthesis.cancel() } catch { /* not supported */ }
+  setActive(null)
 }
 
 export function pauseSpeaking() {
@@ -61,16 +67,21 @@ export function resumeSpeaking() {
 }
 
 // Starts speaking; resolves with a promise that settles when the speech ends, or null if nothing can speak.
-async function start(text, lang) {
+async function start(text, lang, key = null) {
   stopSpeaking()
   const gen = generation
+  const done = () => { if (gen === generation) setActive(null) }
   try {
     const r = await api.tts(text, lang)
     if (gen !== generation) return null
     const audio = new Audio(`data:${r.mime};base64,${r.audio}`)
     current = audio
-    const ended = new Promise((resolve) => { audio.onended = resolve; audio.onerror = resolve })
+    const ended = new Promise((resolve) => {
+      audio.onended = () => { done(); resolve() }
+      audio.onerror = () => { done(); resolve() }
+    })
     await audio.play()
+    setActive(key)
     return ended
   } catch {
     if (gen !== generation) return null
@@ -83,20 +94,25 @@ async function start(text, lang) {
     u.voice = voice
     u.lang = voice.lang
     u.rate = 0.9
-    const ended = new Promise((resolve) => { u.onend = resolve; u.onerror = resolve })
+    const ended = new Promise((resolve) => {
+      u.onend = () => { done(); resolve() }
+      u.onerror = () => { done(); resolve() }
+    })
     speechSynthesis.speak(u)
+    setActive(key)
     return ended
   }
 }
 
 // Speak text in the app language: Cloud Text-to-Speech first, then the phone's own voice. Returns false if neither works.
-export async function speak(text, lang) {
-  return (await start(text, lang)) !== null
+// `key` (optional) identifies the caller so its button can show a "playing" state until the audio ends.
+export async function speak(text, lang, key = null) {
+  return (await start(text, lang, key)) !== null
 }
 
 // Like speak(), but resolves only when the speech has finished (false right away if nothing can speak).
-export async function speakToEnd(text, lang) {
-  const ended = await start(text, lang)
+export async function speakToEnd(text, lang, key = null) {
+  const ended = await start(text, lang, key)
   if (!ended) return false
   await ended
   return true

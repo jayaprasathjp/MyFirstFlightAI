@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { auth } from './firebase';
-import { onIdTokenChanged, signOut as fbSignOut, GoogleAuthProvider, signInWithPopup, signInWithPhoneNumber, RecaptchaVerifier } from 'firebase/auth';
+import { onIdTokenChanged, signOut as fbSignOut, GoogleAuthProvider, signInWithPopup, signInWithPhoneNumber } from 'firebase/auth';
 import { api } from './api';
 
 const AuthContext = createContext();

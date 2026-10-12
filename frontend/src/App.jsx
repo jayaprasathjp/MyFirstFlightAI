@@ -6,6 +6,7 @@ import { LANGUAGES } from "./strings";
 import LanguageScreen from "./screens/LanguageScreen";
 import TravellersScreen from "./screens/TravellersScreen";
 import AuthScreen from "./screens/AuthScreen";
+import LandingScreen from "./screens/LandingScreen";
 import { AuthProvider, useAuth } from "./AuthContext";
 import CheckScreen from "./screens/CheckScreen";
 import ContactsScreen from "./screens/ContactsScreen";
@@ -16,9 +17,13 @@ import FlightAlert from "./components/FlightAlert";
 import JourneyScreen from "./screens/JourneyScreen";
 import LostCard from "./components/LostCard";
 import HelpSheet from "./components/HelpSheet";
+import Stage from "./components/Stage";
+import Story from "./components/Story";
+import { StageCtx } from "./StageContext";
 import Walkthrough from "./components/Walkthrough";
-import { speak } from "./voice";
+import { speak, stopSpeaking } from "./voice";
 import "./App.css";
+import "./theme.css";
 
 // The language is chosen before login, so the trip steps start at Travellers.
 const STEPS = [
@@ -29,7 +34,7 @@ const STEPS = [
   "journey",
 ];
 
-function TopBar({ onLanguage, busy, currentUser, logout, onShowTrips }) {
+function TopBar({ onLanguage, busy, currentUser, logout, onShowTrips, auto, onAuto }) {
   const { lang, t } = useI18n();
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
@@ -54,9 +59,22 @@ function TopBar({ onLanguage, busy, currentUser, logout, onShowTrips }) {
         <span className="mark" aria-hidden="true">
           ✈
         </span>
-        <span>MyFirstFlight</span>
+        <span>MyFirstFlightAI</span>
       </div>
       <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+        <button
+          type="button"
+          className={"autoread" + (auto ? " on" : "")}
+          aria-pressed={auto}
+          aria-label={t("read_to_me")}
+          title={t("read_to_me")}
+          onClick={onAuto}
+        >
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M4 9v6h4l5 4V5L8 9z" />
+            {auto ? <path d="M16.5 8.5a5 5 0 010 7M19 6a8.5 8.5 0 010 12" /> : <path d="M17 9l5 6M22 9l-5 6" />}
+          </svg>
+        </button>
         <select
           className="lang"
           aria-label={t("language_label")}
@@ -99,6 +117,7 @@ function TopBar({ onLanguage, busy, currentUser, logout, onShowTrips }) {
                   right: 0,
                   top: "48px",
                   background: "var(--card)",
+                  color: "var(--ink)", // the top bar's white text would otherwise carry into this card
                   border: "1px solid var(--line)",
                   borderRadius: "12px",
                   padding: "8px",
@@ -199,9 +218,27 @@ function Flow({ setLang }) {
     store.get(`mff-done-${store.get("mff-trip", "")}`, {}),
   );
   const [busy, setBusy] = useState(false);
+  // "Read to me": each screen is read aloud when it opens. On by default; remembered on this phone.
+  const [auto, setAuto] = useState(() => store.get("mff-ui-auto", true));
+  const [jstep, setJstep] = useState(0); // current airport step, drawn on the floor plan
+  const mainRef = useRef(null);
+  const toggleAuto = () => {
+    const next = !auto;
+    setAuto(next);
+    store.set("mff-ui-auto", next);
+    if (!next) stopSpeaking();
+  };
   const [updating, setUpdating] = useState(false); // language switch: server re-translates checks + checklist
   const [error, setError] = useState("");
   const [lostOpen, setLostOpen] = useState(false);
+  // "See how it works": the story plays the first time the app is opened, and on request after that
+  const [storyOpen, setStoryOpen] = useState(false);
+  // signed-out visitors start on the landing page; "Get started" opens sign-in (Back returns to the landing page)
+  const [entry, setEntry] = useState("landing");
+  const entryRef = useRef(entry);
+  entryRef.current = entry;
+  const openSignIn = () => { window.history.pushState({ mff: "auth" }, ""); setEntry("auth"); };
+  const closeStory = () => { setStoryOpen(false); store.set("mff-story-seen", true); };
   const [helpOpen, setHelpOpen] = useState(false);
   const [toastMsg, setToastMsg] = useState("");
   const toastTimer = useRef(null);
@@ -227,12 +264,17 @@ function Flow({ setLang }) {
     if (replace) setStep("travellers");
     else if (step === "travellers") setStep("check");
   };
+  // Opening a trip adds a browser history entry, so the phone's Back button returns to My Trips instead of leaving the app.
+  const openTripView = () => {
+    if (window.history.state?.mff !== "trip") window.history.pushState({ mff: "trip" }, "");
+    setViewMode("trip");
+  };
   const selectTrip = (t) => {
     applyTrip(t);
     setDone(t.checklist_done || {});
     setStep("travellers");
     setDocsPrompt(needsDocsPrompt(t));
-    setViewMode("trip");
+    openTripView();
   };
 
   // New trip in the language already chosen; it opens on Travellers.
@@ -241,15 +283,61 @@ function Flow({ setLang }) {
       applyTrip(await api.createTrip(lang));
       setDone({});
       setStep("travellers");
-      setViewMode("trip");
+      openTripView();
     });
 
+  // after arriving: the trip is finished and moves to Past trips (it can be reopened from there)
+  const finishTrip = () =>
+    run(async () => {
+      const r = await api.completeTrip(trip.id, true);
+      setTrip({ ...trip, completed_at: r.completed_at });
+      toast(t("trip_finished_toast"), 7000); // long enough to read while My Trips loads
+      goToTrips();
+    });
+
+  const leaveTrip = () => {
+    if (trip && !(trip.travellers || []).length) {
+      api.deleteTrip(trip.id).catch(() => { /* already gone */ });
+      ["mff-trip", "mff-trip-cache", "mff-step"].forEach(store.del);
+      setTrip(null);
+    }
+    setLostOpen(false);
+    setHelpOpen(false);
+    setViewMode("trips");
+  };
+  // on-screen "My Trips" goes through history too, so Back and the button always agree
+  const goToTrips = () => (window.history.state?.mff === "trip" ? window.history.back() : leaveTrip());
+  const currentUserRef = useRef(currentUser);
+  currentUserRef.current = currentUser;
+  const leaveRef = useRef(leaveTrip);
+  leaveRef.current = leaveTrip;
+  const overlayRef = useRef(false);
+  useEffect(() => {
+    if (viewMode === "trip" && window.history.state?.mff !== "trip") {
+      window.history.replaceState({ mff: "trips" }, "");
+      window.history.pushState({ mff: "trip" }, "");
+    }
+    const onBack = () => {
+      if (entryRef.current === "auth" && !currentUserRef.current) { setEntry("landing"); return; }
+      if (overlayRef.current) { // Back closes an open sheet first, and stays in the trip
+        setLostOpen(false); setHelpOpen(false);
+        window.history.pushState({ mff: "trip" }, "");
+        return;
+      }
+      leaveRef.current();
+    };
+    window.addEventListener("popstate", onBack);
+    return () => window.removeEventListener("popstate", onBack);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  overlayRef.current = lostOpen || helpOpen;
   const closeLost = useCallback(() => setLostOpen(false), []);
   const closeHelp = useCallback(() => setHelpOpen(false), []);
-  const toast = (msg) => {
+  const toast = (msg, ms = 3000) => {
     setToastMsg(msg);
     clearTimeout(toastTimer.current);
-    toastTimer.current = setTimeout(() => setToastMsg(""), 3000);
+    toastTimer.current = setTimeout(() => setToastMsg(""), ms);
   };
 
   const setStep = (s) => {
@@ -338,9 +426,14 @@ function Flow({ setLang }) {
   };
   const [dup, setDup] = useState(null); // same traveller already in another trip of this user
   const [pulseHelp, setPulseHelp] = useState(false); // highlight Help / I'm Lost while the intro is spoken
+  const pulseRef = useRef(false); // same flag, readable from timers
   const announceHelp = () => {
     setPulseHelp(true);
-    setTimeout(() => setPulseHelp(false), 9000);
+    pulseRef.current = true;
+    setTimeout(() => {
+      setPulseHelp(false);
+      pulseRef.current = false;
+    }, 9000);
     speak(t("help_intro"), lang);
   };
   // On the Check screen (the page after uploading), say once per trip and session where Help and I'm Lost are.
@@ -354,6 +447,22 @@ function Flow({ setLang }) {
     announceHelp();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [step, trip?.id]);
+  // Read the screen's heading and its first lines aloud when it opens (the airport steps read themselves).
+  useEffect(() => {
+    if (!auto || !currentUser || viewMode !== "trip" || step === "journey") return;
+    const id = setTimeout(() => {
+      if (pulseRef.current) return; // the Help / I'm lost introduction is already speaking
+      const el = mainRef.current;
+      if (!el) return;
+      const parts = [el.querySelector("h2"), el.querySelector(".muted"), el.querySelector(".verdict")]
+        .filter(Boolean)
+        .map((n) => n.innerText.trim())
+        .filter(Boolean);
+      if (parts.length) speak(parts.join(". "), lang);
+    }, 1200);
+    return () => clearTimeout(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [auto, step, viewMode, trip?.id, lang, docsPrompt]);
   const addTraveller = (files, assistance) =>
     run(async () => {
       const r = await api.addTraveller(trip.id, files, assistance);
@@ -433,41 +542,50 @@ function Flow({ setLang }) {
   const allowed = (s) => trip && (s === "travellers" || hasTravellers);
 
   return (
-    <div className="app">
+    <StageCtx.Provider value={{ jstep, setJstep }}>
+    <div className={"app" + (storyOpen ? " story-on" : "")}>
       <TopBar
         onLanguage={changeLanguage}
         busy={busy}
         currentUser={currentUser}
         logout={doLogout}
-        onShowTrips={() => setViewMode("trips")}
+        onShowTrips={goToTrips}
+        auto={auto}
+        onAuto={toggleAuto}
       />
       {!currentUser ? (
-        langPicked ? (
-          <AuthScreen onChangeLanguage={() => setLangPicked(false)} />
+        entry === "auth" ? (
+          <AuthScreen
+            onStory={() => setStoryOpen(true)}
+            onBack={() => (window.history.state?.mff === "auth" ? window.history.back() : setEntry("landing"))}
+            onChangeLanguage={() => setEntry("landing")}
+          />
         ) : (
-          <main className="screen">
-            <LanguageScreen onPick={pickLanguage} voice />
-          </main>
+          <LandingScreen onStart={openSignIn} onStory={() => setStoryOpen(true)} onLanguage={changeLanguage} toast={toast} />
         )
       ) : viewMode === "trips" ? (
         <TripsScreen
           onSelect={selectTrip}
           onNew={newTrip}
+          onDeleted={(id) => { if (trip?.id === id) setTrip(null); }}
           busy={busy}
           error={error}
+          toast={toast}
         />
       ) : docsPrompt && trip ? (
-        <main className="screen">
+        <main className="screen" ref={mainRef}>
           <DocsFoundScreen
             trip={trip}
             onContinue={() => answerDocsPrompt(false)}
             onReplace={() => answerDocsPrompt(true)}
+            toast={toast}
           />
         </main>
       ) : (
         <>
           <Stepper step={step} allowed={allowed} onGo={setStep} />
-          <main className="screen">
+          <main className="screen" ref={mainRef}>
+            <Stage step={step} trip={trip} done={done} />
             {updating && (
               <div className="reading" role="status">
                 <span className="spin" aria-hidden="true"></span>
@@ -507,6 +625,9 @@ function Flow({ setLang }) {
               <div className="err" role="alert">
                 {error}
               </div>
+            )}
+            {step === "language" && (
+              <LanguageScreen onPick={pickLanguage} busy={busy} toast={toast} onStory={() => setStoryOpen(true)} />
             )}
             {step === "travellers" && trip && (
               <TravellersScreen
@@ -565,6 +686,8 @@ function Flow({ setLang }) {
                 onFeedback={saveFeedback}
                 walkthrough={<Walkthrough trip={trip} />}
                 toast={toast}
+                auto={auto}
+                onFinish={finishTrip}
               />
             )}
             {!trip && (
@@ -573,7 +696,7 @@ function Flow({ setLang }) {
           </main>
           {trip && (
             <footer className={"foot" + (hasTravellers ? " dock-pad" : "")}>
-              <button className="link" onClick={() => setViewMode("trips")}>
+              <button className="link" onClick={goToTrips}>
                 {t("back_to_trips")}
               </button>
               <button
@@ -628,7 +751,9 @@ function Flow({ setLang }) {
           {toastMsg}
         </div>
       )}
+      {storyOpen && <Story trip={currentUser ? trip : null} onClose={closeStory} onLanguage={changeLanguage} />}
     </div>
+    </StageCtx.Provider>
   );
 }
 

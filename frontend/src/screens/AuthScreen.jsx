@@ -7,7 +7,10 @@ import Listen from '../components/Listen';
 import { speak, stopSpeaking } from '../voice';
 import { EN } from '../strings';
 
-export default function AuthScreen({ onLogged, onChangeLanguage }) {
+import Icon from '../components/Icon';
+import { store } from '../api';
+
+export default function AuthScreen({ onLogged, onStory, onBack, onChangeLanguage }) {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [code, setCode] = useState('');
   const [confirmResult, setConfirmResult] = useState(null);
@@ -41,9 +44,27 @@ export default function AuthScreen({ onLogged, onChangeLanguage }) {
     };
   }, []);
 
+  // Plain words in her language, never Firebase's English codes (those go to the console for us)
   const handleError = (err) => {
-    setError(err.message || t('err_auth_default'));
+    console.error(err);
+    const code = err?.code || '';
+    const key = /captcha|app-credential/.test(code) ? 'err_auth_verify'
+      : code === 'auth/too-many-requests' ? 'err_auth_too_many'
+      : code === 'auth/network-request-failed' ? 'err_network'
+      : code === 'auth/invalid-phone-number' ? 'err_auth_invalid_phone'
+      : 'err_auth_default';
+    setError(t(key));
   };
+
+  const readStep = confirmResult
+    ? `${message ? message + '. ' : ''}${t('auth_otp')}`
+    : `${t('auth_sign_in_up')}. ${t('auth_phone_desc')}`
+  useEffect(() => {
+    if (!store.get('mff-ui-auto', true)) return
+    const id = setTimeout(() => speak(readStep, lang), 1200)
+    return () => { clearTimeout(id); stopSpeaking() }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [confirmResult, lang])
 
   const handleSendOtp = async (e) => {
     e.preventDefault();
@@ -110,19 +131,20 @@ export default function AuthScreen({ onLogged, onChangeLanguage }) {
   return (
     <div className="screen" style={{ alignContent: 'center' }}>
       <div id={recaptchaId}></div>
+      {onBack && <button type="button" className="tripback" style={{ maxWidth: '420px', margin: '0 auto 4px', justifySelf: 'center' }} onClick={onBack}><span aria-hidden="true">←</span> {t('back')}</button>}
       <div className="card" style={{ padding: '24px', display: 'grid', gap: '20px', maxWidth: '420px', margin: '0 auto', width: '100%' }}>
-        <div className="gh"><h2>{t('auth_sign_in_up')}</h2><Listen text={voiceText} toast={setError} /></div>
+        <div className="gh" style={{ justifyContent: 'center' }}><h2 style={{ textAlign: 'center', marginBottom: '8px' }}>{t('auth_sign_in_up')}</h2><Listen text={readStep} toast={setError} /></div>
         <p style={{ textAlign: 'center', fontSize: '14px', color: 'var(--muted)', marginTop: '-12px' }}>
           {t('auth_phone_desc')}
         </p>
         
-        {error && <div className="err" role="alert">{error}</div>}
+        {error && <div className="err gh" role="alert"><div>{error}</div><Listen text={error} /></div>}
         {message && <div style={{ color: 'var(--ok)', background: 'var(--ok-soft)', padding: '10px 12px', borderRadius: '12px', fontWeight: '600', fontSize: '15px' }} role="status">{message}</div>}
         
         {!confirmResult ? (
           <form onSubmit={handleSendOtp} className="form" style={{ gap: '16px' }}>
             <label>
-              {t('auth_phone')}
+              <span className="gh"><b>{t('auth_phone')}</b><Listen text={`${t('auth_phone')}. ${t('auth_phone_desc')}`} /></span>
               <input 
                 type="tel" 
                 placeholder={t('auth_phone_placeholder')}
@@ -140,7 +162,7 @@ export default function AuthScreen({ onLogged, onChangeLanguage }) {
         ) : (
           <form onSubmit={handleVerifyOtp} className="form" style={{ gap: '16px' }}>
             <label>
-              {t('auth_otp')}
+              <span className="gh"><b>{t('auth_otp')}</b><Listen text={`${message ? message + '. ' : ''}${t('auth_otp')}`} /></span>
               <input 
                 type="text" 
                 placeholder={t('auth_otp_placeholder')}
@@ -179,6 +201,7 @@ export default function AuthScreen({ onLogged, onChangeLanguage }) {
           </svg>
           {t('auth_google')}
         </button>
+        {onStory && <button className="btn ghost full storybtn" type="button" onClick={onStory}><Icon name="speaker" /> {t('story_title')}</button>}
         {onChangeLanguage && (
           <button className="link" type="button" onClick={onChangeLanguage} style={{ justifySelf: 'center' }}>
             🌐 {t('change_language')}

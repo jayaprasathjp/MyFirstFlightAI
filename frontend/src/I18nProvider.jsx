@@ -27,7 +27,11 @@ async function loadLabels(lang) {
 export default function I18nProvider({ lang, children }) {
   const [loaded, setLoaded] = useState({})
   const meta = LANGUAGES.find((l) => l.code === lang) || LANGUAGES[0]
-  const texts = lang === 'en' ? EN : { ...EN, ...(loaded[lang] || cached(lang)) }
+  // while a new language loads, keep showing the one on screen (no flash of English in between)
+  const textsFor = (l) => (l === 'en' ? EN : (loaded[l] || cached(l)) && { ...EN, ...(loaded[l] || cached(l)) })
+  const [shownLang, setShownLang] = useState(lang)
+  const texts = textsFor(lang) || textsFor(shownLang) || EN
+  if (shownLang !== lang && textsFor(lang)) setShownLang(lang) // remember the newest language that has loaded
 
   useEffect(() => {
     document.documentElement.lang = lang

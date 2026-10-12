@@ -4,11 +4,12 @@ import { useI18n } from '../i18n'
 import { EN, LANGUAGES } from '../strings'
 import { speak, stopSpeaking, useRecorder } from '../voice'
 import Listen from '../components/Listen'
+import Icon from '../components/Icon'
 
 const SAY_MS = 6000 // naming a language takes a few seconds; stop by itself after that
 
 // "Say your language": record, let Gemini name the language, then ask to confirm (a wrong guess is one tap away).
-function VoicePick({ onPick }) {
+export function VoicePick({ onPick }) {
   const { t } = useI18n()
   const { recording, start, stop } = useRecorder()
   const [busy, setBusy] = useState(false)
@@ -36,6 +37,7 @@ function VoicePick({ onPick }) {
     if (recording) return finish()
     setFound(null)
     setMsg('')
+    stopSpeaking() // the mic must not record the app's own voice
     try {
       await start()
       timer.current = setTimeout(finish, SAY_MS)
@@ -56,11 +58,12 @@ function VoicePick({ onPick }) {
           {busy ? <><span className="spin" aria-hidden="true"></span> {t('thinking')}</> : recording ? '' : t('lang_voice_hint')}
         </span>
       </div>
+      <Listen text={() => t('lang_choose_below', { list: LANGUAGES.map((l) => l.english).join(', ') })} toast={() => {}} />
       {found && (
         <div className="vp-found">
           <span><b lang={found.code}>{found.native}</b> <small>{found.english}</small></span>
           <div className="row2">
-            <button className="btn pri" onClick={() => onPick(found.code)}>✓ {t('continue')}</button>
+            <button className="btn pri" onClick={() => { onPick(found.code); setFound(null) }}>✓ {t('continue')}</button>
             <button className="btn sec" onClick={mic}>🎤 {t('lang_voice_again')}</button>
           </div>
         </div>
@@ -85,12 +88,16 @@ function LanguagesIntro() {
 }
 const noop = () => {}
 
-export default function LanguageScreen({ onPick, busy, voice }) {
+export default function LanguageScreen({ onPick, busy, toast, onStory, voice }) {
   const { lang, t } = useI18n()
   return (
     <>
-      <div className="gh"><h2>{t('choose_language')}</h2>{voice && <LanguagesIntro />}</div>
+      <div className="gh">
+        <h2>{t('choose_language')}</h2>
+        {voice ? <LanguagesIntro /> : <Listen text={`${t('choose_language')}. ${t('choose_language_hint')}`} toast={toast} />}
+      </div>
       <p className="muted">{t('choose_language_hint')}</p>
+      {onStory && <button className="btn sec full storybtn" onClick={onStory}><Icon name="speaker" /> {t('story_title')}</button>}
       {voice && <VoicePick onPick={onPick} />}
       <div className="langs">
         {LANGUAGES.map((l) => (

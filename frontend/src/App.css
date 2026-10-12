@@ -1635,7 +1635,7 @@ ul.do li::before {
 .helphint-play { margin-inline-start: auto; font-size: 20px }
 
 /* language page: say your language */
-.voicepick { display: grid; grid-template-columns: auto 1fr; gap: 10px 14px; align-items: center;
+.voicepick { display: grid; grid-template-columns: auto 1fr auto; gap: 10px 14px; align-items: center;
   border: 1.5px solid var(--brand); background: var(--brand-soft) }
 .voicepick .micbtn { width: 64px; height: 64px }
 .voicepick .micbtn svg { width: 28px; height: 28px }
@@ -1666,9 +1666,36 @@ ul.do li::before {
 .fb-thanks { background: var(--ok-soft); color: var(--ok); border-radius: 12px; padding: 12px; font-weight: 700; text-align: center }
 
 /* app walkthrough: full-screen narrated player */
-.tripvideo { position: fixed; inset: 0; z-index: 26; background: var(--app); overflow: auto; display: grid; gap: 14px;
-  align-content: start; grid-auto-rows: max-content; max-width: 480px; margin: 0 auto;
-  padding: calc(16px + env(safe-area-inset-top, 0px)) 16px calc(24px + env(safe-area-inset-bottom, 0px)) }
+.tripvideo-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.tripvideo {
+  position: relative;
+  inset: auto;
+  z-index: 1;
+  background: var(--app);
+  overflow-y: auto;
+  display: grid;
+  gap: 14px;
+  align-content: start;
+  grid-auto-rows: max-content;
+  width: 100%;
+  max-width: 480px;
+  min-height: 100%;
+  margin: 0 auto;
+  padding: calc(16px + env(safe-area-inset-top, 0px)) 16px calc(24px + env(safe-area-inset-bottom, 0px));
+  box-shadow: 0 0 48px rgba(0, 0, 0, 0.6);
+}
 .tv-head { display: flex; justify-content: space-between; align-items: center; gap: 10px }
 .tv-x { padding: 10px 14px }
 .tv-bar { height: 4px; border-radius: 99px; background: var(--line); overflow: hidden; margin-top: -8px }
