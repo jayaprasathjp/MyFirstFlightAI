@@ -13,7 +13,8 @@ import ContactsScreen from "./screens/ContactsScreen";
 import ChecklistScreen from "./screens/ChecklistScreen";
 import TripsScreen from "./screens/TripsScreen";
 import DocsFoundScreen from "./screens/DocsFoundScreen";
-import FlightAlert from "./components/FlightAlert";
+import FlightAlert, { useFlightStatus } from "./components/FlightAlert";
+import FlightChip from "./components/FlightChip";
 import JourneyScreen from "./screens/JourneyScreen";
 import LostCard from "./components/LostCard";
 import HelpSheet from "./components/HelpSheet";
@@ -34,7 +35,7 @@ const STEPS = [
   "journey",
 ];
 
-function TopBar({ onLanguage, busy, currentUser, logout, onShowTrips, auto, onAuto }) {
+function TopBar({ onLanguage, busy, currentUser, logout, onShowTrips, auto, onAuto, flight }) {
   const { lang, t } = useI18n();
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
@@ -62,6 +63,7 @@ function TopBar({ onLanguage, busy, currentUser, logout, onShowTrips, auto, onAu
         <span>MyFirstFlightAI</span>
       </div>
       <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+        {flight && <FlightChip flight={flight.code} status={flight.status} />}
         <button
           type="button"
           className={"autoread" + (auto ? " on" : "")}
@@ -536,6 +538,9 @@ function Flow({ setLang }) {
   };
 
   const hasTravellers = !!trip && trip.travellers.length > 0;
+  // Live flight status, shared by the top-bar chip and the delay / cancellation popup.
+  const flightInfo = useFlightStatus(currentUser && hasTravellers ? trip.id : null);
+  const flightCode = hasTravellers ? trip.summary?.flights?.[0] : null;
   const allowed = (s) => trip && (s === "travellers" || hasTravellers);
 
   return (
@@ -549,6 +554,7 @@ function Flow({ setLang }) {
         onShowTrips={goToTrips}
         auto={auto}
         onAuto={toggleAuto}
+        flight={currentUser && viewMode === "trip" && flightCode ? { code: flightCode, status: flightInfo.status } : null}
       />
       {!currentUser ? (
         entry === "auth" ? (
@@ -724,7 +730,7 @@ function Flow({ setLang }) {
               </button>
             </div>
           )}
-          {hasTravellers && <FlightAlert tripId={trip.id} toast={toast} />}
+          {hasTravellers && <FlightAlert tripId={trip.id} alert={flightInfo.alert} toast={toast} />}
           {helpOpen && hasTravellers && (
             <HelpSheet
               trip={trip}

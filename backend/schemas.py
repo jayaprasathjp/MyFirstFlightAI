@@ -1,7 +1,7 @@
 """Pydantic models: Gemini extraction schemas and API request bodies."""
-import re
 from typing import List, Literal, Optional
 
+import phonenumbers
 from pydantic import BaseModel, Field, field_validator
 
 DocType = Literal["ticket", "passport", "visa"]
@@ -107,16 +107,16 @@ class ChecklistToggle(BaseModel):
 
 
 def normalize_phone(raw: str) -> str | None:
-    """Indian mobiles: exactly 10 digits starting 6-9 (+91 added if left out). Other country codes: 8-15 digits.
-    Returns "+91 98765 43210" / "+6581234567", or None. Same rule as frontend/src/phone.js."""
-    s = re.sub(r"[\s().-]", "", raw or "")
-    india = re.fullmatch(r"(?:\+?91|0)?([6-9]\d{9})", s)
-    if india:
-        return f"+91 {india[1][:5]} {india[1][5:]}"
-    if re.match(r"\+?91", s) or s.isdigit():
-        return None  # Indian, or no country code, but not 10 digits
-    other = re.fullmatch(r"\+(\d{8,15})", s)
-    return f"+{other[1]}" if other else None
+    """A valid phone number for its country (Google's libphonenumber rules: Singapore 8 digits, India 10, ...),
+    written as "+65 8123 4567", or None. A number without a country code is taken as Indian.
+    Same library as frontend/src/phone.js (libphonenumber-js)."""
+    try:
+        n = phonenumbers.parse((raw or "").strip(), "IN")
+    except phonenumbers.NumberParseException:
+        return None
+    if not phonenumbers.is_valid_number(n):
+        return None
+    return phonenumbers.format_number(n, phonenumbers.PhoneNumberFormat.INTERNATIONAL)
 
 
 class Contact(BaseModel):
@@ -130,7 +130,7 @@ class Contact(BaseModel):
     def _phone(cls, v):
         phone = normalize_phone(v)
         if not phone:
-            raise ValueError("Indian mobile numbers need 10 digits; other numbers need their country code.")
+            raise ValueError("This is not a valid phone number for its country.")
         return phone
 
 
