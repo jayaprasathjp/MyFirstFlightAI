@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { api, errorText } from '../api'
 import { useI18n } from '../i18n'
-import { EN, LANGUAGES } from '../strings'
-import { speak, stopSpeaking, useRecorder } from '../voice'
+import { LANGUAGES } from '../strings'
+import { stopSpeaking, useRecorder } from '../voice'
 import Listen from '../components/Listen'
 import Icon from '../components/Icon'
 
@@ -73,17 +73,10 @@ export function VoicePick({ onPick }) {
   )
 }
 
-// First page only: read out which languages there are and how to choose one.
+// Read out which languages there are and how to choose one (on 🔊 only, never by itself).
 function LanguagesIntro() {
-  const { lang, t } = useI18n()
+  const { t } = useI18n()
   const text = `${t('choose_language')}. ${t('lang_intro', { list: LANGUAGES.map((l) => l.english).join(', ') })}`
-  const inLanguage = lang === 'en' || t('lang_intro') !== EN.lang_intro // a new language's labels load a moment later
-  // Browsers may block sound until the first tap; then the 🔊 button plays it.
-  useEffect(() => {
-    if (!inLanguage) return
-    speak(text, lang)
-    return stopSpeaking
-  }, [text, lang, inLanguage])
   return <Listen text={text} toast={noop} />
 }
 const noop = () => {}

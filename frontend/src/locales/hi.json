@@ -87,7 +87,7 @@
   "from_visa": "आपके वीज़ा से",
   "add_contact": "एक और संपर्क जोड़ें",
   "save_continue": "सुरक्षित करें और जारी रखें",
-  "err_contacts": "कम से कम एक संपर्क जोड़ें जिसमें नाम और फ़ोन नंबर हो, जैसे +91 98400 12345.",
+  "err_contacts": "कम से कम एक नाम और फ़ोन नंबर वाला संपर्क जोड़ें। भारत के मोबाइल नंबर 10 अंकों के होते हैं, जैसे 98400 12345; दूसरे देशों के लिए + और देश के कोड से शुरू करें।",
   "ai_badge": "एआई सुझाव · आधिकारिक वेबसाइट पर पुष्टि करें",
   "go_airport": "हवाई अड्डे के चरण",
   "journey_title": "हवाई अड्डा, चरण-दर-चरण",
@@ -292,7 +292,7 @@
     "from_visa": "From your visa",
     "add_contact": "Add another contact",
     "save_continue": "Save and continue",
-    "err_contacts": "Add at least one contact with a name and a phone number like +91 98400 12345.",
+    "err_contacts": "Add at least one contact with a name and a phone number. Indian mobile numbers have 10 digits, like 98400 12345; for other countries start with + and the country code.",
     "ai_badge": "AI suggestion · confirm on the official website",
     "go_airport": "Airport steps",
     "journey_title": "Airport, step by step",
@@ -467,7 +467,10 @@
     "lang_voice_fail": "Sorry, I could not hear a language. Please try again, or tap your language below.",
     "lang_mic_denied": "Microphone not allowed. Please tap your language below.",
     "lang_intro": "These languages are available: {list}. Tap your language below, or tap the mic and say it.",
-    "lang_choose_below": "Select your language from the languages below: {list}."
+    "lang_choose_below": "Select your language from the languages below: {list}.",
+    "err_phone_digits": "Please check the number. Indian mobile numbers have 10 digits, like 98765 43210. For other countries, start with + and the country code.",
+    "fb_speak": "Speak your comment",
+    "fb_speak_hint": "Or tap the mic and say it. Your words appear in the box."
   },
   "video_replay": "दोबारा देखें",
   "video_pause": "रोकें",
@@ -582,5 +585,8 @@
   "moment_board": "आपकी उड़ान {flight} में सवार हो रहे हैं। दरवाज़े पर अपना बोर्डिंग पास दिखाएँ।",
   "moment_arrive": "{name} आपका इंतज़ार कर रहे हैं।",
   "moment_arrive_any": "आपका परिवार आपका इंतज़ार कर रहा है।",
-  "lang_choose_below": "अपनी भाषा नीचे दी गई भाषाओं में से चुनें: {list}।"
+  "lang_choose_below": "अपनी भाषा नीचे दी गई भाषाओं में से चुनें: {list}।",
+  "err_phone_digits": "कृपया नंबर जांचें। भारत के मोबाइल नंबर 10 अंकों के होते हैं, जैसे 98765 43210। दूसरे देशों के लिए, + और देश के कोड से शुरू करें।",
+  "fb_speak": "अपनी बात बोलें",
+  "fb_speak_hint": "या माइक पर टैप करके बोलें. आपके शब्द इस बक्से में दिखेंगे."
 }

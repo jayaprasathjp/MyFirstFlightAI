@@ -44,12 +44,9 @@ export default function CheckScreen({ trip, onBack, onNext, onAnswer, onHelpIntr
   const tripChecks = trip.checks.filter((c) => !c.traveller_id)
   if (tripChecks.length) groups.push({ key: 'trip', title: t('trip_notes'), checks: tripChecks })
 
-  const readAll = () => [ready ? t('ready_title') : t('fix_title'), ready ? t('ready_body') : t('fix_body'),
-    ...groups.flatMap((g) => [g.title, ...g.checks.map((c) => `${c.title}. ${c.message}`)])].join('. ')
-
   return (
     <>
-      <div className="gh"><h2>{t('check_title')}</h2><Listen text={readAll} toast={toast} /></div>
+      <h2>{t('check_title')}</h2>
       <button className="helphint" onClick={onHelpIntro} aria-label={t('help_intro')}>
         <span aria-hidden="true"><Icon name="down" /></span>
         <span>{t('help_hint_short')}</span>

@@ -87,7 +87,7 @@
   "from_visa": "De su visa",
   "add_contact": "Añadir otro contacto",
   "save_continue": "Guardar y continuar",
-  "err_contacts": "Añada al menos un contacto con un nombre y un número de teléfono como +91 98400 12345.",
+  "err_contacts": "Agregue al menos un contacto con un nombre y un número de teléfono. Los números de celular en India tienen 10 dígitos, como 98400 12345; para otros países, empiece con + y el código del país.",
   "ai_badge": "Sugerencia de IA · confirme en el sitio web oficial",
   "go_airport": "Pasos en el aeropuerto",
   "journey_title": "Aeropuerto, paso a paso",
@@ -292,7 +292,7 @@
     "from_visa": "From your visa",
     "add_contact": "Add another contact",
     "save_continue": "Save and continue",
-    "err_contacts": "Add at least one contact with a name and a phone number like +91 98400 12345.",
+    "err_contacts": "Add at least one contact with a name and a phone number. Indian mobile numbers have 10 digits, like 98400 12345; for other countries start with + and the country code.",
     "ai_badge": "AI suggestion · confirm on the official website",
     "go_airport": "Airport steps",
     "journey_title": "Airport, step by step",
@@ -467,7 +467,10 @@
     "lang_voice_fail": "Sorry, I could not hear a language. Please try again, or tap your language below.",
     "lang_mic_denied": "Microphone not allowed. Please tap your language below.",
     "lang_intro": "These languages are available: {list}. Tap your language below, or tap the mic and say it.",
-    "lang_choose_below": "Select your language from the languages below: {list}."
+    "lang_choose_below": "Select your language from the languages below: {list}.",
+    "err_phone_digits": "Please check the number. Indian mobile numbers have 10 digits, like 98765 43210. For other countries, start with + and the country code.",
+    "fb_speak": "Speak your comment",
+    "fb_speak_hint": "Or tap the mic and say it. Your words appear in the box."
   },
   "video_replay": "Ver de nuevo",
   "video_pause": "Pausar",
@@ -582,5 +585,8 @@
   "moment_board": "Suba a su vuelo {flight}. Muestre su pase de abordar en la puerta.",
   "moment_arrive": "{name} le está esperando.",
   "moment_arrive_any": "Su familia le está esperando.",
-  "lang_choose_below": "Elija su idioma de los que están abajo: {list}."
+  "lang_choose_below": "Elija su idioma de los que están abajo: {list}.",
+  "err_phone_digits": "Por favor, revise el número. Los números de celular en India tienen 10 dígitos, como 98765 43210. Para otros países, empiece con + y el código del país.",
+  "fb_speak": "Diga su comentario",
+  "fb_speak_hint": "O toque el micrófono y dígalo. Sus palabras aparecerán en el cuadro."
 }

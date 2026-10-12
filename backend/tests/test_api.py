@@ -205,6 +205,41 @@ def test_assist_request_is_stored(client):
     assert client.post(f"/api/trips/{trip['id']}/assist", json={"traveller_id": "nope", "kind": "lost"}).status_code == 404
 
 
+def test_transcribe_comment(client, monkeypatch):
+    seen = {}
+    monkeypatch.setattr(gemini, "transcribe", lambda audio, mime, lang: seen.update(mime=mime, lang=lang) or "மிகவும் எளிதாக இருந்தது")
+    trip = _trip_with_traveller(client)
+    url = f"/api/trips/{trip['id']}/transcribe"
+    r = client.post(url, files={"audio": ("c.webm", b"\x1a\x45", "audio/webm;codecs=opus")})
+    assert r.status_code == 200 and r.json() == {"text": "மிகவும் எளிதாக இருந்தது"} and seen == {"mime": "audio/webm", "lang": "en"}
+
+    def unclear(audio, mime, lang):
+        raise gemini.UnclearAudio("Sorry, I could not hear that clearly.")
+    monkeypatch.setattr(gemini, "transcribe", unclear)
+    assert client.post(url, files={"audio": ("c.webm", b"\x1a\x45", "audio/webm")}).status_code == 422
+    assert client.post(url, files={"audio": ("c.txt", b"x", "text/plain")}).status_code == 415
+    main.app.dependency_overrides[main.get_current_user] = lambda: "someone-else"
+    assert client.post(url, files={"audio": ("c.webm", b"\x1a\x45", "audio/webm")}).status_code == 403
+
+
+def test_phone_numbers_indian_need_10_digits(client):
+    from schemas import normalize_phone
+    assert normalize_phone("9876543210") == "+91 98765 43210"          # no country code: taken as Indian
+    assert normalize_phone("+91 98765-43210") == "+91 98765 43210"
+    assert normalize_phone("09876543210") == "+91 98765 43210"
+    assert normalize_phone("987654321") is None                         # 9 digits
+    assert normalize_phone("+91 98765 432101") is None                  # 11 digits
+    assert normalize_phone("+91 5876543210") is None                    # Indian mobiles start 6-9
+    assert normalize_phone("+65 8123 4567") == "+6581234567"            # family abroad keeps working
+    assert normalize_phone("+971 50 123 4567") == "+971501234567"
+    assert normalize_phone("+65 812") is None
+    trip = _trip_with_traveller(client)
+    url = f"/api/trips/{trip['id']}/contacts"
+    assert client.put(url, json={"contacts": [{"name": "Amma", "phone": "98401 2341"}]}).status_code == 422
+    trip = client.put(url, json={"contacts": [{"name": "Amma", "phone": "9840123412"}]}).json()
+    assert trip["contacts"][0]["phone"] == "+91 98401 23412"
+
+
 def test_pick_language_by_voice(client, monkeypatch):
     seen = {}
     monkeypatch.setattr(gemini, "pick_language", lambda audio, mime: seen.update(audio=audio, mime=mime) or {"code": "ta", "heard": "தமிழ்"})

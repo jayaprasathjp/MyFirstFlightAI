@@ -87,7 +87,7 @@
   "from_visa": "Dal suo visto",
   "add_contact": "Aggiungi un altro contatto",
   "save_continue": "Salva e continua",
-  "err_contacts": "Aggiunga almeno un contatto con un nome e un numero di telefono come +91 98400 12345.",
+  "err_contacts": "Aggiunga almeno un contatto con un nome e un numero di telefono. I numeri di cellulare indiani hanno 10 cifre, come 98400 12345; per altri paesi inizi con + e il prefisso internazionale.",
   "ai_badge": "Suggerimento dell'IA · controlli sul sito ufficiale",
   "go_airport": "Passi per l'aeroporto",
   "journey_title": "Aeroporto, passo dopo passo",
@@ -287,7 +287,7 @@
     "from_visa": "From your visa",
     "add_contact": "Add another contact",
     "save_continue": "Save and continue",
-    "err_contacts": "Add at least one contact with a name and a phone number like +91 98400 12345.",
+    "err_contacts": "Add at least one contact with a name and a phone number. Indian mobile numbers have 10 digits, like 98400 12345; for other countries start with + and the country code.",
     "ai_badge": "AI suggestion · confirm on the official website",
     "go_airport": "Airport steps",
     "journey_title": "Airport, step by step",
@@ -462,7 +462,10 @@
     "lang_voice_fail": "Sorry, I could not hear a language. Please try again, or tap your language below.",
     "lang_mic_denied": "Microphone not allowed. Please tap your language below.",
     "lang_intro": "These languages are available: {list}. Tap your language below, or tap the mic and say it.",
-    "lang_choose_below": "Select your language from the languages below: {list}."
+    "lang_choose_below": "Select your language from the languages below: {list}.",
+    "err_phone_digits": "Please check the number. Indian mobile numbers have 10 digits, like 98765 43210. For other countries, start with + and the country code.",
+    "fb_speak": "Speak your comment",
+    "fb_speak_hint": "Or tap the mic and say it. Your words appear in the box."
   },
   "help_intro": "I suoi documenti sono pronti. Se ha bisogno di aiuto in qualsiasi momento, tocchi il pulsante blu \"Aiuto\" in fondo allo schermo. Se si sente perso, tocchi il pulsante rosso \"Mi sono perso\".",
   "bag_not_on_ticket": "Non stampato sul suo biglietto: questo e il limite solito. Per favore, confermi con la compagnia aerea.",
@@ -582,5 +585,8 @@
   "moment_board": "Si imbarchi sul tuo volo {flight}. Mostra la tua carta d'imbarco alla porta.",
   "moment_arrive": "{name} ti sta aspettando.",
   "moment_arrive_any": "La tua famiglia ti sta aspettando.",
-  "lang_choose_below": "Selezioni la sua lingua tra quelle elencate qui sotto: {list}."
+  "lang_choose_below": "Selezioni la sua lingua tra quelle elencate qui sotto: {list}.",
+  "err_phone_digits": "Per favore, controlli il numero. I numeri di cellulare indiani hanno 10 cifre, come 98765 43210. Per altri paesi, inizi con + e il prefisso internazionale.",
+  "fb_speak": "Dica il suo commento",
+  "fb_speak_hint": "Oppure tocchi il microfono e lo dica. Le sue parole appariranno qui."
 }

@@ -19,10 +19,7 @@ const STEPS = [
 // The front page for anyone not signed in: what the app does, in the visitor's language, every part readable aloud.
 export default function LandingScreen({ onStart, onStory, onLanguage, toast }) {
   const { t, lang } = useI18n()
-  const hero = `${t('land_title')} ${t('land_sub')}`
-  // the languages section reads out every language there is, and how to choose (tap one, or say it)
-  const langsText = `${t('land_langs')}. ${t('land_langs_d')} ${t('lang_intro', { list: LANGUAGES.map((l) => l.english).join(', ') })}`
-  // the globe flies from a home airport for the chosen language, to a new destination every few seconds
+  const hero = `${t('land_title')} ${t('land_sub')}`  // the globe flies from a home airport for the chosen language, to a new destination every few seconds
   const [n, setN] = useState(0)
   useEffect(() => {
     if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return
@@ -52,7 +49,7 @@ export default function LandingScreen({ onStart, onStory, onLanguage, toast }) {
       </section>
 
       <section className="land-band">
-        <div className="gh"><h2>{t('land_langs')}</h2><Listen text={langsText} toast={toast} /></div>
+        <h2>{t('land_langs')}</h2>
         <p className="muted">{t('land_langs_d')}</p>
         <VoicePick onPick={onLanguage} />
         <div className="land-langs">
@@ -63,7 +60,7 @@ export default function LandingScreen({ onStart, onStory, onLanguage, toast }) {
       </section>
 
       <section className="land-band">
-        <div className="gh"><h2>{t('land_how')}</h2><Listen text={[t('land_how'), ...STEPS.map(([, a, b]) => `${t(a)}. ${t(b)}`)].join('. ')} toast={toast} /></div>
+        <h2>{t('land_how')}</h2>
         <ol className="land-steps">
           {STEPS.map(([icon, a, b], i) => (
             <li key={a}>

@@ -2,8 +2,8 @@ import { useState } from 'react'
 import { useI18n } from '../i18n'
 import { usePlaces } from '../places'
 import Listen from '../components/Listen'
+import { normalizePhone } from '../phone'
 
-const PHONE = /^\+?[0-9][0-9 ()-]{5,19}$/
 const EMPTY = { name: '', relation: '', phone: '', at_destination: false }
 
 function initialRows(trip) {
@@ -22,9 +22,9 @@ export default function ContactsScreen({ trip, onSave, busy, error, toast }) {
   const edit = (i, field, value) => { setRows((r) => r.map((row, n) => (n === i ? { ...row, [field]: value } : row))); setErr('') }
   const submit = () => {
     const filled = rows.filter((r) => r.name.trim() || r.phone.trim())
-    if (!filled.length || filled.some((r) => !r.name.trim() || !PHONE.test(r.phone.trim()))) return setErr(t('err_contacts'))
+    if (!filled.length || filled.some((r) => !r.name.trim() || !normalizePhone(r.phone))) return setErr(t('err_contacts'))
     onSave(filled.map(({ name, relation, phone, at_destination }) =>
-      ({ name: name.trim(), relation: relation.trim(), phone: phone.trim(), at_destination })))
+      ({ name: name.trim(), relation: relation.trim(), phone: normalizePhone(phone), at_destination })))
   }
 
   return (

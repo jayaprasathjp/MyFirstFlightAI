@@ -70,6 +70,7 @@ export const api = {
     return request(`/api/trips/${id}/boarding-pass`, { method: 'POST', body: form })
   },
   pickLanguage: (audio) => request('/api/pick-language', { method: 'POST', body: voiceForm('', audio) }, true),
+  transcribe: (id, audio) => request(`/api/trips/${id}/transcribe`, { method: 'POST', body: voiceForm('', audio) }, true),
   saveFeedback: (id, feedback) => request(`/api/trips/${id}/feedback`, json('PUT', feedback)),
   assist: (id, body) => request(`/api/trips/${id}/assist`, json('POST', body)),
   tts: (text, language) => request('/api/tts', json('POST', { text, language }), true),

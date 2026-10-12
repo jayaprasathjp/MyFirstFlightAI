@@ -1,7 +1,8 @@
 """Pydantic models: Gemini extraction schemas and API request bodies."""
+import re
 from typing import List, Literal, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 DocType = Literal["ticket", "passport", "visa"]
 Assistance = Literal["none", "elderly", "wheelchair", "visually_impaired"]
@@ -105,11 +106,32 @@ class ChecklistToggle(BaseModel):
     done: dict[str, bool]  # full map of item_id -> done; last write wins
 
 
+def normalize_phone(raw: str) -> str | None:
+    """Indian mobiles: exactly 10 digits starting 6-9 (+91 added if left out). Other country codes: 8-15 digits.
+    Returns "+91 98765 43210" / "+6581234567", or None. Same rule as frontend/src/phone.js."""
+    s = re.sub(r"[\s().-]", "", raw or "")
+    india = re.fullmatch(r"(?:\+?91|0)?([6-9]\d{9})", s)
+    if india:
+        return f"+91 {india[1][:5]} {india[1][5:]}"
+    if re.match(r"\+?91", s) or s.isdigit():
+        return None  # Indian, or no country code, but not 10 digits
+    other = re.fullmatch(r"\+(\d{8,15})", s)
+    return f"+{other[1]}" if other else None
+
+
 class Contact(BaseModel):
     name: str = Field(min_length=1, max_length=60)
     relation: str = Field("", max_length=40)
-    phone: str = Field(pattern=r"^\+?[0-9][0-9 ()-]{5,19}$")
+    phone: str = Field(max_length=24)
     at_destination: bool = False
+
+    @field_validator("phone")
+    @classmethod
+    def _phone(cls, v):
+        phone = normalize_phone(v)
+        if not phone:
+            raise ValueError("Indian mobile numbers need 10 digits; other numbers need their country code.")
+        return phone
 
 
 class ContactsRequest(BaseModel):
@@ -143,6 +165,11 @@ class AskResult(BaseModel):
     language: str = Field(description="ISO 639-1 code of the language the traveller spoke or typed, e.g. ta, hi, en")
     question: str = Field(description="what the traveller asked, written in the language they used")
     answer: str = Field(description="the answer, in the same language the traveller used")
+
+
+class Transcript(BaseModel):
+    heard_clearly: bool = Field(True, description="false if there is no clear speech; never guess words")
+    text: str = Field(description="exactly what was said, in the language and script it was spoken")
 
 
 class LanguagePick(BaseModel):
