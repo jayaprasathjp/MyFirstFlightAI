@@ -87,7 +87,7 @@
   "from_visa": "మీ వీసా నుండి",
   "add_contact": "మరొకరి వివరాలు జోడించండి",
   "save_continue": "సేవ్ చేసి, కొనసాగించండి",
-  "err_contacts": "దయచేసి పేరు, ఫోన్ నంబర్‌తో కనీసం ఒకరిని చేర్చండి. భారతదేశపు మొబైల్ నంబర్‌లు 10 అంకెలు ఉంటాయి, ఉదాహరణకు 98400 12345; ఇతర దేశాలకైతే + గుర్తుతో మొదలుపెట్టి దేశం కోడ్ వేయండి.",
+  "err_contacts": "కనీసం ఒక పేరు మరియు ఫోన్ నంబర్‌తో ఒక కాంటాక్ట్‌ను జోడించండి. భారతీయ మొబైల్ నంబర్‌లు 10 అంకెలు కలిగి ఉంటాయి మరియు 6, 7, 8 లేదా 9తో మొదలవుతాయి, ఉదాహరణకు 98400 12345; ఇతర దేశాల కోసం + మరియు దేశం కోడ్‌తో ప్రారంభించండి.",
   "ai_badge": "AI సూచన · అధికారిక వెబ్‌సైట్‌లో నిర్ధారించుకోండి",
   "go_airport": "విమానాశ్రయం పనులు",
   "journey_title": "విమానాశ్రయం, అంచెలంచెలుగా",
@@ -292,7 +292,7 @@
     "from_visa": "From your visa",
     "add_contact": "Add another contact",
     "save_continue": "Save and continue",
-    "err_contacts": "Add at least one contact with a name and a phone number. Indian mobile numbers have 10 digits, like 98400 12345; for other countries start with + and the country code.",
+    "err_contacts": "Add at least one contact with a name and a phone number. Indian mobile numbers have 10 digits and start with 6, 7, 8 or 9, like 98400 12345; for other countries start with + and the country code.",
     "ai_badge": "AI suggestion · confirm on the official website",
     "go_airport": "Airport steps",
     "journey_title": "Airport, step by step",
@@ -468,9 +468,10 @@
     "lang_mic_denied": "Microphone not allowed. Please tap your language below.",
     "lang_intro": "These languages are available: {list}. Tap your language below, or tap the mic and say it.",
     "lang_choose_below": "Select your language from the languages below: {list}.",
-    "err_phone_digits": "Please check the number. Indian mobile numbers have 10 digits, like 98765 43210. For other countries, start with + and the country code.",
+    "err_phone_digits": "Please check the number. Indian mobile numbers have 10 digits and start with 6, 7, 8 or 9, like 98765 43210. For other countries, start with + and the country code.",
     "fb_speak": "Speak your comment",
-    "fb_speak_hint": "Or tap the mic and say it. Your words appear in the box."
+    "fb_speak_hint": "Or tap the mic and say it. Your words appear in the box.",
+    "err_check_details": "Some details are not right. Please check them and try again."
   },
   "video_replay": "మళ్ళీ చూడండి",
   "video_pause": "ఆపు",
@@ -586,7 +587,8 @@
   "moment_arrive": "{name} మీ కోసం ఎదురుచూస్తున్నారు.",
   "moment_arrive_any": "మీ కుటుంబం మీ కోసం ఎదురుచూస్తోంది.",
   "lang_choose_below": "కింద ఇచ్చిన భాషల నుండి మీ భాషను ఎంచుకోండి: {list}.",
-  "err_phone_digits": "దయచేసి నంబర్ సరిచూడండి. భారతదేశపు మొబైల్ నంబర్‌లు 10 అంకెలు ఉంటాయి, ఉదాహరణకు 98765 43210. ఇతర దేశాలకైతే, + గుర్తుతో మొదలుపెట్టి దేశం కోడ్ వేయండి.",
+  "err_phone_digits": "దయచేసి నంబర్‌ను సరిచూడండి. భారతీయ మొబైల్ నంబర్‌లు 10 అంకెలు కలిగి ఉంటాయి మరియు 6, 7, 8 లేదా 9తో మొదలవుతాయి, ఉదాహరణకు 98765 43210. ఇతర దేశాల కోసం, + మరియు దేశం కోడ్‌తో ప్రారంభించండి.",
   "fb_speak": "మీ అభిప్రాయం చెప్పండి",
-  "fb_speak_hint": "లేదా మైక్ నొక్కి చెప్పండి. మీరు చెప్పినవి ఇక్కడ కనిపిస్తాయి."
+  "fb_speak_hint": "లేదా మైక్ నొక్కి చెప్పండి. మీరు చెప్పినవి ఇక్కడ కనిపిస్తాయి.",
+  "err_check_details": "కొన్ని వివరాలు సరిగ్గా లేవు. దయచేసి వాటిని సరిచూసి మళ్ళీ ప్రయత్నించండి."
 }

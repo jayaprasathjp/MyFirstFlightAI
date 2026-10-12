@@ -87,7 +87,7 @@
   "from_visa": "ビザから",
   "add_contact": "別の連絡先を追加する",
   "save_continue": "保存して続ける",
-  "err_contacts": "名前と電話番号を一つ以上追加してください。インドの携帯電話番号は98400 12345のように10桁です。他の国の場合は、+と国番号から始めてください。",
+  "err_contacts": "お名前と電話番号を一つ以上追加してください。インドの携帯電話番号は10桁で、6、7、8、または9で始まります。例えば、98400 12345のようになります。他の国の場合は、+と国番号から始めてくださいね。",
   "ai_badge": "AIのおすすめ・公式ウェブサイトで確認してください",
   "go_airport": "空港での手順",
   "journey_title": "空港、一歩ずつ",
@@ -292,7 +292,7 @@
     "from_visa": "From your visa",
     "add_contact": "Add another contact",
     "save_continue": "Save and continue",
-    "err_contacts": "Add at least one contact with a name and a phone number. Indian mobile numbers have 10 digits, like 98400 12345; for other countries start with + and the country code.",
+    "err_contacts": "Add at least one contact with a name and a phone number. Indian mobile numbers have 10 digits and start with 6, 7, 8 or 9, like 98400 12345; for other countries start with + and the country code.",
     "ai_badge": "AI suggestion · confirm on the official website",
     "go_airport": "Airport steps",
     "journey_title": "Airport, step by step",
@@ -468,9 +468,10 @@
     "lang_mic_denied": "Microphone not allowed. Please tap your language below.",
     "lang_intro": "These languages are available: {list}. Tap your language below, or tap the mic and say it.",
     "lang_choose_below": "Select your language from the languages below: {list}.",
-    "err_phone_digits": "Please check the number. Indian mobile numbers have 10 digits, like 98765 43210. For other countries, start with + and the country code.",
+    "err_phone_digits": "Please check the number. Indian mobile numbers have 10 digits and start with 6, 7, 8 or 9, like 98765 43210. For other countries, start with + and the country code.",
     "fb_speak": "Speak your comment",
-    "fb_speak_hint": "Or tap the mic and say it. Your words appear in the box."
+    "fb_speak_hint": "Or tap the mic and say it. Your words appear in the box.",
+    "err_check_details": "Some details are not right. Please check them and try again."
   },
   "video_replay": "もう一度見る",
   "video_pause": "一時停止",
@@ -586,7 +587,8 @@
   "moment_arrive": "{name}さんがあなたを待っていますよ。",
   "moment_arrive_any": "ご家族があなたを待っていますよ。",
   "lang_choose_below": "下の言語からお選びください：{list}。",
-  "err_phone_digits": "電話番号を確認してください。インドの携帯電話番号は98765 43210のように10桁です。他の国の場合は、+と国番号から始めてください。",
+  "err_phone_digits": "番号を確認してください。インドの携帯電話番号は10桁で、6、7、8、または9で始まります。例えば、98765 43210のようになります。他の国の場合は、+と国番号から始めてくださいね。",
   "fb_speak": "ご意見をお話しください",
-  "fb_speak_hint": "または、マイクのボタンを押してお話しください。お話しされた言葉がここに表示されます。"
+  "fb_speak_hint": "または、マイクのボタンを押してお話しください。お話しされた言葉がここに表示されます。",
+  "err_check_details": "いくつか情報が間違っているようです。もう一度確認して、やり直してくださいね。"
 }

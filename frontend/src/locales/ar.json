@@ -87,7 +87,7 @@
   "from_visa": "من تأشيرتك",
   "add_contact": "أضف جهة اتصال أخرى",
   "save_continue": "احفظ وتابع",
-  "err_contacts": "الرجاء إضافة جهة اتصال واحدة على الأقل مع اسم ورقم هاتف. أرقام الهواتف المحمولة الهندية تتكون من 10 أرقام، مثل 98400 12345؛ أما بالنسبة للدول الأخرى فابدأ بـ + ثم رمز الدولة.",
+  "err_contacts": "أضف جهة اتصال واحدة على الأقل باسم ورقم هاتف. أرقام الهواتف المحمولة الهندية تتكون من 10 أرقام وتبدأ بـ 6 أو 7 أو 8 أو 9، مثل 98400 12345؛ بالنسبة للبلدان الأخرى، ابدأ بـ + ورمز البلد.",
   "ai_badge": "اقتراح الذكاء الاصطناعي · يُرجى التأكيد على الموقع الرسمي",
   "go_airport": "خطوات المطار",
   "journey_title": "المطار، خطوة بخطوة",
@@ -292,7 +292,7 @@
     "from_visa": "From your visa",
     "add_contact": "Add another contact",
     "save_continue": "Save and continue",
-    "err_contacts": "Add at least one contact with a name and a phone number. Indian mobile numbers have 10 digits, like 98400 12345; for other countries start with + and the country code.",
+    "err_contacts": "Add at least one contact with a name and a phone number. Indian mobile numbers have 10 digits and start with 6, 7, 8 or 9, like 98400 12345; for other countries start with + and the country code.",
     "ai_badge": "AI suggestion · confirm on the official website",
     "go_airport": "Airport steps",
     "journey_title": "Airport, step by step",
@@ -468,9 +468,10 @@
     "lang_mic_denied": "Microphone not allowed. Please tap your language below.",
     "lang_intro": "These languages are available: {list}. Tap your language below, or tap the mic and say it.",
     "lang_choose_below": "Select your language from the languages below: {list}.",
-    "err_phone_digits": "Please check the number. Indian mobile numbers have 10 digits, like 98765 43210. For other countries, start with + and the country code.",
+    "err_phone_digits": "Please check the number. Indian mobile numbers have 10 digits and start with 6, 7, 8 or 9, like 98765 43210. For other countries, start with + and the country code.",
     "fb_speak": "Speak your comment",
-    "fb_speak_hint": "Or tap the mic and say it. Your words appear in the box."
+    "fb_speak_hint": "Or tap the mic and say it. Your words appear in the box.",
+    "err_check_details": "Some details are not right. Please check them and try again."
   },
   "video_replay": "شاهد مرة أخرى",
   "video_pause": "إيقاف مؤقت",
@@ -586,7 +587,8 @@
   "moment_arrive": "{name} في انتظارك.",
   "moment_arrive_any": "عائلتك في انتظارك.",
   "lang_choose_below": "اختر لغتك من اللغات أدناه: {list}.",
-  "err_phone_digits": "الرجاء التحقق من الرقم. أرقام الهواتف المحمولة الهندية تتكون من 10 أرقام، مثل 98765 43210. بالنسبة للدول الأخرى، ابدأ بـ + ثم رمز الدولة.",
+  "err_phone_digits": "الرجاء التحقق من الرقم. أرقام الهواتف المحمولة الهندية تتكون من 10 أرقام وتبدأ بـ 6 أو 7 أو 8 أو 9، مثل 98765 43210. بالنسبة للبلدان الأخرى، ابدأ بـ + ورمز البلد.",
   "fb_speak": "تكلم بتعليقك",
-  "fb_speak_hint": "أو اضغط على الميكروفون وتحدث. ستظهر كلماتك في المربع."
+  "fb_speak_hint": "أو اضغط على الميكروفون وتحدث. ستظهر كلماتك في المربع.",
+  "err_check_details": "بعض التفاصيل غير صحيحة. يرجى مراجعتها والمحاولة مرة أخرى."
 }

@@ -54,7 +54,8 @@ export default function AuthScreen({ onLogged, onStory, onBack, onChangeLanguage
     e.preventDefault();
     setError('');
     setMessage('');
-    const phone = normalizePhone(phoneNumber); // Indian mobiles: 10 digits; +91 is added if left out
+    // Indian mobiles: 10 digits starting 6-9; +91 is added if left out. Firebase test numbers pass in test mode only.
+    const phone = normalizePhone(phoneNumber, { testNumbers: import.meta.env.VITE_FIREBASE_TEST_MODE === 'true' });
     if (!phone) return setError(t('err_phone_digits'));
     setPhoneNumber(phone);
     setBusy(true);

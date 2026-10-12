@@ -363,8 +363,13 @@ function Flow({ setLang }) {
       ),
     );
   };
+  // Rejected form details are shown in the traveller's language (the contacts message explains phone numbers).
   const fail = (e) =>
-    setError(e.message === "network" ? t("err_network") : e.message);
+    setError(
+      e.message === "network" ? t("err_network")
+        : e.invalid ? t(step === "contacts" ? "err_contacts" : "err_check_details")
+        : e.message,
+    );
 
   // Load the saved trip on start (falls back to the cached copy when offline).
   useEffect(() => {

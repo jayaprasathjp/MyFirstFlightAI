@@ -87,7 +87,7 @@
   "from_visa": "আপনার ভিসা থেকে",
   "add_contact": "আরেকটি পরিচিতি যোগ করুন",
   "save_continue": "সংরক্ষণ করুন এবং চালিয়ে যান",
-  "err_contacts": "কমপক্ষে একজন পরিচিত মানুষের নাম ও ফোন নম্বর দিন। ভারতের মোবাইল নম্বর ১০ অঙ্কের হয়, যেমন 98400 12345; অন্য দেশের নম্বরের জন্য প্রথমে + এবং তারপর দেশের কোড দিন।",
+  "err_contacts": "কমপক্ষে একটি নাম ও ফোন নম্বর যোগ করুন। ভারতের মোবাইল নম্বর ১০ সংখ্যার হয় এবং ৬, ৭, ৮ অথবা ৯ দিয়ে শুরু হয়, যেমন 98400 12345; অন্য দেশের নম্বরের জন্য, প্রথমে + চিহ্ন ও তারপর দেশের কোড দিন।",
   "ai_badge": "এআই পরামর্শ · অফিসিয়াল ওয়েবসাইটে নিশ্চিত করুন",
   "go_airport": "বিমানবন্দরের ধাপগুলি",
   "journey_title": "বিমানবন্দর, ধাপে ধাপে",
@@ -292,7 +292,7 @@
     "from_visa": "From your visa",
     "add_contact": "Add another contact",
     "save_continue": "Save and continue",
-    "err_contacts": "Add at least one contact with a name and a phone number. Indian mobile numbers have 10 digits, like 98400 12345; for other countries start with + and the country code.",
+    "err_contacts": "Add at least one contact with a name and a phone number. Indian mobile numbers have 10 digits and start with 6, 7, 8 or 9, like 98400 12345; for other countries start with + and the country code.",
     "ai_badge": "AI suggestion · confirm on the official website",
     "go_airport": "Airport steps",
     "journey_title": "Airport, step by step",
@@ -468,9 +468,10 @@
     "lang_mic_denied": "Microphone not allowed. Please tap your language below.",
     "lang_intro": "These languages are available: {list}. Tap your language below, or tap the mic and say it.",
     "lang_choose_below": "Select your language from the languages below: {list}.",
-    "err_phone_digits": "Please check the number. Indian mobile numbers have 10 digits, like 98765 43210. For other countries, start with + and the country code.",
+    "err_phone_digits": "Please check the number. Indian mobile numbers have 10 digits and start with 6, 7, 8 or 9, like 98765 43210. For other countries, start with + and the country code.",
     "fb_speak": "Speak your comment",
-    "fb_speak_hint": "Or tap the mic and say it. Your words appear in the box."
+    "fb_speak_hint": "Or tap the mic and say it. Your words appear in the box.",
+    "err_check_details": "Some details are not right. Please check them and try again."
   },
   "video_replay": "আবার দেখুন",
   "video_pause": "বিরতি দিন",
@@ -586,7 +587,8 @@
   "moment_arrive": "{name} আপনার জন্য অপেক্ষা করছেন।",
   "moment_arrive_any": "আপনার পরিবার আপনার জন্য অপেক্ষা করছে।",
   "lang_choose_below": "নীচের ভাষাগুলি থেকে আপনার ভাষা নির্বাচন করুন: {list}।",
-  "err_phone_digits": "দয়া করে নম্বরটি দেখুন। ভারতের মোবাইল নম্বর ১০ অঙ্কের হয়, যেমন 98765 43210। অন্য দেশের নম্বরের জন্য, প্রথমে + এবং তারপর দেশের কোড দিন।",
+  "err_phone_digits": "দয়া করে নম্বরটি দেখে নিন। ভারতের মোবাইল নম্বর ১০ সংখ্যার হয় এবং ৬, ৭, ৮ অথবা ৯ দিয়ে শুরু হয়, যেমন 98765 43210। অন্য দেশের নম্বরের জন্য, প্রথমে + চিহ্ন ও তারপর দেশের কোড দিন।",
   "fb_speak": "আপনার মন্তব্য বলুন",
-  "fb_speak_hint": "অথবা মাইকে চাপুন এবং বলুন। আপনার কথাগুলি বাক্সে দেখা যাবে।"
+  "fb_speak_hint": "অথবা মাইকে চাপুন এবং বলুন। আপনার কথাগুলি বাক্সে দেখা যাবে।",
+  "err_check_details": "কিছু তথ্য ঠিক নেই। দয়া করে সেগুলো দেখে আবার চেষ্টা করুন।"
 }
