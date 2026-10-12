@@ -5,7 +5,12 @@ import { RecaptchaVerifier } from 'firebase/auth';
 import { auth } from '../firebase';
 import Listen from '../components/Listen';
 import { stopSpeaking } from '../voice';
-import { normalizePhone } from '../phone';
+import { normalizePhone, splitPhone } from '../phone';
+import PhoneInput from '../components/PhoneInput';
+
+// Test numbers set up in Firebase Console (Authentication > Phone > test numbers), code 123456. Firebase sends
+// no SMS for these. Keep this list in step with the console.
+const FIREBASE_TEST_NUMBERS = ['+911234567890', '+919876543210'];
 
 import Icon from '../components/Icon';
 
@@ -17,7 +22,7 @@ export default function AuthScreen({ onLogged, onStory, onBack, onChangeLanguage
   const [message, setMessage] = useState('');
   const [busy, setBusy] = useState(false);
   const { requestPhoneOtp, loginWithGoogle } = useAuth();
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   // Generate a unique ID for this mount so Firebase doesn't trip over old detached DOM nodes
   const [recaptchaId] = useState(() => 'recaptcha-' + Math.random().toString(36).substring(2, 9));
 
@@ -54,10 +59,18 @@ export default function AuthScreen({ onLogged, onStory, onBack, onChangeLanguage
     e.preventDefault();
     setError('');
     setMessage('');
-    // Indian mobiles: 10 digits starting 6-9; +91 is added if left out. Firebase test numbers pass in test mode only.
-    const phone = normalizePhone(phoneNumber, { testNumbers: import.meta.env.VITE_FIREBASE_TEST_MODE === 'true' });
-    if (!phone) return setError(t('err_phone_digits'));
-    setPhoneNumber(phone);
+    // Indian mobiles: 10 digits starting 6-9; +91 is added if left out. The team's Firebase test numbers always
+    // pass (any 10 digits pass in local Firebase test mode).
+    // Checked by the chosen country's rules (Singapore 8 digits, India 10, ...); the team's Firebase test
+    // numbers always pass.
+    const typed = phoneNumber.replace(/[\s().-]/g, '');
+    const phone = FIREBASE_TEST_NUMBERS.includes(typed) ? typed : normalizePhone(phoneNumber);
+    if (!phone) {
+      const cc = splitPhone(phoneNumber).country;
+      let country = cc;
+      try { country = new Intl.DisplayNames([lang, 'en'], { type: 'region' }).of(cc); } catch { /* code only */ }
+      return setError(t('err_phone_country', { country }));
+    }
     setBusy(true);
     try {
       if (!window.recaptchaVerifier) {
@@ -66,7 +79,7 @@ export default function AuthScreen({ onLogged, onStory, onBack, onChangeLanguage
         });
         await window.recaptchaVerifier.render();
       }
-      const confirmation = await requestPhoneOtp(phone.replace(/\s/g, ''), window.recaptchaVerifier);
+      const confirmation = await requestPhoneOtp(phone.replace(/[\s-]/g, ''), window.recaptchaVerifier);
       setConfirmResult(confirmation);
       setMessage(t('auth_otp_sent'));
     } catch (err) {
@@ -131,17 +144,10 @@ export default function AuthScreen({ onLogged, onStory, onBack, onChangeLanguage
         
         {!confirmResult ? (
           <form onSubmit={handleSendOtp} className="form" style={{ gap: '16px' }}>
-            <label>
-              <span className="gh"><b>{t('auth_phone')}</b><Listen text={`${t('auth_phone')}. ${t('auth_phone_desc')}`} /></span>
-              <input 
-                type="tel" 
-                placeholder={t('auth_phone_placeholder')}
-                required 
-                value={phoneNumber} 
-                onChange={(e) => setPhoneNumber(e.target.value)}
-                style={{ border: '1px solid var(--line)', background: 'var(--app)', borderRadius: '12px', padding: '12px', fontSize: '16px', color: 'var(--ink)', width: '100%', marginTop: '6px' }}
-              />
-            </label>
+            <div className="form" style={{ gap: '6px' }}>
+              <span className="gh"><label htmlFor="auth-phone"><b>{t('auth_phone')}</b></label><Listen text={`${t('auth_phone')}. ${t('auth_phone_desc')}`} /></span>
+              <PhoneInput id="auth-phone" label={t('auth_phone')} value={phoneNumber} onChange={(v) => { setPhoneNumber(v); setError('') }} />
+            </div>
             
             <button className="btn pri full" type="submit" disabled={busy} style={{ marginTop: '4px' }}>
               {busy ? <span className="spin" style={{width: '20px', height: '20px', borderTopColor: 'var(--brand-ink)'}} /> : t('auth_send_otp')}

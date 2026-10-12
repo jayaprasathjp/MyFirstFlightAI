@@ -204,9 +204,9 @@ def trip_view(trip):
     lang = trip.get("language", "en")
     checks = trip.get("checks") or []
     travellers, contacts, advice = trip["travellers"], trip.get("contacts") or [], trip.get("advice")
-    items = build_checklist(trip.get("summary"), travellers, checks, advice, contacts) if travellers else []
     answers = trip.get("quick_answers") or {}
-    questions = quick_questions(trip.get("summary"), travellers, items)
+    items = build_checklist(trip.get("summary"), travellers, checks, advice, contacts, answers) if travellers else []
+    questions = quick_questions(trip.get("summary"), travellers, items, answers)
     items = [i for i in items if answers.get(i["id"]) is not True]  # "yes, already done": not shown in the checklist
     journey = build_journey(with_baggage(trip.get("summary"), advice), travellers, advice, contacts, trip.get("boarding")) if travellers else []
 
@@ -257,8 +257,8 @@ def trip_view(trip):
             "items": [{**i, "title": tr[f"i.{i['id']}.t"], "detail": tr[f"i.{i['id']}.d"], "done": bool(done.get(i["id"]))}
                       for i in items],
         },
-        "quick_questions": [{"id": q["id"], "question": tr[f"q.{q['id']}"], "answer": answers.get(q["id"])}
-                            for q in questions],
+        "quick_questions": [{"id": q["id"], "kind": q["kind"], "follows": q.get("follows"), "question": tr[f"q.{q['id']}"],
+                             "answer": answers.get(q["id"])} for q in questions],
         "contacts": contacts,
         "destination_contact": destination_contact(travellers, []),  # from the visa, to prefill the contacts form
         # boarding_estimate: shown until the real time comes from the boarding pass (typed in or photo)
@@ -622,7 +622,9 @@ def trip_facts(trip):
         "document_checks": [{"status": c["status"], "result": c["title"], "detail": c["message"]}
                             for c in trip.get("checks") or []],
         "checklist": [{"task": i["title"], "detail": i["detail"], "done": bool(done.get(i["id"]))}
-                      for i in build_checklist(trip.get("summary"), travellers, trip.get("checks") or [], advice, contacts)],
+                      for i in build_checklist(trip.get("summary"), travellers, trip.get("checks") or [], advice, contacts,
+                                               trip.get("quick_answers"))
+                      if (trip.get("quick_answers") or {}).get(i["id"]) is not True],
         "airport_steps": [{"step": st["title"], "do": st["do"]}
                           for st in build_journey(trip.get("summary"), travellers, advice, contacts, trip.get("boarding"))],
         "boarding_pass": trip.get("boarding") or {},

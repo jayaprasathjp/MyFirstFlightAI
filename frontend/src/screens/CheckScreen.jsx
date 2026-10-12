@@ -14,24 +14,30 @@ function Check({ c, toast }) {
   )
 }
 
-// Yes/no questions after upload: "yes, already done" removes that task from the checklist.
+// Yes/no questions after upload: "yes, already done" removes that task from the checklist. A follow-up
+// (kind "have", e.g. "any bags to check in?" after web check-in) appears below its question only after a yes;
+// its "yes" adds a task instead.
 function QuickQuestions({ questions, onAnswer, busy, toast }) {
   const { t } = useI18n()
   if (!questions?.length) return null
   return (
     <section className="card form quickq">
       <h3>{t('quick_title')}</h3>
-      {questions.map((q) => (
-        <div key={q.id} className="qrow">
-          <div className="gh"><b>{q.question}</b><Listen text={q.question} toast={toast} /></div>
-          <div className="row2 even">
-            <button className={'btn sec' + (q.answer === true ? ' chosen' : '')} disabled={busy}
-              aria-pressed={q.answer === true} onClick={() => onAnswer(q.id, true)}>✓ {t('yes_done')}</button>
-            <button className={'btn sec' + (q.answer === false ? ' chosen' : '')} disabled={busy}
-              aria-pressed={q.answer === false} onClick={() => onAnswer(q.id, false)}>{t('not_yet')}</button>
+      {questions.map((q) => {
+        const have = q.kind === 'have'
+        return (
+          <div key={q.id} className={'qrow' + (q.follows ? ' followup' : '')}>
+            <div className="gh"><b>{q.question}</b><Listen text={q.question} toast={toast} /></div>
+            <div className="row2 even">
+              <button className={'btn sec' + (q.answer === true ? ' chosen' : '')} disabled={busy}
+                aria-pressed={q.answer === true} onClick={() => onAnswer(q.id, true)}>✓ {t(have ? 'yes' : 'yes_done')}</button>
+              <button className={'btn sec' + (q.answer === false ? ' chosen' : '')} disabled={busy}
+                aria-pressed={q.answer === false} onClick={() => onAnswer(q.id, false)}>{t(have ? 'no' : 'not_yet')}</button>
+            </div>
+            {have && <small className="muted">{t('quick_have_hint')}</small>}
           </div>
-        </div>
-      ))}
+        )
+      })}
       <small className="muted">{t('quick_hint')}</small>
     </section>
   )

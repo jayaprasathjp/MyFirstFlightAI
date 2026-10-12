@@ -119,8 +119,9 @@ def advice_items(advice, card_link=None):
     return items
 
 
-def build_checklist(summary, travellers, checks, advice=None, contacts=None):
+def build_checklist(summary, travellers, checks, advice=None, contacts=None, answers=None):
     s = summary or {}
+    answers = answers or {}
     country = s.get("destination_country") or "your destination"
     airline = s.get("airline") or "the airline"
     items = []
@@ -183,6 +184,13 @@ def build_checklist(summary, travellers, checks, advice=None, contacts=None):
                            f"{plan['dep']:%H:%M} flight. Leave earlier if the airport is more than 1 hour away.", key=True))
     else:
         items.append(_item("leave_home", "t0", "Leave home early", "Reach the airport 3 hours before an international flight.", key=True))
+    # Web check-in done, but bags to check in (quick question follow-up): they still go to the counter.
+    if answers.get("webci") is True and answers.get("webci_bags") is True:
+        closes = f" Bag drop closes at {s['checkin_closes']}, so go there first." if s.get("checkin_closes") else \
+            " Go there first: bag drop closes about 1 hour before an international flight."
+        items.append(_item("bag_drop", "t0", f"Drop your check-in bags at the {airline} counter",
+                           "Your web check-in is done, but bags still go to the check-in or bag drop counter. "
+                           "Show your passport and boarding pass there." + closes, key=True))
     items += [
         _item("docs_in_hand", "t0", "Passports, visas and tickets in hand", "Keep them together in one pouch, not in the suitcase."),
         _item("lost_card", "t0", "Check the I'm Lost card once",
@@ -197,20 +205,25 @@ def build_checklist(summary, travellers, checks, advice=None, contacts=None):
     return sorted(fixes + ai + rest, key=lambda i: order[i["group"]])
 
 
-def quick_questions(summary, travellers, items):
-    """Yes/no questions asked after upload; 'yes, already done' removes that item from the checklist."""
+def quick_questions(summary, travellers, items, answers=None):
+    """Yes/no questions asked after upload. kind "done": 'yes, already done' removes that item from the checklist.
+    kind "have": a follow-up shown only after a "yes" to `follows`; its 'yes' adds an item instead."""
     s = summary or {}
+    answers = answers or {}
     airline = s.get("airline") or "the airline"
     ids = {i["id"] for i in items}
     questions = []
     if "webci" in ids:
-        questions.append({"id": "webci", "question": "Have you already done web check-in"
+        questions.append({"id": "webci", "kind": "done", "question": "Have you already done web check-in"
                           + (f" (booking {s['pnr']})?" if s.get("pnr") else "?")})
+        if answers.get("webci") is True:
+            questions.append({"id": "webci_bags", "kind": "have", "follows": "webci",
+                              "question": f"Do you have any bags to check in at the {airline} counter?"})
     if "assist" in ids:
         needs = [t for t in travellers if t.get("assistance", "none") != "none"]
         kinds = " and ".join(sorted({ASSIST_LABEL[t["assistance"]] for t in needs}))
         names = ", ".join((t.get("name") or "traveller").title() for t in needs)
-        questions.append({"id": "assist", "question": f"Have you already asked {airline} for {kinds} for {names}?"})
+        questions.append({"id": "assist", "kind": "done", "question": f"Have you already asked {airline} for {kinds} for {names}?"})
     return questions
 
 

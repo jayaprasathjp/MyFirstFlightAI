@@ -1588,6 +1588,10 @@ ul.do li::before {
 }
 
 .quickq .qrow { display: grid; gap: 8px }
+/* follow-up question, shown under the question it depends on */
+.quickq .qrow.followup { margin-inline-start: 18px; padding-inline-start: 14px; border-inline-start: 3px solid var(--sig, var(--brand));
+  animation: tvin .35s ease-out both }
+@media (prefers-reduced-motion: reduce) { .quickq .qrow.followup { animation: none } }
 .btn.chosen { border-color: var(--brand); background: var(--brand-soft); color: var(--brand) }
 .dupcard { border: 1.5px solid var(--warn); background: var(--warn-soft) }
 
@@ -1665,6 +1669,11 @@ ul.do li::before {
 .feedback label { display: grid; gap: 6px; font-weight: 700 }
 .feedback textarea { border: 1px solid var(--line); background: var(--app); border-radius: 12px; padding: 12px; font: inherit;
   font-weight: 400; color: var(--ink); width: 100%; resize: vertical }
+/* phone number: country (flag, name, +code) then the local number */
+.phonein { display: grid; grid-template-columns: minmax(0, 13rem) minmax(0, 1fr); gap: 8px }
+.phonein select, .phonein input { border: 1px solid var(--line); background: var(--app); color: var(--ink); border-radius: 12px;
+  padding: 12px; font-size: 16px; width: 100%; min-height: 52px }
+@media (max-width: 480px) { .phonein { grid-template-columns: minmax(0, 8.5rem) minmax(0, 1fr) } }
 .fb-comment { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: start }
 .fb-comment .micbtn { width: 56px; height: 56px }
 .fb-comment .micbtn svg { width: 24px; height: 24px }

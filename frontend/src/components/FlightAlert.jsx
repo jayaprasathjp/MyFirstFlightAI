@@ -6,30 +6,38 @@ import Icon from './Icon'
 
 const CHECK_EVERY_MS = 10 * 60 * 1000
 
-// Checks the trip's flight (on open, then every 10 minutes) and pops up delays, cancellations and gate changes.
-// Each distinct message is shown once; it also goes to the phone's notifications if the user allowed them.
-export default function FlightAlert({ tripId, toast }) {
+// Checks the trip's flight (on open, then every 10 minutes). Shared by the top-bar status chip and the popup,
+// so the flight API is called once. status is null when nothing is known yet (not travel day, or no live data).
+export function useFlightStatus(tripId) {
+  const [res, setRes] = useState({ status: null, alert: null })
+  useEffect(() => {
+    setRes({ status: null, alert: null })
+    if (!tripId) return
+    let alive = true
+    const check = () => api.flightStatus(tripId).then((r) => { if (alive) setRes({ status: r.status, alert: r.alert }) }).catch(() => {})
+    check()
+    const timer = setInterval(check, CHECK_EVERY_MS)
+    return () => { alive = false; clearInterval(timer) }
+  }, [tripId])
+  return res
+}
+
+// Pops up delays, cancellations and gate changes. Each distinct message is shown once; it also goes to the
+// phone's notifications if the user allowed them.
+export default function FlightAlert({ tripId, alert: incoming, toast }) {
   const { lang, t } = useI18n()
   const [alert, setAlert] = useState(null)
   const seenKey = `mff-alert-${tripId}`
 
   useEffect(() => {
-    if (!tripId) return
-    let alive = true
-    const check = () => api.flightStatus(tripId).then((r) => {
-      const a = r.alert
-      if (!alive || !a) return
-      const id = `${a.title_en}|${a.message_en}`
-      if (store.get(seenKey, '') === id) return
-      setAlert({ ...a, id })
-      try {
-        if ('Notification' in window && Notification.permission === 'granted') new Notification(a.title, { body: a.message })
-      } catch { /* notifications unavailable */ }
-    }).catch(() => {})
-    check()
-    const timer = setInterval(check, CHECK_EVERY_MS)
-    return () => { alive = false; clearInterval(timer) }
-  }, [tripId, seenKey])
+    if (!incoming) return
+    const id = `${incoming.title_en}|${incoming.message_en}`
+    if (store.get(seenKey, '') === id) return
+    setAlert({ ...incoming, id })
+    try {
+      if ('Notification' in window && Notification.permission === 'granted') new Notification(incoming.title, { body: incoming.message })
+    } catch { /* notifications unavailable */ }
+  }, [incoming, seenKey])
 
   if (!alert) return null
   const close = () => {

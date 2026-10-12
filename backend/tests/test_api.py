@@ -222,17 +222,19 @@ def test_transcribe_comment(client, monkeypatch):
     assert client.post(url, files={"audio": ("c.webm", b"\x1a\x45", "audio/webm")}).status_code == 403
 
 
-def test_phone_numbers_indian_need_10_digits(client):
+def test_phone_numbers_follow_each_country(client):
     from schemas import normalize_phone
     assert normalize_phone("9876543210") == "+91 98765 43210"          # no country code: taken as Indian
     assert normalize_phone("+91 98765-43210") == "+91 98765 43210"
     assert normalize_phone("09876543210") == "+91 98765 43210"
-    assert normalize_phone("987654321") is None                         # 9 digits
-    assert normalize_phone("+91 98765 432101") is None                  # 11 digits
-    assert normalize_phone("+91 5876543210") is None                    # Indian mobiles start 6-9
-    assert normalize_phone("+65 8123 4567") == "+6581234567"            # family abroad keeps working
-    assert normalize_phone("+971 50 123 4567") == "+971501234567"
-    assert normalize_phone("+65 812") is None
+    assert normalize_phone("987654321") is None                         # India: 9 digits is too short
+    assert normalize_phone("+91 98765 432101") is None                  # 11 digits is too long
+    assert normalize_phone("+65 8123 4567") == "+65 8123 4567"          # Singapore: 8 digits
+    assert normalize_phone("+65") is None and normalize_phone("+65 812345") is None
+    assert normalize_phone("+65 81234567890") is None
+    assert normalize_phone("+971 50 123 4567") == "+971 50 123 4567"    # UAE mobile: 9 digits
+    assert normalize_phone("+1 415 555 2671") == "+1 415-555-2671"      # USA: 10 digits
+    assert normalize_phone("call me") is None
     trip = _trip_with_traveller(client)
     url = f"/api/trips/{trip['id']}/contacts"
     assert client.put(url, json={"contacts": [{"name": "Amma", "phone": "98401 2341"}]}).status_code == 422
@@ -322,10 +324,30 @@ def test_quick_answers_hide_done_items(client):
     ids = [i["id"] for i in trip["checklist"]["items"]]
     assert "webci" not in ids                       # yes, already done -> not in the checklist
     assert "assist" in ids                          # not yet -> still there (optional)
-    assert {q["id"]: q["answer"] for q in trip["quick_questions"]} == {"webci": True, "assist": False}
+    assert {q["id"]: q["answer"] for q in trip["quick_questions"]} == {"webci": True, "webci_bags": None, "assist": False}
 
     trip = client.put(f"/api/trips/{trip['id']}/quick-answers", json={"answers": {"webci": False}}).json()
     assert "webci" in [i["id"] for i in trip["checklist"]["items"]]   # answer can be changed back
+
+
+def test_web_checkin_follow_up_bags(client):
+    trip = _trip_with_traveller(client)
+    url = f"/api/trips/{trip['id']}/quick-answers"
+    ids = lambda tr: [q["id"] for q in tr["quick_questions"]]          # noqa: E731
+    items = lambda tr: [i["id"] for i in tr["checklist"]["items"]]       # noqa: E731
+    assert "webci_bags" not in ids(trip)                                 # no follow-up before "yes, done"
+    trip = client.put(url, json={"answers": {"webci": True}}).json()
+    follow = next(q for q in trip["quick_questions"] if q["id"] == "webci_bags")
+    assert ids(trip)[ids(trip).index("webci") + 1] == "webci_bags"       # asked right below web check-in
+    assert follow["kind"] == "have" and follow["follows"] == "webci" and "SkyLane Air" in follow["question"]
+    assert "bag_drop" not in items(trip)                                 # not answered yet
+    trip = client.put(url, json={"answers": {"webci_bags": True}}).json()
+    bag = next(i for i in trip["checklist"]["items"] if i["id"] == "bag_drop")
+    assert bag["group"] == "t0" and "SkyLane Air" in bag["title"] and "22:50" in bag["detail"]
+    trip = client.put(url, json={"answers": {"webci_bags": False}}).json()
+    assert "bag_drop" not in items(trip)                                 # no bags: nothing to drop
+    trip = client.put(url, json={"answers": {"webci_bags": True, "webci": False}}).json()
+    assert "webci_bags" not in ids(trip) and "bag_drop" not in items(trip)   # web check-in "not yet": follow-up gone
 
 
 def test_duplicate_trip_detected_and_trip_delete(client):

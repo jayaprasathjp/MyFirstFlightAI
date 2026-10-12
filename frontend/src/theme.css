@@ -39,8 +39,21 @@ h3 { font-size: 14px }
   background: rgba(255, 255, 255, .12); color: #fff; display: grid; place-items: center; padding: 0;
 }
 .autoread.on { background: var(--sig); border-color: var(--sig); color: #0A1F3C }
-/* phones: logo only, so the read-to-me, language and profile controls all fit */
+/* flight status chip: "✈ SU 572 · On time" (green), delayed (amber), cancelled (red); tap to hear it */
+.flightchip { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 14px; border-radius: 999px;
+  border: 2px solid rgba(255, 255, 255, .35); background: rgba(255, 255, 255, .12); color: #fff; font-size: 14px; white-space: nowrap }
+.flightchip b { font-weight: 800 }
+.flightchip .fc-dot { width: 10px; height: 10px; border-radius: 50%; background: #3DDC97; box-shadow: 0 0 0 3px rgba(61, 220, 151, .25) }
+.flightchip.ok { border-color: rgba(61, 220, 151, .6) }
+.flightchip.warn { border-color: #FFB020; background: rgba(255, 176, 32, .16) }
+.flightchip.warn .fc-dot { background: #FFB020; box-shadow: 0 0 0 3px rgba(255, 176, 32, .25) }
+.flightchip.bad { border-color: #FF5A5F; background: rgba(255, 90, 95, .18) }
+.flightchip.bad .fc-dot { background: #FF5A5F; box-shadow: 0 0 0 3px rgba(255, 90, 95, .25) }
+.flightchip:focus-visible { outline: 3px solid var(--sig); outline-offset: 2px }
+/* phones: logo only, so the flight status, read-to-me, language and profile controls all fit */
 @media (max-width: 440px) { .brand span:not(.mark) { display: none } }
+@media (max-width: 560px) { .flightchip .fc-flight { display: none } .flightchip { padding: 0 10px } }
+@media (max-width: 440px) { .top .lang { max-width: 112px } .flightchip { padding: 0 8px; gap: 6px; font-size: 13px } }
 
 /* ---------- stepper ---------- */
 .stepper { background: var(--app) }
