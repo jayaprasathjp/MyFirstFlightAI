@@ -87,7 +87,7 @@
   "from_visa": "तुमच्या व्हिसावरून",
   "add_contact": "आणखी एक संपर्क जोडा",
   "save_continue": "जतन करा आणि पुढे सुरू ठेवा",
-  "err_contacts": "कृपया कमीतकमी एका व्यक्तीचे नाव आणि फोन नंबर टाका. भारतीय मोबाईल नंबर १० अंकी असतात, जसे की ९८४०० १२३४५; इतर देशांसाठी + आणि देशाच्या कोडने सुरुवात करा.",
+  "err_contacts": "कृपया नाव आणि फोन नंबर असलेला किमान एक संपर्क जोडा. भारतीय मोबाईल नंबर १० अंकी असतात आणि ते ६, ७, ८ किंवा ९ ने सुरू होतात, जसे की ९८४०० १२३४५; इतर देशांसाठी + आणि देशाच्या कोडने सुरू करा.",
   "ai_badge": "AI सूचना · अधिकृत वेबसाइटवर खात्री करा",
   "go_airport": "विमानतळावरील पायऱ्या",
   "journey_title": "विमानतळ, पायरी-पायरीने",
@@ -292,7 +292,7 @@
     "from_visa": "From your visa",
     "add_contact": "Add another contact",
     "save_continue": "Save and continue",
-    "err_contacts": "Add at least one contact with a name and a phone number. Indian mobile numbers have 10 digits, like 98400 12345; for other countries start with + and the country code.",
+    "err_contacts": "Add at least one contact with a name and a phone number. Indian mobile numbers have 10 digits and start with 6, 7, 8 or 9, like 98400 12345; for other countries start with + and the country code.",
     "ai_badge": "AI suggestion · confirm on the official website",
     "go_airport": "Airport steps",
     "journey_title": "Airport, step by step",
@@ -468,9 +468,10 @@
     "lang_mic_denied": "Microphone not allowed. Please tap your language below.",
     "lang_intro": "These languages are available: {list}. Tap your language below, or tap the mic and say it.",
     "lang_choose_below": "Select your language from the languages below: {list}.",
-    "err_phone_digits": "Please check the number. Indian mobile numbers have 10 digits, like 98765 43210. For other countries, start with + and the country code.",
+    "err_phone_digits": "Please check the number. Indian mobile numbers have 10 digits and start with 6, 7, 8 or 9, like 98765 43210. For other countries, start with + and the country code.",
     "fb_speak": "Speak your comment",
-    "fb_speak_hint": "Or tap the mic and say it. Your words appear in the box."
+    "fb_speak_hint": "Or tap the mic and say it. Your words appear in the box.",
+    "err_check_details": "Some details are not right. Please check them and try again."
   },
   "video_replay": "पुन्हा पहा",
   "video_pause": "थांबवा",
@@ -586,7 +587,8 @@
   "moment_arrive": "{name} तुमची वाट पाहत आहेत.",
   "moment_arrive_any": "तुमचे कुटुंब तुमची वाट पाहत आहे.",
   "lang_choose_below": "तुमची भाषा खालील भाषांमधून निवडा: {list}.",
-  "err_phone_digits": "कृपया नंबर तपासा. भारतीय मोबाईल नंबर १० अंकी असतात, जसे की ९८७६५ ४३२१०. इतर देशांसाठी, + आणि देशाच्या कोडने सुरुवात करा.",
+  "err_phone_digits": "कृपया नंबर तपासा. भारतीय मोबाईल नंबर १० अंकी असतात आणि ते ६, ७, ८ किंवा ९ ने सुरू होतात, जसे की ९८७६५ ४३२१०. इतर देशांसाठी, + आणि देशाच्या कोडने सुरू करा.",
   "fb_speak": "तुमचं मत बोला",
-  "fb_speak_hint": "किंवा माइकवर टॅप करून बोला. तुमचे शब्द बॉक्समध्ये दिसतील."
+  "fb_speak_hint": "किंवा माइकवर टॅप करून बोला. तुमचे शब्द बॉक्समध्ये दिसतील.",
+  "err_check_details": "काही माहिती बरोबर नाही. कृपया ती तपासा आणि पुन्हा प्रयत्न करा."
 }

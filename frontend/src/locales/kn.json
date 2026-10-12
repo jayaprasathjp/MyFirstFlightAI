@@ -87,7 +87,7 @@
   "from_visa": "ನಿಮ್ಮ ವೀಸಾದಿಂದ",
   "add_contact": "ಇನ್ನೊಬ್ಬರ ಸಂಪರ್ಕ ಸೇರಿಸಿ",
   "save_continue": "ಉಳಿಸಿ ಮತ್ತು ಮುಂದುವರಿಸಿ",
-  "err_contacts": "ಹೆಸರು ಮತ್ತು ಫೋನ್ ಸಂಖ್ಯೆಯೊಂದಿಗೆ ಕನಿಷ್ಠ ಒಂದು ಸಂಪರ್ಕವನ್ನು ಸೇರಿಸಿ. ಭಾರತೀಯ ಮೊಬೈಲ್ ಸಂಖ್ಯೆಗಳು 10 ಅಂಕೆಗಳನ್ನು ಹೊಂದಿರುತ್ತವೆ, ಉದಾಹರಣೆಗೆ 98400 12345; ಇತರ ದೇಶಗಳಿಗೆ + ಮತ್ತು ದೇಶದ ಕೋಡ್‌ನೊಂದಿಗೆ ಪ್ರಾರಂಭಿಸಿ.",
+  "err_contacts": "ಹೆಸರು ಮತ್ತು ಫೋನ್ ಸಂಖ್ಯೆಯೊಂದಿಗೆ ಕನಿಷ್ಠ ಒಂದು ಸಂಪರ್ಕವನ್ನು ಸೇರಿಸಿ. ಭಾರತೀಯ ಮೊಬೈಲ್ ಸಂಖ್ಯೆಗಳು 10 ಅಂಕೆಗಳನ್ನು ಹೊಂದಿದ್ದು 6, 7, 8 ಅಥವಾ 9 ರಿಂದ ಪ್ರಾರಂಭವಾಗುತ್ತವೆ, ಉದಾಹರಣೆಗೆ 98400 12345; ಇತರ ದೇಶಗಳಿಗೆ + ಮತ್ತು ದೇಶದ ಕೋಡ್‌ನೊಂದಿಗೆ ಪ್ರಾರಂಭಿಸಿ.",
   "ai_badge": "AI ಸಲಹೆ · ಅಧಿಕೃತ ವೆಬ್‌ಸೈಟ್‌ನಲ್ಲಿ ದೃಢೀಕರಿಸಿ",
   "go_airport": "ವಿಮಾನ ನಿಲ್ದಾಣದ ಹಂತಗಳು",
   "journey_title": "ವಿಮಾನ ನಿಲ್ದಾಣ, ಹಂತ ಹಂತವಾಗಿ",
@@ -292,7 +292,7 @@
     "from_visa": "From your visa",
     "add_contact": "Add another contact",
     "save_continue": "Save and continue",
-    "err_contacts": "Add at least one contact with a name and a phone number. Indian mobile numbers have 10 digits, like 98400 12345; for other countries start with + and the country code.",
+    "err_contacts": "Add at least one contact with a name and a phone number. Indian mobile numbers have 10 digits and start with 6, 7, 8 or 9, like 98400 12345; for other countries start with + and the country code.",
     "ai_badge": "AI suggestion · confirm on the official website",
     "go_airport": "Airport steps",
     "journey_title": "Airport, step by step",
@@ -468,9 +468,10 @@
     "lang_mic_denied": "Microphone not allowed. Please tap your language below.",
     "lang_intro": "These languages are available: {list}. Tap your language below, or tap the mic and say it.",
     "lang_choose_below": "Select your language from the languages below: {list}.",
-    "err_phone_digits": "Please check the number. Indian mobile numbers have 10 digits, like 98765 43210. For other countries, start with + and the country code.",
+    "err_phone_digits": "Please check the number. Indian mobile numbers have 10 digits and start with 6, 7, 8 or 9, like 98765 43210. For other countries, start with + and the country code.",
     "fb_speak": "Speak your comment",
-    "fb_speak_hint": "Or tap the mic and say it. Your words appear in the box."
+    "fb_speak_hint": "Or tap the mic and say it. Your words appear in the box.",
+    "err_check_details": "Some details are not right. Please check them and try again."
   },
   "video_replay": "ಮತ್ತೆ ನೋಡಿ",
   "video_pause": "ವಿರಾಮ",
@@ -586,7 +587,8 @@
   "moment_arrive": "{name} ನಿಮಗಾಗಿ ಕಾಯುತ್ತಿದ್ದಾರೆ.",
   "moment_arrive_any": "ನಿಮ್ಮ ಕುಟುಂಬದವರು ನಿಮಗಾಗಿ ಕಾಯುತ್ತಿದ್ದಾರೆ.",
   "lang_choose_below": "ಕೆಳಗಿನ ಭಾಷೆಗಳಿಂದ ನಿಮ್ಮ ಭಾಷೆಯನ್ನು ಆಯ್ಕೆಮಾಡಿ: {list}.",
-  "err_phone_digits": "ದಯವಿಟ್ಟು ಸಂಖ್ಯೆಯನ್ನು ಪರಿಶೀಲಿಸಿ. ಭಾರತೀಯ ಮೊಬೈಲ್ ಸಂಖ್ಯೆಗಳು 10 ಅಂಕೆಗಳನ್ನು ಹೊಂದಿರುತ್ತವೆ, ಉದಾಹರಣೆಗೆ 98765 43210. ಇತರ ದೇಶಗಳಿಗೆ, + ಮತ್ತು ದೇಶದ ಕೋಡ್‌ನೊಂದಿಗೆ ಪ್ರಾರಂಭಿಸಿ.",
+  "err_phone_digits": "ದಯವಿಟ್ಟು ಸಂಖ್ಯೆಯನ್ನು ಪರಿಶೀಲಿಸಿ. ಭಾರತೀಯ ಮೊಬೈಲ್ ಸಂಖ್ಯೆಗಳು 10 ಅಂಕೆಗಳನ್ನು ಹೊಂದಿದ್ದು 6, 7, 8 ಅಥವಾ 9 ರಿಂದ ಪ್ರಾರಂಭವಾಗುತ್ತವೆ, ಉದಾಹರಣೆಗೆ 98765 43210. ಇತರ ದೇಶಗಳಿಗೆ, + ಮತ್ತು ದೇಶದ ಕೋಡ್‌ನೊಂದಿಗೆ ಪ್ರಾರಂಭಿಸಿ.",
   "fb_speak": "ನಿಮ್ಮ ಅನಿಸಿಕೆ ಹೇಳಿ",
-  "fb_speak_hint": "ಅಥವಾ ಮೈಕ್ ಒತ್ತಿ ಹೇಳಿ. ನೀವು ಹೇಳಿದ ಮಾತು ಇಲ್ಲಿ ಕಾಣಿಸುತ್ತದೆ."
+  "fb_speak_hint": "ಅಥವಾ ಮೈಕ್ ಒತ್ತಿ ಹೇಳಿ. ನೀವು ಹೇಳಿದ ಮಾತು ಇಲ್ಲಿ ಕಾಣಿಸುತ್ತದೆ.",
+  "err_check_details": "ಕೆಲವು ವಿವರಗಳು ಸರಿಯಾಗಿಲ್ಲ. ದಯವಿಟ್ಟು ಅವುಗಳನ್ನು ಪರಿಶೀಲಿಸಿ ಮತ್ತು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ."
 }

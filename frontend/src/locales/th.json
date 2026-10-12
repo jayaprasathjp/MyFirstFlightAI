@@ -87,7 +87,7 @@
   "from_visa": "จากวีซ่าของคุณ",
   "add_contact": "เพิ่มผู้ติดต่ออีกคน",
   "save_continue": "บันทึกและไปต่อ",
-  "err_contacts": "กรุณาเพิ่มผู้ติดต่ออย่างน้อย 1 ท่าน พร้อมชื่อและเบอร์โทรศัพท์นะคะ เบอร์มือถือของอินเดียมี 10 หลัก เช่น 98400 12345 ถ้าเป็นเบอร์ของประเทศอื่น ให้ขึ้นต้นด้วยเครื่องหมาย + และรหัสประเทศค่ะ",
+  "err_contacts": "กรุณาเพิ่มผู้ติดต่ออย่างน้อยหนึ่งคน พร้อมชื่อและเบอร์โทรศัพท์ เบอร์มือถือของอินเดียมี 10 หลัก และขึ้นต้นด้วย 6, 7, 8 หรือ 9 เช่น 98400 12345 สำหรับประเทศอื่น ๆ ให้ขึ้นต้นด้วย + และรหัสประเทศ",
   "ai_badge": "คำแนะนำจาก AI · กรุณายืนยันข้อมูลบนเว็บไซต์ทางการอีกครั้งนะคะ",
   "go_airport": "ขั้นตอนที่สนามบิน",
   "journey_title": "สนามบิน ทีละขั้นตอน",
@@ -287,7 +287,7 @@
     "from_visa": "From your visa",
     "add_contact": "Add another contact",
     "save_continue": "Save and continue",
-    "err_contacts": "Add at least one contact with a name and a phone number. Indian mobile numbers have 10 digits, like 98400 12345; for other countries start with + and the country code.",
+    "err_contacts": "Add at least one contact with a name and a phone number. Indian mobile numbers have 10 digits and start with 6, 7, 8 or 9, like 98400 12345; for other countries start with + and the country code.",
     "ai_badge": "AI suggestion · confirm on the official website",
     "go_airport": "Airport steps",
     "journey_title": "Airport, step by step",
@@ -463,9 +463,10 @@
     "lang_mic_denied": "Microphone not allowed. Please tap your language below.",
     "lang_intro": "These languages are available: {list}. Tap your language below, or tap the mic and say it.",
     "lang_choose_below": "Select your language from the languages below: {list}.",
-    "err_phone_digits": "Please check the number. Indian mobile numbers have 10 digits, like 98765 43210. For other countries, start with + and the country code.",
+    "err_phone_digits": "Please check the number. Indian mobile numbers have 10 digits and start with 6, 7, 8 or 9, like 98765 43210. For other countries, start with + and the country code.",
     "fb_speak": "Speak your comment",
-    "fb_speak_hint": "Or tap the mic and say it. Your words appear in the box."
+    "fb_speak_hint": "Or tap the mic and say it. Your words appear in the box.",
+    "err_check_details": "Some details are not right. Please check them and try again."
   },
   "help_intro": "เอกสารของท่านพร้อมแล้ว หากท่านต้องการความช่วยเหลือเมื่อใดก็ตาม ให้กดปุ่มช่วยเหลือสีน้ำเงินที่อยู่ด้านล่างของหน้าจอ หากท่านหลงทาง ให้กดปุ่มฉันหลงทางสีแดง",
   "bag_not_on_ticket": "ไม่ได้พิมพ์อยู่บนตั๋วของท่าน: นี่คือขีดจำกัดปกติ โปรดยืนยันกับสายการบินอีกครั้ง",
@@ -586,7 +587,8 @@
   "moment_arrive": "{name} กำลังรอคุณอยู่นะคะ/นะครับ",
   "moment_arrive_any": "ครอบครัวของคุณกำลังรอคุณอยู่นะคะ/นะครับ",
   "lang_choose_below": "เลือกภาษาของท่านจากรายการด้านล่างนี้: {list}",
-  "err_phone_digits": "กรุณาตรวจสอบเบอร์โทรศัพท์อีกครั้ง เบอร์มือถือของอินเดียมี 10 หลัก เช่น 98765 43210 ถ้าเป็นเบอร์ของประเทศอื่น ให้ขึ้นต้นด้วยเครื่องหมาย + และรหัสประเทศนะคะ",
+  "err_phone_digits": "กรุณาตรวจสอบเบอร์โทรศัพท์ เบอร์มือถือของอินเดียมี 10 หลัก และขึ้นต้นด้วย 6, 7, 8 หรือ 9 เช่น 98765 43210 สำหรับประเทศอื่น ๆ ให้ขึ้นต้นด้วย + และรหัสประเทศ",
   "fb_speak": "พูดความคิดเห็นของคุณ",
-  "fb_speak_hint": "หรือแตะไมโครโฟนแล้วพูดได้เลยค่ะ คำพูดของคุณจะปรากฏในช่องนี้ค่ะ"
+  "fb_speak_hint": "หรือแตะไมโครโฟนแล้วพูดได้เลยค่ะ คำพูดของคุณจะปรากฏในช่องนี้ค่ะ",
+  "err_check_details": "มีบางอย่างไม่ถูกต้อง กรุณาตรวจสอบอีกครั้งนะคะ"
 }

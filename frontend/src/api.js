@@ -21,8 +21,11 @@ async function request(path, options = {}, retry = false) {
   }
   const data = await res.json().catch(() => ({}))
   if (!res.ok) {
-    const err = new Error(typeof data.detail === 'string' ? data.detail : `HTTP ${res.status}`)
+    // A rejected form (422) lists its problems: keep the server's words, never show a bare "HTTP 422".
+    const problems = Array.isArray(data.detail) ? data.detail.map((d) => String(d.msg || '').replace(/^Value error, /, '')).filter(Boolean) : []
+    const err = new Error(typeof data.detail === 'string' ? data.detail : problems.join(' ') || `HTTP ${res.status}`)
     err.status = res.status
+    err.invalid = problems.length > 0
     throw err
   }
   return data

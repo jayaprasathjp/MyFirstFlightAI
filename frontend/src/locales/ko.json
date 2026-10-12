@@ -87,7 +87,7 @@
   "from_visa": "비자에서 가져왔어요",
   "add_contact": "다른 연락처 추가",
   "save_continue": "저장하고 계속하기",
-  "err_contacts": "이름과 전화번호를 가진 연락처를 적어도 한 개 추가해주세요. 인도 휴대폰 번호는 98400 12345처럼 10자리입니다. 다른 나라는 +와 국가 번호로 시작합니다.",
+  "err_contacts": "이름과 전화번호를 가진 연락처를 적어도 하나 추가해주세요. 인도 휴대폰 번호는 10자리이고 6, 7, 8 또는 9로 시작해요. 예를 들면 98400 12345 같아요. 다른 나라 번호는 +와 국가 번호로 시작해요.",
   "ai_badge": "AI 추천 · 공식 웹사이트에서 다시 확인해 주세요",
   "go_airport": "공항 절차",
   "journey_title": "공항, 한 걸음씩",
@@ -292,7 +292,7 @@
     "from_visa": "From your visa",
     "add_contact": "Add another contact",
     "save_continue": "Save and continue",
-    "err_contacts": "Add at least one contact with a name and a phone number. Indian mobile numbers have 10 digits, like 98400 12345; for other countries start with + and the country code.",
+    "err_contacts": "Add at least one contact with a name and a phone number. Indian mobile numbers have 10 digits and start with 6, 7, 8 or 9, like 98400 12345; for other countries start with + and the country code.",
     "ai_badge": "AI suggestion · confirm on the official website",
     "go_airport": "Airport steps",
     "journey_title": "Airport, step by step",
@@ -468,9 +468,10 @@
     "lang_mic_denied": "Microphone not allowed. Please tap your language below.",
     "lang_intro": "These languages are available: {list}. Tap your language below, or tap the mic and say it.",
     "lang_choose_below": "Select your language from the languages below: {list}.",
-    "err_phone_digits": "Please check the number. Indian mobile numbers have 10 digits, like 98765 43210. For other countries, start with + and the country code.",
+    "err_phone_digits": "Please check the number. Indian mobile numbers have 10 digits and start with 6, 7, 8 or 9, like 98765 43210. For other countries, start with + and the country code.",
     "fb_speak": "Speak your comment",
-    "fb_speak_hint": "Or tap the mic and say it. Your words appear in the box."
+    "fb_speak_hint": "Or tap the mic and say it. Your words appear in the box.",
+    "err_check_details": "Some details are not right. Please check them and try again."
   },
   "video_replay": "다시 보기",
   "video_pause": "일시 정지",
@@ -586,7 +587,8 @@
   "moment_arrive": "{name} 님이 기다리고 계세요.",
   "moment_arrive_any": "가족들이 기다리고 있어요.",
   "lang_choose_below": "아래 언어 중에서 선택하세요: {list}.",
-  "err_phone_digits": "전화번호를 다시 확인해주세요. 인도 휴대폰 번호는 98765 43210처럼 10자리입니다. 다른 나라는 +와 국가 번호로 시작합니다.",
+  "err_phone_digits": "전화번호를 다시 확인해주세요. 인도 휴대폰 번호는 10자리이고 6, 7, 8 또는 9로 시작해요. 예를 들면 98765 43210 같아요. 다른 나라 번호는 +와 국가 번호로 시작해요.",
   "fb_speak": "의견을 말씀해주세요",
-  "fb_speak_hint": "아니면 마이크를 누르고 말씀해보세요. 말씀하신 내용이 여기에 나타납니다."
+  "fb_speak_hint": "아니면 마이크를 누르고 말씀해보세요. 말씀하신 내용이 여기에 나타납니다.",
+  "err_check_details": "몇몇 정보가 틀렸어요. 다시 확인하고 시도해 주세요."
 }

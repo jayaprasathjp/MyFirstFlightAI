@@ -87,7 +87,7 @@
   "from_visa": "De votre visa",
   "add_contact": "Ajouter un autre contact",
   "save_continue": "Enregistrer et continuer",
-  "err_contacts": "Ajoutez au moins un contact avec un nom et un numéro de téléphone. Les numéros de téléphone mobile indiens ont 10 chiffres, comme 98400 12345 ; pour les autres pays, commencez par + et l'indicatif du pays.",
+  "err_contacts": "Ajoutez au moins un contact avec un nom et un numéro de téléphone. Les numéros de téléphone mobile indiens ont 10 chiffres et commencent par 6, 7, 8 ou 9, comme 98400 12345; pour les autres pays, commencez par + et l'indicatif du pays.",
   "ai_badge": "Suggestion de l'IA · confirmez sur le site officiel",
   "go_airport": "Étapes à l'aéroport",
   "journey_title": "Aéroport, étape par étape",
@@ -292,7 +292,7 @@
     "from_visa": "From your visa",
     "add_contact": "Add another contact",
     "save_continue": "Save and continue",
-    "err_contacts": "Add at least one contact with a name and a phone number. Indian mobile numbers have 10 digits, like 98400 12345; for other countries start with + and the country code.",
+    "err_contacts": "Add at least one contact with a name and a phone number. Indian mobile numbers have 10 digits and start with 6, 7, 8 or 9, like 98400 12345; for other countries start with + and the country code.",
     "ai_badge": "AI suggestion · confirm on the official website",
     "go_airport": "Airport steps",
     "journey_title": "Airport, step by step",
@@ -468,9 +468,10 @@
     "lang_mic_denied": "Microphone not allowed. Please tap your language below.",
     "lang_intro": "These languages are available: {list}. Tap your language below, or tap the mic and say it.",
     "lang_choose_below": "Select your language from the languages below: {list}.",
-    "err_phone_digits": "Please check the number. Indian mobile numbers have 10 digits, like 98765 43210. For other countries, start with + and the country code.",
+    "err_phone_digits": "Please check the number. Indian mobile numbers have 10 digits and start with 6, 7, 8 or 9, like 98765 43210. For other countries, start with + and the country code.",
     "fb_speak": "Speak your comment",
-    "fb_speak_hint": "Or tap the mic and say it. Your words appear in the box."
+    "fb_speak_hint": "Or tap the mic and say it. Your words appear in the box.",
+    "err_check_details": "Some details are not right. Please check them and try again."
   },
   "video_replay": "Regarder à nouveau",
   "video_pause": "Pause",
@@ -586,7 +587,8 @@
   "moment_arrive": "{name} vous attend.",
   "moment_arrive_any": "Votre famille vous attend.",
   "lang_choose_below": "Choisissez votre langue parmi les langues ci-dessous : {list}.",
-  "err_phone_digits": "Veuillez vérifier le numéro. Les numéros de téléphone mobile indiens ont 10 chiffres, comme 98765 43210. Pour les autres pays, commencez par + et l'indicatif du pays.",
+  "err_phone_digits": "Veuillez vérifier le numéro. Les numéros de téléphone mobile indiens ont 10 chiffres et commencent par 6, 7, 8 ou 9, comme 98765 43210. Pour les autres pays, commencez par + et l'indicatif du pays.",
   "fb_speak": "Dites votre commentaire",
-  "fb_speak_hint": "Ou appuyez sur le micro et parlez. Vos mots apparaîtront dans la boîte."
+  "fb_speak_hint": "Ou appuyez sur le micro et parlez. Vos mots apparaîtront dans la boîte.",
+  "err_check_details": "Certains détails ne sont pas corrects. S'il vous plaît, vérifiez-les et réessayez."
 }

@@ -87,7 +87,7 @@
   "from_visa": "来自您的签证",
   "add_contact": "添加另一个联系人",
   "save_continue": "保存并继续",
-  "err_contacts": "请至少添加一个联系人，要有姓名和电话号码。印度的手机号是10位数字，比如98400 12345；其他国家的号码，请在前面加上“+”和国家代码。",
+  "err_contacts": "请您至少添加一个联系人，写上他们的名字和电话号码。印度的手机号码是10位数，开头是6、7、8或者9，比如98400 12345；如果是其他国家的号码，请在前面加上“+”和国家代码。",
   "ai_badge": "AI建议 · 请在官方网站上确认",
   "go_airport": "机场步骤",
   "journey_title": "机场，一步一步来",
@@ -292,7 +292,7 @@
     "from_visa": "From your visa",
     "add_contact": "Add another contact",
     "save_continue": "Save and continue",
-    "err_contacts": "Add at least one contact with a name and a phone number. Indian mobile numbers have 10 digits, like 98400 12345; for other countries start with + and the country code.",
+    "err_contacts": "Add at least one contact with a name and a phone number. Indian mobile numbers have 10 digits and start with 6, 7, 8 or 9, like 98400 12345; for other countries start with + and the country code.",
     "ai_badge": "AI suggestion · confirm on the official website",
     "go_airport": "Airport steps",
     "journey_title": "Airport, step by step",
@@ -468,9 +468,10 @@
     "lang_mic_denied": "Microphone not allowed. Please tap your language below.",
     "lang_intro": "These languages are available: {list}. Tap your language below, or tap the mic and say it.",
     "lang_choose_below": "Select your language from the languages below: {list}.",
-    "err_phone_digits": "Please check the number. Indian mobile numbers have 10 digits, like 98765 43210. For other countries, start with + and the country code.",
+    "err_phone_digits": "Please check the number. Indian mobile numbers have 10 digits and start with 6, 7, 8 or 9, like 98765 43210. For other countries, start with + and the country code.",
     "fb_speak": "Speak your comment",
-    "fb_speak_hint": "Or tap the mic and say it. Your words appear in the box."
+    "fb_speak_hint": "Or tap the mic and say it. Your words appear in the box.",
+    "err_check_details": "Some details are not right. Please check them and try again."
   },
   "video_replay": "再看一遍",
   "video_pause": "暂停",
@@ -586,7 +587,8 @@
   "moment_arrive": "{name} 正在等您。",
   "moment_arrive_any": "您的家人正在等您。",
   "lang_choose_below": "请从下面的语言中选择您的语言：{list}。",
-  "err_phone_digits": "请检查一下电话号码。印度的手机号是10位数字，比如98765 43210。其他国家的号码，请在前面加上“+”和国家代码。",
+  "err_phone_digits": "请您检查一下电话号码。印度的手机号码是10位数，开头是6、7、8或者9，比如98765 43210。如果是其他国家的号码，请在前面加上“+”和国家代码。",
   "fb_speak": "说出您的意见",
-  "fb_speak_hint": "或者点击麦克风说出来。您说的话会显示在这里。"
+  "fb_speak_hint": "或者点击麦克风说出来。您说的话会显示在这里。",
+  "err_check_details": "有些信息不对。请您再检查一下，然后重新尝试。"
 }

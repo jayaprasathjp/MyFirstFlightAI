@@ -87,7 +87,7 @@
   "from_visa": "Dari visa anda",
   "add_contact": "Tambah kenalan lain",
   "save_continue": "Simpan dan teruskan",
-  "err_contacts": "Sila tambah sekurang-kurangnya satu kenalan dengan nama dan nombor telefon. Nombor telefon bimbit India ada 10 digit, contohnya 98400 12345; untuk negara lain, mulakan dengan + dan kod negara.",
+  "err_contacts": "Sila tambah sekurang-kurangnya satu nama dan nombor telefon. Nombor telefon bimbit India ada 10 digit dan bermula dengan 6, 7, 8 atau 9, contohnya 98400 12345; untuk negara lain, sila letak + dan kod negara di depan.",
   "ai_badge": "Cadangan AI · sahkan di laman web rasmi",
   "go_airport": "Langkah-langkah di lapangan terbang",
   "journey_title": "Lapangan terbang, langkah demi langkah",
@@ -292,7 +292,7 @@
     "from_visa": "From your visa",
     "add_contact": "Add another contact",
     "save_continue": "Save and continue",
-    "err_contacts": "Add at least one contact with a name and a phone number. Indian mobile numbers have 10 digits, like 98400 12345; for other countries start with + and the country code.",
+    "err_contacts": "Add at least one contact with a name and a phone number. Indian mobile numbers have 10 digits and start with 6, 7, 8 or 9, like 98400 12345; for other countries start with + and the country code.",
     "ai_badge": "AI suggestion · confirm on the official website",
     "go_airport": "Airport steps",
     "journey_title": "Airport, step by step",
@@ -468,9 +468,10 @@
     "lang_mic_denied": "Microphone not allowed. Please tap your language below.",
     "lang_intro": "These languages are available: {list}. Tap your language below, or tap the mic and say it.",
     "lang_choose_below": "Select your language from the languages below: {list}.",
-    "err_phone_digits": "Please check the number. Indian mobile numbers have 10 digits, like 98765 43210. For other countries, start with + and the country code.",
+    "err_phone_digits": "Please check the number. Indian mobile numbers have 10 digits and start with 6, 7, 8 or 9, like 98765 43210. For other countries, start with + and the country code.",
     "fb_speak": "Speak your comment",
-    "fb_speak_hint": "Or tap the mic and say it. Your words appear in the box."
+    "fb_speak_hint": "Or tap the mic and say it. Your words appear in the box.",
+    "err_check_details": "Some details are not right. Please check them and try again."
   },
   "video_replay": "Tonton semula",
   "video_pause": "Jeda",
@@ -586,7 +587,8 @@
   "moment_arrive": "{name} sedang tunggu anda.",
   "moment_arrive_any": "Keluarga anda sedang tunggu anda.",
   "lang_choose_below": "Pilih bahasa anda dari senarai bahasa di bawah: {list}.",
-  "err_phone_digits": "Tolong semak nombornya. Nombor telefon bimbit India ada 10 digit, contohnya 98765 43210. Untuk negara lain, mulakan dengan + dan kod negara.",
+  "err_phone_digits": "Sila semak nombor telefon. Nombor telefon bimbit India ada 10 digit dan bermula dengan 6, 7, 8 atau 9, contohnya 98765 43210. Untuk negara lain, sila letak + dan kod negara di depan.",
   "fb_speak": "Cakap komen pakcik/makcik",
-  "fb_speak_hint": "Atau tekan mikrofon dan cakap. Kata-kata pakcik/makcik akan terpapar di sini."
+  "fb_speak_hint": "Atau tekan mikrofon dan cakap. Kata-kata pakcik/makcik akan terpapar di sini.",
+  "err_check_details": "Ada maklumat yang tak betul. Tolong semak semula dan cuba lagi ya."
 }

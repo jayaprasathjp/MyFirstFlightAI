@@ -87,7 +87,7 @@
   "from_visa": "உங்கள் விசா-வில் இருந்து",
   "add_contact": "மற்றொரு தொடர்பு எண்ணைச் சேர்க்கவும்",
   "save_continue": "சேமித்து தொடரவும்",
-  "err_contacts": "குறைந்தது ஒரு தொடர்பு எண்ணையும் பெயரையும் சேர்க்கவும். இந்திய மொபைல் எண்களுக்கு 10 இலக்கங்கள் இருக்கும், உதாரணமாக 98400 12345; மற்ற நாடுகளுக்கு + குறியீடு மற்றும் நாட்டின் குறியீட்டுடன் தொடங்கவும்.",
+  "err_contacts": "குறைந்தது ஒரு தொடர்பு எண்ணையும் பெயரையும் சேர்க்கவும். இந்திய மொபைல் எண்களுக்கு 10 இலக்கங்கள் இருக்கும், மேலும் அவை 6, 7, 8 அல்லது 9 இல் தொடங்கும், உதாரணமாக 98400 12345; மற்ற நாடுகளுக்கு + மற்றும் நாட்டின் குறியீட்டுடன் தொடங்கவும்.",
   "ai_badge": "AI பரிந்துரை · அதிகாரப்பூர்வ இணையதளத்தில் உறுதிப்படுத்தவும்",
   "go_airport": "விமான நிலைய படிகள்",
   "journey_title": "விமான நிலையம், படிப்படியாக",
@@ -292,7 +292,7 @@
     "from_visa": "From your visa",
     "add_contact": "Add another contact",
     "save_continue": "Save and continue",
-    "err_contacts": "Add at least one contact with a name and a phone number. Indian mobile numbers have 10 digits, like 98400 12345; for other countries start with + and the country code.",
+    "err_contacts": "Add at least one contact with a name and a phone number. Indian mobile numbers have 10 digits and start with 6, 7, 8 or 9, like 98400 12345; for other countries start with + and the country code.",
     "ai_badge": "AI suggestion · confirm on the official website",
     "go_airport": "Airport steps",
     "journey_title": "Airport, step by step",
@@ -468,9 +468,10 @@
     "lang_mic_denied": "Microphone not allowed. Please tap your language below.",
     "lang_intro": "These languages are available: {list}. Tap your language below, or tap the mic and say it.",
     "lang_choose_below": "Select your language from the languages below: {list}.",
-    "err_phone_digits": "Please check the number. Indian mobile numbers have 10 digits, like 98765 43210. For other countries, start with + and the country code.",
+    "err_phone_digits": "Please check the number. Indian mobile numbers have 10 digits and start with 6, 7, 8 or 9, like 98765 43210. For other countries, start with + and the country code.",
     "fb_speak": "Speak your comment",
-    "fb_speak_hint": "Or tap the mic and say it. Your words appear in the box."
+    "fb_speak_hint": "Or tap the mic and say it. Your words appear in the box.",
+    "err_check_details": "Some details are not right. Please check them and try again."
   },
   "video_replay": "மீண்டும் பார்",
   "video_pause": "நிறுத்து",
@@ -586,7 +587,8 @@
   "moment_arrive": "{name} உங்களுக்காகக் காத்திருக்கிறார்.",
   "moment_arrive_any": "உங்கள் குடும்பத்தினர் உங்களுக்காகக் காத்திருக்கிறார்கள்.",
   "lang_choose_below": "கீழே உள்ள மொழிகளில் இருந்து உங்கள் மொழியைத் தேர்ந்தெடுக்கவும்: {list}.",
-  "err_phone_digits": "தயவுசெய்து எண்ணைச் சரிபார்க்கவும். இந்திய மொபைல் எண்களுக்கு 10 இலக்கங்கள் இருக்கும், உதாரணமாக 98765 43210. மற்ற நாடுகளுக்கு, + குறியீடு மற்றும் நாட்டின் குறியீட்டுடன் தொடங்கவும்.",
+  "err_phone_digits": "தயவுசெய்து எண்ணைச் சரிபார்க்கவும். இந்திய மொபைல் எண்களுக்கு 10 இலக்கங்கள் இருக்கும், மேலும் அவை 6, 7, 8 அல்லது 9 இல் தொடங்கும், உதாரணமாக 98765 43210. மற்ற நாடுகளுக்கு, + மற்றும் நாட்டின் குறியீட்டுடன் தொடங்கவும்.",
   "fb_speak": "உங்கள் கருத்தைச் சொல்லுங்கள்",
-  "fb_speak_hint": "அல்லது மைக் பட்டனைத் தட்டிச் சொல்லுங்கள். நீங்கள் சொல்வது இங்கே வரும்."
+  "fb_speak_hint": "அல்லது மைக் பட்டனைத் தட்டிச் சொல்லுங்கள். நீங்கள் சொல்வது இங்கே வரும்.",
+  "err_check_details": "சில விவரங்கள் சரியாக இல்லை. தயவுசெய்து அவற்றைச் சரிபார்த்து மீண்டும் முயற்சிக்கவும்."
 }
