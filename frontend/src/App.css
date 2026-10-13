@@ -928,7 +928,13 @@ ul.do li::before {
   inset-inline-end: max(16px, calc(50vw - 224px));
   display: flex;
   gap: 10px;
+  /* long labels (Tamil, Malayalam...) put the buttons on two rows instead of pushing Help off-screen */
+  max-width: calc(100vw - 32px);
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
+.dock .helpbtn, .dock .sos { max-width: 100%; line-height: 1.15; text-align: start; }
+.dock .helpbtn span, .dock .sos span { flex: none; }
 .helpbtn {
   background: var(--brand);
   color: var(--brand-ink);
