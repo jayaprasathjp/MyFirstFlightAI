@@ -35,10 +35,12 @@ h3 { font-size: 14px }
 .lang option { color: #0A1F3C }
 .top .av { background: var(--sig); color: #0A1F3C }
 .autoread {
-  width: 44px; height: 44px; border-radius: 50%; border: 2px solid rgba(255, 255, 255, .45);
-  background: rgba(255, 255, 255, .12); color: #fff; display: grid; place-items: center; padding: 0;
+  width: 44px; height: 44px; border-radius: 50%; border: 2px solid var(--sig);
+  background: var(--sig); color: #0A1F3C; display: grid; place-items: center; padding: 0;
+  cursor: pointer; transition: transform .15s ease, background .15s ease;
 }
-.autoread.on { background: var(--sig); border-color: var(--sig); color: #0A1F3C }
+.autoread:hover { transform: scale(1.05) }
+.autoread.on { background: #0A1F3C; border-color: var(--sig); color: var(--sig) }
 /* flight status chip: "✈ SU 572 · On time" (green), delayed (amber), cancelled (red); tap to hear it */
 .flightchip { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 14px; border-radius: 999px;
   border: 2px solid rgba(255, 255, 255, .35); background: rgba(255, 255, 255, .12); color: #fff; font-size: 14px; white-space: nowrap }
