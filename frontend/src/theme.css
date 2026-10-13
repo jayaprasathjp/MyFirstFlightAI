@@ -340,3 +340,7 @@ ul.do li > span { flex: 1; min-width: 0 }
 
 /* the story covers the whole app; what is behind it is hidden so its 3D scenes stop drawing */
 .app.story-on > :not(.story) { display: none }
+
+/* English shown to staff stays left-to-right inside Arabic screens ("TR 867?", not "?TR 867") */
+[lang="en"] { direction: ltr; unicode-bidi: isolate; }
+.say .loc { unicode-bidi: plaintext; }

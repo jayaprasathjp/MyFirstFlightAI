@@ -41,7 +41,8 @@ def get_genai_client():
 def _new_client():
     use_vertex = os.getenv("USE_VERTEX_AI", "false").lower() in ("true", "1", "yes")
     project = os.getenv("GCP_PROJECT_ID")
-    location = os.getenv("GCP_LOCATION", "us-central1")
+    # Vertex's global endpoint: us-central1 throttled gemini-2.5-flash to 60-180 s or 429s; global answered in ~3 s
+    location = os.getenv("GEMINI_LOCATION", "global")
     api_key = os.getenv("GEMINI_API_KEY")
 
     if use_vertex or project:

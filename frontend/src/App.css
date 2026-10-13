@@ -1499,11 +1499,15 @@ ul.do li::before {
     justify-content: center;
   }
 
+  /* in the sidebar under the steps, so it never covers the content's 🔊 buttons */
   .dock {
-    inset-inline-end: 40px;
-    bottom: 40px;
+    inset-inline: 24px auto;
+    bottom: 32px;
+    width: 232px;
+    flex-direction: column;
     position: fixed;
   }
+  .dock .helpbtn, .dock .sos { justify-content: center; }
 
   /* Modals as centered dialogs */
   .lost,

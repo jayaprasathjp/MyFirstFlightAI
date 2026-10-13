@@ -57,7 +57,7 @@ function Phone({ step, progress, children }) {
   return (
     <PhoneFrame className="tv-phone" onDoc={(d) => { docRef.current = d }}>
       <div className="app">
-        <header className="top"><div className="brand"><span className="mark">✈</span><span>MyFirstFlight</span></div></header>
+        <header className="top"><div className="brand"><span className="mark">✈</span><span>MyFirstFlightAI</span></div></header>
         {step != null && ( // no step bar before login (language page)
           <nav className="stepper">
             {STEPS.map((s, n) => (
