@@ -487,7 +487,8 @@
     "err_phone_country": "This is not a valid {country} phone number.",
     "yes": "Yes",
     "no": "No",
-    "quick_have_hint": "If yes, we add the bag drop to your checklist for the day you fly."
+    "quick_have_hint": "If yes, we add the bag drop to your checklist for the day you fly.",
+    "choose_lang_dropdown": "Choose your preferred language in the dropdown"
   },
   "video_replay": "ಮತ್ತೆ ನೋಡಿ",
   "video_pause": "ವಿರಾಮ",
@@ -622,5 +623,6 @@
   "err_phone_country": "ಇದು ಸರಿಯಾದ {country} ಫೋನ್ ಸಂಖ್ಯೆ ಅಲ್ಲ.",
   "yes": "ಹೌದು",
   "no": "ಇಲ್ಲ",
-  "quick_have_hint": "ಹೌದು ಎಂದಾದರೆ, ನೀವು ಪ್ರಯಾಣಿಸುವ ದಿನದ ನಿಮ್ಮ ಪರಿಶೀಲನಾಪಟ್ಟಿಗೆ ನಾವು ಬ್ಯಾಗ್ ಡ್ರಾಪ್ ಅನ್ನು ಸೇರಿಸುತ್ತೇವೆ."
+  "quick_have_hint": "ಹೌದು ಎಂದಾದರೆ, ನೀವು ಪ್ರಯಾಣಿಸುವ ದಿನದ ನಿಮ್ಮ ಪರಿಶೀಲನಾಪಟ್ಟಿಗೆ ನಾವು ಬ್ಯಾಗ್ ಡ್ರಾಪ್ ಅನ್ನು ಸೇರಿಸುತ್ತೇವೆ.",
+  "choose_lang_dropdown": "ಡ್ರಾಪ್‌ಡೌನ್‌ನಲ್ಲಿ ನಿಮ್ಮ ಆದ್ಯತೆಯ ಭಾಷೆಯನ್ನು ಆಯ್ಕೆಮಾಡಿ"
 }

@@ -482,7 +482,8 @@
     "err_phone_country": "This is not a valid {country} phone number.",
     "yes": "Yes",
     "no": "No",
-    "quick_have_hint": "If yes, we add the bag drop to your checklist for the day you fly."
+    "quick_have_hint": "If yes, we add the bag drop to your checklist for the day you fly.",
+    "choose_lang_dropdown": "Choose your preferred language in the dropdown"
   },
   "help_intro": "I suoi documenti sono pronti. Se ha bisogno di aiuto in qualsiasi momento, tocchi il pulsante blu \"Aiuto\" in fondo allo schermo. Se si sente perso, tocchi il pulsante rosso \"Mi sono perso\".",
   "bag_not_on_ticket": "Non stampato sul suo biglietto: questo e il limite solito. Per favore, confermi con la compagnia aerea.",
@@ -622,5 +623,6 @@
   "err_phone_country": "Questo non è un numero di telefono valido per {country}.",
   "yes": "Sì",
   "no": "No",
-  "quick_have_hint": "Se sì, aggiungiamo la consegna del bagaglio alla sua lista di cose da fare per il giorno del volo."
+  "quick_have_hint": "Se sì, aggiungiamo la consegna del bagaglio alla sua lista di cose da fare per il giorno del volo.",
+  "choose_lang_dropdown": "Scegli la tua lingua preferita nel menu a discesa"
 }

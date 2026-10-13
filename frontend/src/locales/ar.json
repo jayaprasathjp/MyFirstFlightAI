@@ -487,7 +487,8 @@
     "err_phone_country": "This is not a valid {country} phone number.",
     "yes": "Yes",
     "no": "No",
-    "quick_have_hint": "If yes, we add the bag drop to your checklist for the day you fly."
+    "quick_have_hint": "If yes, we add the bag drop to your checklist for the day you fly.",
+    "choose_lang_dropdown": "Choose your preferred language in the dropdown"
   },
   "video_replay": "شاهد مرة أخرى",
   "video_pause": "إيقاف مؤقت",
@@ -622,5 +623,6 @@
   "err_phone_country": "هذا ليس رقم هاتف صحيح لـ {country}.",
   "yes": "نعم",
   "no": "لا",
-  "quick_have_hint": "إذا كانت الإجابة نعم، فسنضيف تسليم الحقائب إلى قائمة مهامك ليوم السفر."
+  "quick_have_hint": "إذا كانت الإجابة نعم، فسنضيف تسليم الحقائب إلى قائمة مهامك ليوم السفر.",
+  "choose_lang_dropdown": "اختر لغتك المفضلة من القائمة المنسدلة"
 }

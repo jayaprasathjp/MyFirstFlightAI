@@ -487,7 +487,8 @@
     "err_phone_country": "This is not a valid {country} phone number.",
     "yes": "Yes",
     "no": "No",
-    "quick_have_hint": "If yes, we add the bag drop to your checklist for the day you fly."
+    "quick_have_hint": "If yes, we add the bag drop to your checklist for the day you fly.",
+    "choose_lang_dropdown": "Choose your preferred language in the dropdown"
   },
   "video_replay": "다시 보기",
   "video_pause": "일시 정지",
@@ -622,5 +623,6 @@
   "err_phone_country": "이것은 유효한 {country} 전화번호가 아닙니다.",
   "yes": "네",
   "no": "아니요",
-  "quick_have_hint": "네라고 하시면, 비행 당일에 짐 부치는 곳을 확인 목록에 넣어 드릴게요."
+  "quick_have_hint": "네라고 하시면, 비행 당일에 짐 부치는 곳을 확인 목록에 넣어 드릴게요.",
+  "choose_lang_dropdown": "드롭다운에서 원하는 언어를 선택하세요"
 }

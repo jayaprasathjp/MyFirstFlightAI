@@ -336,5 +336,6 @@
   "err_phone_country": "This is not a valid {country} phone number.",
   "yes": "Yes",
   "no": "No",
-  "quick_have_hint": "If yes, we add the bag drop to your checklist for the day you fly."
+  "quick_have_hint": "If yes, we add the bag drop to your checklist for the day you fly.",
+  "choose_lang_dropdown": "Choose your preferred language in the dropdown"
 }

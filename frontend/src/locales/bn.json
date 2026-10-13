@@ -487,7 +487,8 @@
     "err_phone_country": "This is not a valid {country} phone number.",
     "yes": "Yes",
     "no": "No",
-    "quick_have_hint": "If yes, we add the bag drop to your checklist for the day you fly."
+    "quick_have_hint": "If yes, we add the bag drop to your checklist for the day you fly.",
+    "choose_lang_dropdown": "Choose your preferred language in the dropdown"
   },
   "video_replay": "আবার দেখুন",
   "video_pause": "বিরতি দিন",
@@ -622,5 +623,6 @@
   "err_phone_country": "এটি একটি সঠিক {country} ফোন নম্বর নয়।",
   "yes": "হ্যাঁ",
   "no": "না",
-  "quick_have_hint": "যদি হ্যাঁ হয়, তাহলে আপনার উড়ানের দিনের জন্য তৈরি করা জরুরি কাজের তালিকায় আমরা ব্যাগ জমা দেওয়ার বিষয়টি যোগ করে দেব।"
+  "quick_have_hint": "যদি হ্যাঁ হয়, তাহলে আপনার উড়ানের দিনের জন্য তৈরি করা জরুরি কাজের তালিকায় আমরা ব্যাগ জমা দেওয়ার বিষয়টি যোগ করে দেব।",
+  "choose_lang_dropdown": "ড্রপডাউনে আপনার পছন্দের ভাষাটি বেছে নিন"
 }
