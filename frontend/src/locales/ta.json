@@ -487,7 +487,8 @@
     "err_phone_country": "This is not a valid {country} phone number.",
     "yes": "Yes",
     "no": "No",
-    "quick_have_hint": "If yes, we add the bag drop to your checklist for the day you fly."
+    "quick_have_hint": "If yes, we add the bag drop to your checklist for the day you fly.",
+    "choose_lang_dropdown": "Choose your preferred language in the dropdown"
   },
   "video_replay": "மீண்டும் பார்",
   "video_pause": "நிறுத்து",
@@ -622,5 +623,6 @@
   "err_phone_country": "இது சரியான {country} தொலைபேசி எண் இல்லை.",
   "yes": "ஆம்",
   "no": "இல்லை",
-  "quick_have_hint": "ஆம் என்றால், நீங்கள் விமானத்தில் செல்லும் நாளில், உங்கள் சரிபார்ப்புப் பட்டியலில் பைகளை ஒப்படைக்கும் வசதியைச் சேர்ப்போம்."
+  "quick_have_hint": "ஆம் என்றால், நீங்கள் விமானத்தில் செல்லும் நாளில், உங்கள் சரிபார்ப்புப் பட்டியலில் பைகளை ஒப்படைக்கும் வசதியைச் சேர்ப்போம்.",
+  "choose_lang_dropdown": "கீழ்தோன்றும் பட்டியலில் உங்கள் விருப்பமான மொழியைத் தேர்ந்தெடுக்கவும்"
 }

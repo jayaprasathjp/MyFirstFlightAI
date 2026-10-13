@@ -487,7 +487,8 @@
     "err_phone_country": "This is not a valid {country} phone number.",
     "yes": "Yes",
     "no": "No",
-    "quick_have_hint": "If yes, we add the bag drop to your checklist for the day you fly."
+    "quick_have_hint": "If yes, we add the bag drop to your checklist for the day you fly.",
+    "choose_lang_dropdown": "Choose your preferred language in the dropdown"
   },
   "video_replay": "Tonton semula",
   "video_pause": "Jeda",
@@ -622,5 +623,6 @@
   "err_phone_country": "Ini bukan nombor telefon {country} yang sah.",
   "yes": "Ya",
   "no": "Tidak",
-  "quick_have_hint": "Jika ya, kami akan masukkan bagasi daftar masuk ini ke dalam senarai semak anda pada hari penerbangan nanti."
+  "quick_have_hint": "Jika ya, kami akan masukkan bagasi daftar masuk ini ke dalam senarai semak anda pada hari penerbangan nanti.",
+  "choose_lang_dropdown": "Pilih bahasa pilihan anda dalam menu lungsur"
 }

@@ -482,7 +482,8 @@
     "err_phone_country": "This is not a valid {country} phone number.",
     "yes": "Yes",
     "no": "No",
-    "quick_have_hint": "If yes, we add the bag drop to your checklist for the day you fly."
+    "quick_have_hint": "If yes, we add the bag drop to your checklist for the day you fly.",
+    "choose_lang_dropdown": "Choose your preferred language in the dropdown"
   },
   "help_intro": "เอกสารของท่านพร้อมแล้ว หากท่านต้องการความช่วยเหลือเมื่อใดก็ตาม ให้กดปุ่มช่วยเหลือสีน้ำเงินที่อยู่ด้านล่างของหน้าจอ หากท่านหลงทาง ให้กดปุ่มฉันหลงทางสีแดง",
   "bag_not_on_ticket": "ไม่ได้พิมพ์อยู่บนตั๋วของท่าน: นี่คือขีดจำกัดปกติ โปรดยืนยันกับสายการบินอีกครั้ง",
@@ -622,5 +623,6 @@
   "err_phone_country": "นี่ไม่ใช่เบอร์โทรศัพท์ของประเทศ{country}ที่ถูกต้อง",
   "yes": "ใช่",
   "no": "ไม่",
-  "quick_have_hint": "ถ้าใช่ เราจะเพิ่มการโหลดกระเป๋าเดินทางลงในรายการสิ่งที่ต้องทำในวันเดินทางของคุณ"
+  "quick_have_hint": "ถ้าใช่ เราจะเพิ่มการโหลดกระเป๋าเดินทางลงในรายการสิ่งที่ต้องทำในวันเดินทางของคุณ",
+  "choose_lang_dropdown": "เลือกภาษาที่คุณต้องการในเมนูแบบเลื่อนลง"
 }

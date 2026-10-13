@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useRef, useState, useSyncExternalStore } from "react";
 import { api, store } from "./api";
 import { useI18n } from "./i18n";
 import I18nProvider from "./I18nProvider";
@@ -22,7 +22,7 @@ import Stage from "./components/Stage";
 import Story from "./components/Story";
 import { StageCtx } from "./StageContext";
 import Walkthrough from "./components/Walkthrough";
-import { speak, stopSpeaking } from "./voice";
+import { speak, stopSpeaking, subscribeSpeaking, getSpeakingKey } from "./voice";
 import "./App.css";
 import "./theme.css";
 
@@ -35,10 +35,21 @@ const STEPS = [
   "journey",
 ];
 
-function TopBar({ onLanguage, busy, currentUser, logout, onShowTrips, auto, onAuto, flight }) {
+function TopBar({ onLanguage, busy, currentUser, logout, onShowTrips, flight }) {
   const { lang, t } = useI18n();
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
+  const speakerId = useId();
+  const speaking = useSyncExternalStore(subscribeSpeaking, () => getSpeakingKey() === speakerId);
+
+  const handleSpeakerClick = (e) => {
+    e.preventDefault();
+    if (speaking) {
+      stopSpeaking();
+    } else {
+      speak(t("choose_lang_dropdown"), lang, speakerId);
+    }
+  };
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -66,16 +77,20 @@ function TopBar({ onLanguage, busy, currentUser, logout, onShowTrips, auto, onAu
         {flight && <FlightChip flight={flight.code} status={flight.status} />}
         <button
           type="button"
-          className={"autoread" + (auto ? " on" : "")}
-          aria-pressed={auto}
-          aria-label={t("read_to_me")}
-          title={t("read_to_me")}
-          onClick={onAuto}
+          className={"autoread" + (speaking ? " on" : "")}
+          aria-pressed={speaking}
+          aria-label={t("choose_lang_dropdown")}
+          title={t("choose_lang_dropdown")}
+          onClick={handleSpeakerClick}
         >
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <path d="M4 9v6h4l5 4V5L8 9z" />
-            {auto ? <path d="M16.5 8.5a5 5 0 010 7M19 6a8.5 8.5 0 010 12" /> : <path d="M17 9l5 6M22 9l-5 6" />}
-          </svg>
+          {speaking ? (
+            <span className="bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+          ) : (
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M4 9v6h4l5 4V5L8 9z" />
+              <path d="M16.5 8.5a5 5 0 010 7M19 6a8.5 8.5 0 010 12" />
+            </svg>
+          )}
         </button>
         <select
           className="lang"
@@ -220,18 +235,8 @@ function Flow({ setLang }) {
     store.get(`mff-done-${store.get("mff-trip", "")}`, {}),
   );
   const [busy, setBusy] = useState(false);
-  // "Read to me": each screen is read aloud when it opens. On by default; remembered on this phone.
-  // "Read to me" is off unless the traveller turns it on: pages never start speaking by themselves.
-  // New key: the old "mff-ui-auto" was on for everyone by default, so that saved value is ignored.
-  const [auto, setAuto] = useState(() => store.get("mff-ui-readtome", false));
   const [jstep, setJstep] = useState(0); // current airport step, drawn on the floor plan
   const mainRef = useRef(null);
-  const toggleAuto = () => {
-    const next = !auto;
-    setAuto(next);
-    store.set("mff-ui-readtome", next);
-    if (!next) stopSpeaking();
-  };
   const [updating, setUpdating] = useState(false); // language switch: server re-translates checks + checklist
   const [error, setError] = useState("");
   const [lostOpen, setLostOpen] = useState(false);
@@ -445,23 +450,6 @@ function Flow({ setLang }) {
     }, 9000);
     speak(t("help_intro"), lang);
   };
-  // With "Read to me" on: read the screen's heading and first lines when it opens (the airport steps read
-  // themselves). Not again on a language change.
-  useEffect(() => {
-    if (!auto || !currentUser || viewMode !== "trip" || step === "journey") return;
-    const id = setTimeout(() => {
-      if (pulseRef.current) return; // the Help / I'm lost introduction is already speaking
-      const el = mainRef.current;
-      if (!el) return;
-      const parts = [el.querySelector("h2"), el.querySelector(".muted"), el.querySelector(".verdict")]
-        .filter(Boolean)
-        .map((n) => n.innerText.trim())
-        .filter(Boolean);
-      if (parts.length) speak(parts.join(". "), lang);
-    }, 1200);
-    return () => clearTimeout(id);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [auto, step, viewMode, trip?.id, docsPrompt]);
   const addTraveller = (files, assistance) =>
     run(async () => {
       const r = await api.addTraveller(trip.id, files, assistance);
@@ -552,8 +540,6 @@ function Flow({ setLang }) {
         currentUser={currentUser}
         logout={doLogout}
         onShowTrips={goToTrips}
-        auto={auto}
-        onAuto={toggleAuto}
         flight={currentUser && viewMode === "trip" && flightCode ? { code: flightCode, status: flightInfo.status } : null}
       />
       {!currentUser ? (
@@ -689,7 +675,6 @@ function Flow({ setLang }) {
                 onFeedback={saveFeedback}
                 walkthrough={<Walkthrough trip={trip} />}
                 toast={toast}
-                auto={auto}
                 onFinish={finishTrip}
               />
             )}
