@@ -1,4 +1,5 @@
 import asyncio
+import time
 import hashlib
 import logging
 import mimetypes
@@ -635,14 +636,20 @@ def trip_facts(trip):
 
 def gemini_call(fn, *args, **kwargs):
     try:
-        return fn(*args, **kwargs)
+        try:
+            return fn(*args, **kwargs)
+        except Exception as exc:
+            if "RESOURCE_EXHAUSTED" not in str(exc) and "429" not in str(exc):
+                raise
+            time.sleep(2)  # Vertex quota bursts clear within seconds: one retry
+            return fn(*args, **kwargs)
     except ValueError as exc:
         raise HTTPException(status_code=503, detail=str(exc))
     except gemini.UnclearAudio as exc:
         raise HTTPException(status_code=422, detail=str(exc))
     except Exception as exc:
         log.exception("Gemini helper failed")
-        raise HTTPException(status_code=502, detail=f"Could not get an answer right now. Please try again. ({exc})")
+        raise HTTPException(status_code=502, detail="Could not get an answer right now. Please try again.")
 
 
 @app.post("/api/trips/{trip_id}/ask")

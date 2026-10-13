@@ -405,3 +405,21 @@ def test_trip_can_be_finished_and_reopened(client):
     assert client.get(f"/api/trips/{trip['id']}").json()["completed_at"] == r["completed_at"]
     assert client.post(f"/api/trips/{trip['id']}/complete", json={"done": False}).json()["completed_at"] is None
     assert client.get(f"/api/trips/{trip['id']}").json()["completed_at"] is None
+
+
+def test_gemini_quota_burst_is_retried_and_never_shown_raw(monkeypatch):
+    monkeypatch.setattr(main.time, "sleep", lambda s: None)
+    calls = []
+
+    def flaky():
+        calls.append(1)
+        if len(calls) == 1:
+            raise RuntimeError("429 RESOURCE_EXHAUSTED")
+        return "ok"
+    assert main.gemini_call(flaky) == "ok" and len(calls) == 2
+
+    def down():
+        raise RuntimeError("429 RESOURCE_EXHAUSTED {'error': ...}")
+    with pytest.raises(main.HTTPException) as e:
+        main.gemini_call(down)
+    assert e.value.status_code == 502 and "RESOURCE" not in e.value.detail

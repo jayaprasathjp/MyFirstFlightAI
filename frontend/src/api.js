@@ -95,7 +95,8 @@ export const api = {
 }
 
 // User-facing text for an API error ('network' = the server could not be reached).
-export const errorText = (e, t) => (e.message === 'network' ? t('err_network') : e.message)
+// server failures (5xx) get a plain message in her language, never the server's English
+export const errorText = (e, t) => (e.message === 'network' ? t('err_network') : e.status >= 500 ? t('err_server') : e.message)
 
 export const store = {
   get(k, d) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d } catch { return d } },

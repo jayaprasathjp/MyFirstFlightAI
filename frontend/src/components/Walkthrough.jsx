@@ -67,7 +67,7 @@ export default function Walkthrough({ trip }) {
         <span className="muted">{t('wt_hint')}</span>
         <div className="wt-actions">
           <button className="btn sec" onClick={() => setOpen(true)}>▶ {t('wt_watch')}</button>
-          <a className="btn sec" href={SAMPLE_VIDEO} download="MyFirstFlight-app-walkthrough.mp4">⬇ {t('wt_download')}</a>
+          <a className="btn sec" href={SAMPLE_VIDEO} download="MyFirstFlightAI-app-walkthrough.mp4">⬇ {t('wt_download')}</a>
         </div>
       </div>
       {open && (
