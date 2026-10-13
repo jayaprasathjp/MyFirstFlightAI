@@ -14,7 +14,7 @@ const FIREBASE_TEST_NUMBERS = ['+911234567890', '+919876543210'];
 
 import Icon from '../components/Icon';
 
-export default function AuthScreen({ onLogged, onStory, onBack, onChangeLanguage }) {
+export default function AuthScreen({ onLogged, onStory, _onBack }) {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [code, setCode] = useState('');
   const [confirmResult, setConfirmResult] = useState(null);
@@ -26,10 +26,13 @@ export default function AuthScreen({ onLogged, onStory, onBack, onChangeLanguage
   // Generate a unique ID for this mount so Firebase doesn't trip over old detached DOM nodes
   const [recaptchaId] = useState(() => 'recaptcha-' + Math.random().toString(36).substring(2, 9));
 
-  // Spoken help in the chosen language: what to do on this page (title 🔊, and "Read to me").
+  // Spoken help in the chosen language: title and description (title 🔊).
   const voiceText = () => confirmResult
-    ? t('auth_voice_otp', { verify: t('auth_verify_otp') })
-    : t('auth_voice', { send: t('auth_send_otp'), google: t('auth_google') });
+    ? t('auth_sign_in_up')
+    : `${t('auth_sign_in_up')}. ${t('auth_phone_desc')}`;
+
+  const phoneVoice = () => t('auth_voice', { send: t('auth_send_otp'), google: t('auth_google') });
+  const otpVoice = () => t('auth_voice_otp', { verify: t('auth_verify_otp') });
 
   useEffect(() => {
     return () => {
@@ -132,12 +135,13 @@ export default function AuthScreen({ onLogged, onStory, onBack, onChangeLanguage
   return (
     <div className="screen" style={{ alignContent: 'center' }}>
       <div id={recaptchaId}></div>
-      {onBack && <button type="button" className="tripback" style={{ maxWidth: '420px', margin: '0 auto 4px', justifySelf: 'center' }} onClick={onBack}><span aria-hidden="true">←</span> {t('back')}</button>}
-      <div className="card" style={{ padding: '24px', display: 'grid', gap: '20px', maxWidth: '420px', margin: '0 auto', width: '100%' }}>
+        <div className="card" style={{ padding: '24px', display: 'grid', gap: '20px', maxWidth: '420px', margin: '0 auto', width: '100%' }}>
         <div className="gh" style={{ justifyContent: 'center' }}><h2 style={{ textAlign: 'center', marginBottom: '8px' }}>{t('auth_sign_in_up')}</h2><Listen text={voiceText} toast={setError} /></div>
-        <p style={{ textAlign: 'center', fontSize: '14px', color: 'var(--muted)', marginTop: '-12px' }}>
-          {t('auth_phone_desc')}
-        </p>
+        {!confirmResult && (
+          <p style={{ textAlign: 'center', fontSize: '14px', color: 'var(--muted)', marginTop: '-12px' }}>
+            {t('auth_phone_desc')}
+          </p>
+        )}
         
         {error && <div className="err gh" role="alert"><div>{error}</div><Listen text={error} /></div>}
         {message && <div style={{ color: 'var(--ok)', background: 'var(--ok-soft)', padding: '10px 12px', borderRadius: '12px', fontWeight: '600', fontSize: '15px' }} role="status">{message}</div>}
@@ -145,7 +149,7 @@ export default function AuthScreen({ onLogged, onStory, onBack, onChangeLanguage
         {!confirmResult ? (
           <form onSubmit={handleSendOtp} className="form" style={{ gap: '16px' }}>
             <div className="form" style={{ gap: '6px' }}>
-              <span className="gh"><label htmlFor="auth-phone"><b>{t('auth_phone')}</b></label><Listen text={`${t('auth_phone')}. ${t('auth_phone_desc')}`} /></span>
+              <span className="gh"><label htmlFor="auth-phone"><b>{t('auth_phone')}</b></label><Listen text={phoneVoice} /></span>
               <PhoneInput id="auth-phone" label={t('auth_phone')} value={phoneNumber} onChange={(v) => { setPhoneNumber(v); setError('') }} />
             </div>
             
@@ -156,7 +160,7 @@ export default function AuthScreen({ onLogged, onStory, onBack, onChangeLanguage
         ) : (
           <form onSubmit={handleVerifyOtp} className="form" style={{ gap: '16px' }}>
             <label>
-              <span className="gh"><b>{t('auth_otp')}</b><Listen text={`${message ? message + '. ' : ''}${t('auth_otp')}`} /></span>
+              <span className="gh"><b>{t('auth_otp')}</b><Listen text={otpVoice} /></span>
               <input 
                 type="text" 
                 placeholder={t('auth_otp_placeholder')}
@@ -196,11 +200,6 @@ export default function AuthScreen({ onLogged, onStory, onBack, onChangeLanguage
           {t('auth_google')}
         </button>
         {onStory && <button className="btn ghost full storybtn" type="button" onClick={onStory}><Icon name="speaker" /> {t('story_title')}</button>}
-        {onChangeLanguage && (
-          <button className="link" type="button" onClick={onChangeLanguage} style={{ justifySelf: 'center' }}>
-            🌐 {t('change_language')}
-          </button>
-        )}
       </div>
     </div>
   );
